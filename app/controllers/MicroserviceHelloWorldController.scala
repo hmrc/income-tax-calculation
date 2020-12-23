@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.incometaxcalculation.config
+package controllers
 
+import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+import scala.concurrent.Future
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+@Singleton()
+class MicroserviceHelloWorldController @Inject()(appConfig: AppConfig, cc: ControllerComponents)
+    extends BackendController(cc) {
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  def hello(): Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok("Hello world"))
+  }
 }
