@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package config
+package services
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import connectors.LiabilityCalculationConnector
+import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
+import javax.inject.Inject
+import uk.gov.hmrc.http.HeaderCarrier
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+import scala.concurrent.Future
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+class LiabilityCalculationService @Inject()(liabilityCalculationConnector: LiabilityCalculationConnector) {
 
-  val desBaseUrl: String = servicesConfig.baseUrl("des")
+  def calculateLiability(nino: String, taxYear: String, crystallisation: Boolean)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
+    liabilityCalculationConnector.calculateLiability(nino, taxYear, crystallisation)
+  }
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
 }

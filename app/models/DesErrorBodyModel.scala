@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.{Json, OFormat}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+case class DesErrorBodyModel(code: String, reason: String)
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-
-  val desBaseUrl: String = servicesConfig.baseUrl("des")
-
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+object DesErrorBodyModel{
+  implicit val formats: OFormat[DesErrorBodyModel] = Json.format[DesErrorBodyModel]
+  val parsingError = DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")
 }

@@ -14,6 +14,7 @@ object AppDependencies {
     "org.scalatest"           %% "scalatest"                % "3.2.3"  % Test,
     "com.typesafe.play"       %% "play-test"                % current  % Test,
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8" % "test, it",
-    "org.scalatestplus.play"  %% "scalatestplus-play"       % "4.0.3"  % "test, it"
+    "org.scalatestplus.play"  %% "scalatestplus-play"       % "4.0.3"  % "test, it",
+    "org.scalamock"           %% "scalamock"                % "4.4.0"  % Test
   )
 }
