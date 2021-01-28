@@ -50,7 +50,7 @@ object LiabilityCalculationHttpParser {
   }
 
   private def logMessage(response:HttpResponse): Option[String] = {
-    Some(s"[SubmittedDividendsHttpParser][read] Received ${response.status} from DES. Body:${response.body}")
+    Some(s"[LiabilityCalculationHttpParser][read] Received ${response.status} from DES. Body:${response.body}")
   }
 
   private def handleDESError(response: HttpResponse, statusOverride: Option[Int] = None): LiabilityCalculationResponse = {
@@ -59,7 +59,7 @@ object LiabilityCalculationHttpParser {
     try {
       response.json.validate[DesErrorBodyModel].fold[LiabilityCalculationResponse](
         _ => {
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_DES, Some(s"[SubmittedDividendsHttpParser][read] Unexpected Json from DES."))
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_DES, Some(s"[LiabilityCalculationHttpParser][read] Unexpected Json from DES."))
           Left(DesErrorModel(status, DesErrorBodyModel.parsingError))
         },
         parsedError => Left(DesErrorModel(status, parsedError))

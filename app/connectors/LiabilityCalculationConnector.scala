@@ -25,11 +25,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LiabilityCalculationConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
 
-  def calculateLiability(
-                          nino: String, taxYear: String, crystallise: Boolean
-                        )(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
+  def calculateLiability(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
     val liabilityCalculationUrl: String = config.desBaseUrl +
-      s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation${if(crystallise)"?crystallise=true"}"
+      s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
     http.POSTEmpty[LiabilityCalculationResponse](liabilityCalculationUrl)
   }
 

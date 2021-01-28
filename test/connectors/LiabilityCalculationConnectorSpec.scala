@@ -36,7 +36,7 @@ class LiabilityCalculationConnectorSpec extends TestSuite with ScalaFutures {
 
         mockHttpEmptyPost(OK, Right(response))
 
-        val result = connector.calculateLiability(nino, taxYear, true)
+        val result = connector.calculateLiability(nino, taxYear)
         whenReady(result) { res =>
           res.right.get mustBe response
         }
@@ -51,7 +51,7 @@ class LiabilityCalculationConnectorSpec extends TestSuite with ScalaFutures {
 
         mockHttpEmptyPost(INTERNAL_SERVER_ERROR, Left(response))
 
-        val result = connector.calculateLiability(nino, taxYear, false)
+        val result = connector.calculateLiability(nino, taxYear)
         whenReady(result) { res =>
           res.left.get mustBe response
         }

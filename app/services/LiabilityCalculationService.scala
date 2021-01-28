@@ -25,8 +25,8 @@ import scala.concurrent.Future
 
 class LiabilityCalculationService @Inject()(liabilityCalculationConnector: LiabilityCalculationConnector) {
 
-  def calculateLiability(nino: String, taxYear: String, crystallisation: Boolean)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
-    liabilityCalculationConnector.calculateLiability(nino, taxYear, crystallisation)
+  def calculateLiability(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
+    liabilityCalculationConnector.calculateLiability(nino, taxYear)
   }
 
 }

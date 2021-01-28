@@ -18,6 +18,7 @@ package controllers
 
 import controllers.predicates.AuthorisedAction
 import javax.inject.Inject
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.LiabilityCalculationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -30,11 +31,10 @@ class LiabilityCalculationController @Inject()(liabilityCalculationService: Liab
                                                authorisedAction: AuthorisedAction)
                                               (implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  def calculateLiability(nino: String, taxYear: String, crystallisation: Option[Boolean],
-                         mtditid: String): Action[AnyContent] = authorisedAction.async(mtditid) { implicit user =>
-    liabilityCalculationService.calculateLiability(nino, taxYear, crystallisation.getOrElse(false)).map {
+  def calculateLiability(nino: String, taxYear: String, mtditid: String): Action[AnyContent] = authorisedAction.async(mtditid) { implicit user =>
+    liabilityCalculationService.calculateLiability(nino, taxYear).map {
       case Right(value) => Ok(value.incomeSourceId)
-      case Left(error) => handleDesErrorResponse(error.status, error.desBody)
+      case Left(error) => Status(error.status)(Json.toJson(error.desBody))
     }
   }
 
