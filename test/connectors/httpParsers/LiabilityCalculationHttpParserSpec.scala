@@ -129,6 +129,16 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
         parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
           Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError))
       }
+
+      "DES returns a bad json body" in {
+        val response =
+          """
+            |{
+            |""".stripMargin
+
+        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
+          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
+      }
     }
   }
 
