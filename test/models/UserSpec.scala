@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import testUtils.TestSuite
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+class UserSpec extends TestSuite {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  ".isAgent" should {
 
-  val desBaseUrl: String = servicesConfig.baseUrl("des")
+    "return true" when {
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+      "user has an arn" in {
+        User[AnyContent]("23456789", Some("123456789"))(FakeRequest()).isAgent mustBe true
+      }
+
+    }
+
+    "return false" when {
+
+      "user does not have an arn" in {
+        User[AnyContent]("23456789", None)(FakeRequest()).isAgent mustBe false
+      }
+
+    }
+
+  }
+
 }

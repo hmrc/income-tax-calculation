@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package common
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+object EnrolmentKeys {
+  val Individual = "HMRC-MTD-IT"
+  val Agent = "HMRC-AS-AGENT"
+}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
-
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-
-  val desBaseUrl: String = servicesConfig.baseUrl("des")
-
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+object EnrolmentIdentifiers {
+  val individualId = "MTDITID"
+  val agentReference = "AgentReferenceNumber"
 }
