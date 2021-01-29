@@ -30,7 +30,9 @@ object LiabilityCalculationHttpParser {
     override def read(method: String, url: String, response: HttpResponse): LiabilityCalculationResponse = {
       response.status match {
         case OK => response.json.validate[LiabilityCalculationIdModel].fold[LiabilityCalculationResponse](
-          _ => Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError)),
+          _ => {
+            pagerDutyLog(BAD_SUCCESS_JSON_FROM_DES, Some(s"[LiabilityCalculationHttpParser][read] Invalid Json from DES."))
+            Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError))},
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
