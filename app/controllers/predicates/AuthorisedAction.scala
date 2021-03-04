@@ -53,10 +53,10 @@ class AuthorisedAction @Inject()(
         checkAuthorisation(block, enrolments, mtdItId)(request, headerCarrier)
     } recover {
       case _: NoActiveSession =>
-        logger.debug("AgentPredicate][authoriseAsAgent] - No active session. Redirecting to Unauthorised")
+        logger.info("AgentPredicate][authoriseAsAgent] - No active session. Redirecting to Unauthorised")
         Unauthorized("")
       case _: AuthorisationException =>
-        logger.debug(s"[AgentPredicate][authoriseAsAgent] - Agent does not have delegated authority for Client.")
+        logger.info(s"[AgentPredicate][authoriseAsAgent] - Agent does not have delegated authority for Client.")
         Unauthorized("")
     }
   }
@@ -90,15 +90,15 @@ class AuthorisedAction @Inject()(
         case Some(arn) =>
           block(User(mtdItId, Some(arn)))
         case None =>
-          logger.debug("[AuthorisedAction][CheckAuthorisation] Agent with no HMRC-AS-AGENT enrolment. Rendering unauthorised view.")
+          logger.info("[AuthorisedAction][CheckAuthorisation] Agent with no HMRC-AS-AGENT enrolment. Rendering unauthorised view.")
           Future.successful(Forbidden(""))
       }
     } recover {
       case _: NoActiveSession =>
-        logger.debug("[AgentPredicate][authoriseAsAgent] - No active session. Redirecting to Unauthorised")
+        logger.info("[AgentPredicate][authoriseAsAgent] - No active session. Redirecting to Unauthorised")
         Unauthorized("")
       case ex: AuthorisationException =>
-        logger.debug(s"[AgentPredicate][authoriseAsAgent] - Agent does not have delegated authority for Client.")
+        logger.info(s"[AgentPredicate][authoriseAsAgent] - Agent does not have delegated authority for Client.")
         Unauthorized("")
     }
   }
@@ -110,7 +110,7 @@ class AuthorisedAction @Inject()(
         if enrolmentIdentifiers.exists(identifier => identifier.key == EnrolmentIdentifiers.individualId && identifier.value == mtditid) =>
         block(User(mtditid, None))
     } getOrElse {
-      logger.warn("[AuthorisedAction][IndividualAuthentication] Non-agent with an invalid MTDITID.")
+      logger.info("[AuthorisedAction][IndividualAuthentication] Non-agent with an invalid MTDITID.")
       Future.successful(Forbidden(""))
     }
   }
