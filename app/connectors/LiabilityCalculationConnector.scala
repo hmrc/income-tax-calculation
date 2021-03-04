@@ -23,12 +23,16 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class LiabilityCalculationConnector @Inject()(http: HttpClient, config: AppConfig)(implicit ec: ExecutionContext) {
+class LiabilityCalculationConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
 
   def calculateLiability(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
-    val liabilityCalculationUrl: String = config.desBaseUrl +
+    val liabilityCalculationUrl: String = appConfig.desBaseUrl +
       s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
-    http.POSTEmpty[LiabilityCalculationResponse](liabilityCalculationUrl)
-  }
 
+    def desCall(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
+      http.POSTEmpty[LiabilityCalculationResponse](liabilityCalculationUrl)
+    }
+
+    desCall(desHeaderCarrier)
+  }
 }
