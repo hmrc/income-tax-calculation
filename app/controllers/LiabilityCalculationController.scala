@@ -32,7 +32,7 @@ class LiabilityCalculationController @Inject()(liabilityCalculationService: Liab
 
   def calculateLiability(nino: String, taxYear: String, mtditid: String): Action[AnyContent] = authorisedAction.async(mtditid) { implicit user =>
     liabilityCalculationService.calculateLiability(nino, taxYear).map {
-      case Right(value) => Ok(value.incomeSourceId)
+      case Right(value) => Ok(Json.toJson(value))
       case Left(error) => Status(error.status)(Json.toJson(error.desBody))
     }
   }

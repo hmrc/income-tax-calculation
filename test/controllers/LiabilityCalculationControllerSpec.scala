@@ -21,6 +21,7 @@ import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
 import org.scalamock.handlers.CallHandler3
 import play.api.http.Status
 import play.api.http.Status._
+import play.api.libs.json.Json
 import services.LiabilityCalculationService
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,7 +48,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
 
   "liabilityCalculation" should {
 
-    "return 200" when {
+    "return 200 with a valid calculationId" when {
 
       "passed a valid URI" in {
         mockAuth()
@@ -55,6 +56,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
 
         val result = controller.calculateLiability(nino, taxYear, mtditid)(fakeRequest)
         status(result) mustBe Status.OK
+        bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
       }
     }
 

@@ -16,11 +16,10 @@
 
 package models
 
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.{JsPath, Json, OFormat, Reads}
 
-case class LiabilityCalculationIdModel(incomeSourceId: String)
+case class LiabilityCalculationIdModel(id: String)
 
 object LiabilityCalculationIdModel{
-  implicit val locationReads: Reads[LiabilityCalculationIdModel] =
-    ((JsPath \ "id").read[String].map(LiabilityCalculationIdModel.apply))
+  implicit val formats: OFormat[LiabilityCalculationIdModel] = Json.format[LiabilityCalculationIdModel]
 }
