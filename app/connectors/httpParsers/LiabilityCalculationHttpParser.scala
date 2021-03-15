@@ -52,7 +52,14 @@ object LiabilityCalculationHttpParser {
   }
 
   private def logMessage(response:HttpResponse): Option[String] = {
-    Some(s"[LiabilityCalculationHttpParser][read] Received ${response.status} from DES. Body:${response.body}")
+
+    val addedId = (response.header("CorrelationId"), response.header("sessionId")) match {
+      case (Some(id), _) => s" CorrelationId: $id"
+      case (_, Some(id)) => s" SessionId: $id"
+      case _ => ""
+    }
+
+    Some(s"[LiabilityCalculationHttpParser][read] Received ${response.status} from DES. Body:${response.body}." + addedId)
   }
 
   private def handleDESError(response: HttpResponse, statusOverride: Option[Int] = None): LiabilityCalculationResponse = {
