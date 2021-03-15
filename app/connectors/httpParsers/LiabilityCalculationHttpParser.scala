@@ -59,7 +59,7 @@ object LiabilityCalculationHttpParser {
       case _ => ""
     }
 
-    Some(s"[LiabilityCalculationHttpParser][read] Received ${response.status} from DES. Body:${response.body}. " + addedId)
+    Some(s"[LiabilityCalculationHttpParser][read] Received ${response.status} from DES. Body:${response.body}." + addedId)
   }
 
   private def handleDESError(response: HttpResponse, statusOverride: Option[Int] = None): LiabilityCalculationResponse = {
