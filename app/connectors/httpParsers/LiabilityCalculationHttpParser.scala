@@ -22,17 +22,16 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper._
 import PagerDutyKeys._
 
-
-object LiabilityCalculationHttpParser {
+object LiabilityCalculationHttpParser extends DESParser {
   type LiabilityCalculationResponse = Either[DesErrorModel, LiabilityCalculationIdModel]
+
+  override val parserName: String = "LiabilityCalculationHttpParser"
 
   implicit object CreateIncomeSourcesHttpReads extends HttpReads[LiabilityCalculationResponse] {
     override def read(method: String, url: String, response: HttpResponse): LiabilityCalculationResponse = {
       response.status match {
         case OK => response.json.validate[LiabilityCalculationIdModel].fold[LiabilityCalculationResponse](
-          _ => {
-            pagerDutyLog(BAD_SUCCESS_JSON_FROM_DES, Some(s"[LiabilityCalculationHttpParser][read] Invalid Json from DES."))
-            Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError))},
+          _ => badSuccessJsonFromDES,
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
@@ -50,29 +49,4 @@ object LiabilityCalculationHttpParser {
       }
     }
   }
-
-  private def logMessage(response:HttpResponse): Option[String] = {
-    val correlationId = response.header("CorrelationId") match {
-      case Some(id) => s" CorrelationId: $id"
-      case _ => ""
-    }
-    Some(s"[LiabilityCalculationHttpParser][read] Received ${response.status} from DES. Body:${response.body}." + correlationId)
-  }
-
-  private def handleDESError(response: HttpResponse, statusOverride: Option[Int] = None): LiabilityCalculationResponse = {
-
-    val status = statusOverride.getOrElse(response.status)
-    try {
-      response.json.validate[DesErrorBodyModel].fold[LiabilityCalculationResponse](
-        _ => {
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_DES, Some(s"[LiabilityCalculationHttpParser][read] Unexpected Json from DES."))
-          Left(DesErrorModel(status, DesErrorBodyModel.parsingError))
-        },
-        parsedError => Left(DesErrorModel(status, parsedError))
-      )
-    } catch {
-      case _: Exception => Left(DesErrorModel(status, DesErrorBodyModel.parsingError))
-    }
-  }
-
 }

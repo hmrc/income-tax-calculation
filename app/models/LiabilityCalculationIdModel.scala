@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{JsPath, Json, OFormat, Reads}
+import play.api.libs.json.{Json, OFormat}
 
 case class LiabilityCalculationIdModel(id: String)
 
