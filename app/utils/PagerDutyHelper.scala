@@ -17,6 +17,7 @@
 package utils
 
 import play.api.Logging
+import uk.gov.hmrc.http.HttpResponse
 
 object PagerDutyHelper extends Logging {
 
@@ -30,5 +31,12 @@ object PagerDutyHelper extends Logging {
 
   def pagerDutyLog(pagerDutyKey: PagerDutyKeys.Value, otherDetail: Option[String] = None): Unit = {
     logger.error(s"$pagerDutyKey ${otherDetail.getOrElse("")}")
+  }
+
+  def getCorrelationId(response:HttpResponse): String ={
+    response.header("CorrelationId") match {
+      case Some(id) => s" CorrelationId: $id"
+      case _ => ""
+    }
   }
 }
