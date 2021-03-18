@@ -44,13 +44,18 @@ class AuthorisedAction @Inject()(
   implicit val executionContext: ExecutionContext = cc.executionContext
 
 
-  def async(mtdItId: String)(block: User[AnyContent] => Future[Result]): Action[AnyContent] = defaultActionBuilder.async { implicit request =>
+  def async(block: User[AnyContent] => Future[Result]): Action[AnyContent] = defaultActionBuilder.async { implicit request =>
     implicit lazy val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers)
+    request.headers.get("mtditid").fold {
+      logger.warn("[AuthorisedAction][async] - No MTDITID in the header. Returning unauthorised.")
+      Future.successful(Unauthorized(""))
+    }(
+      mtditid =>
     authorised.retrieve(allEnrolments and affinityGroup) {
       case enrolments ~ Some(AffinityGroup.Agent) =>
-        checkAuthorisation(block, enrolments, mtdItId, isAgent = true)(request, headerCarrier)
+        checkAuthorisation(block, enrolments, mtditid, isAgent = true)(request, headerCarrier)
       case enrolments ~ _ =>
-        checkAuthorisation(block, enrolments, mtdItId)(request, headerCarrier)
+        checkAuthorisation(block, enrolments, mtditid)(request, headerCarrier)
     } recover {
       case _: NoActiveSession =>
         logger.info("AgentPredicate][authoriseAsAgent] - No active session. Redirecting to Unauthorised")
@@ -59,6 +64,7 @@ class AuthorisedAction @Inject()(
         logger.info(s"[AgentPredicate][authoriseAsAgent] - Agent does not have delegated authority for Client.")
         Unauthorized("")
     }
+    )
   }
 
 

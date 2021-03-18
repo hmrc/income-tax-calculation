@@ -30,7 +30,7 @@ class LiabilityCalculationController @Inject()(liabilityCalculationService: Liab
                                                authorisedAction: AuthorisedAction)
                                               (implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  def calculateLiability(nino: String, taxYear: String, mtditid: String): Action[AnyContent] = authorisedAction.async(mtditid) { implicit user =>
+  def calculateLiability(nino: String, taxYear: String): Action[AnyContent] = authorisedAction.async { implicit user =>
     liabilityCalculationService.calculateLiability(nino, taxYear).map {
       case Right(value) => Ok(Json.toJson(value))
       case Left(error) => Status(error.status)(error.toJson)

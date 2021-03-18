@@ -54,7 +54,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceSuccessCall
 
-        val result = controller.calculateLiability(nino, taxYear, mtditid)(fakeRequest)
+        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
         status(result) mustBe Status.OK
         bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
       }
@@ -66,7 +66,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(INTERNAL_SERVER_ERROR)
 
-        val result = controller.calculateLiability(nino, taxYear, mtditid)(fakeRequest)
+        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
 
@@ -74,7 +74,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(BAD_REQUEST)
 
-        val result = controller.calculateLiability(nino, taxYear, mtditid)(fakeRequest)
+        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
         status(result) mustBe BAD_REQUEST
       }
 
@@ -82,7 +82,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(CONFLICT)
 
-        val result = controller.calculateLiability(nino, taxYear, mtditid)(fakeRequest)
+        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
         status(result) mustBe CONFLICT
       }
 
@@ -90,7 +90,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(FORBIDDEN)
 
-        val result = controller.calculateLiability(nino, taxYear, mtditid)(fakeRequest)
+        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
         status(result) mustBe FORBIDDEN
       }
     }
