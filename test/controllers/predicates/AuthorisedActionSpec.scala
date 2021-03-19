@@ -300,6 +300,13 @@ class AuthorisedActionSpec extends TestSuite {
 
           status(result(fakeRequestWithMtditid)) mustBe UNAUTHORIZED
         }
+
+        "the request does not contain an mtditid header" in {
+
+          lazy val result = auth.async(block)
+
+          status(result(fakeRequest)) mustBe UNAUTHORIZED
+        }
       }
 
     }
