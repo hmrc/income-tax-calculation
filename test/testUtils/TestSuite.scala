@@ -52,7 +52,7 @@ trait TestSuite extends AnyWordSpec with MockFactory with GuiceOneAppPerSuite wi
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  val fakeRequestWithMtditid: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession("MTDITID" -> "1234567890")
+  val fakeRequestWithMtditid: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("mtditid" -> "1234567890")
   implicit val emptyHeaderCarrier: HeaderCarrier = HeaderCarrier()
   val httpClient: HttpClient = mock[HttpClient]
   val mockAppConfig: AppConfig = app.injector.instanceOf[AppConfig]

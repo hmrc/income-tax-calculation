@@ -1,3 +1,3 @@
 # microservice specific routes
 
-GET        /income-tax/nino/:nino/taxYear/:taxYear/tax-calculation             controllers.LiabilityCalculationController.calculateLiability(nino: String, taxYear: String, mtditid: String)
+GET        /income-tax/nino/:nino/taxYear/:taxYear/tax-calculation             controllers.LiabilityCalculationController.calculateLiability(nino: String, taxYear: String)
