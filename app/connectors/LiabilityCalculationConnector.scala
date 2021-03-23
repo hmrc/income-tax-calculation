@@ -19,6 +19,7 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.LiabilityCalculationHttpParser._
 import javax.inject.Inject
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +31,7 @@ class LiabilityCalculationConnector @Inject()(http: HttpClient, val appConfig: A
       s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
 
     def desCall(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
-      http.POSTEmpty[LiabilityCalculationResponse](liabilityCalculationUrl)
+      http.POST[JsValue,LiabilityCalculationResponse](liabilityCalculationUrl, Json.parse("""{}"""))
     }
 
     desCall(desHeaderCarrier)

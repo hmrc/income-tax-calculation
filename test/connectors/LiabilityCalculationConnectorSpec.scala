@@ -19,6 +19,7 @@ package connectors
 import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
+import play.api.libs.json.Json
 import testUtils.TestSuite
 class LiabilityCalculationConnectorSpec extends TestSuite with ScalaFutures {
 
@@ -34,7 +35,7 @@ class LiabilityCalculationConnectorSpec extends TestSuite with ScalaFutures {
 
         val response = LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")
 
-        mockHttpEmptyPost(OK, Right(response))
+        mockHttpPost(OK, Json.parse("""{}"""), Right(response))
 
         val result = connector.calculateLiability(nino, taxYear)
         whenReady(result) { res =>
@@ -49,7 +50,7 @@ class LiabilityCalculationConnectorSpec extends TestSuite with ScalaFutures {
 
         val response = DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("ERROR","error"))
 
-        mockHttpEmptyPost(INTERNAL_SERVER_ERROR, Left(response))
+        mockHttpPost(INTERNAL_SERVER_ERROR, Json.parse("""{}"""), Left(response))
 
         val result = connector.calculateLiability(nino, taxYear)
         whenReady(result) { res =>
