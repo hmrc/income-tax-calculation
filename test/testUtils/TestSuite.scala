@@ -28,6 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.libs.json.{JsValue, Writes}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, DefaultActionBuilder, Result}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core._
@@ -76,6 +77,14 @@ trait TestSuite extends AnyWordSpec with MockFactory with GuiceOneAppPerSuite wi
       .expects(*, *, *, *, *)
       .returning(Future.successful(response))
   }
+
+  //noinspection ScalaStyle
+  def mockHttpPost(status: Int, json: JsValue, response: LiabilityCalculationResponse) = {
+    (httpClient.POST(_: String, _: JsValue, _: Seq[(String, String)])(_: Writes[JsValue], _: HttpReads[_], _: HeaderCarrier, _: ExecutionContext))
+      .expects(*, json, *, *, *, *, *)
+      .returning(Future.successful(response))
+  }
+
 
   //noinspection ScalaStyle
   def mockAuth() = {
