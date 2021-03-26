@@ -1,6 +1,7 @@
 .*
 
 !.gitignore
+!.github
 !.scalafmt.conf
 .cache
 /.classpath
