@@ -22,7 +22,7 @@ Add a link to the relevant story in Jira
 - [ ]  Have you moved the task to “in pipeline” on Jira ?
 
 ### Checklist PR Raiser
-##### Before creating PR?
+##### Before creating PR
 - [ ]  Have you run the tests ?
 - [ ]  Have you run the journey tests ?
 - [ ]  Have you addressed warnings where appropriate?
