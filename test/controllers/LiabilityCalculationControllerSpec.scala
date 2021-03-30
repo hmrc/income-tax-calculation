@@ -34,7 +34,6 @@ class LiabilityCalculationControllerSpec extends TestSuite {
   private val controller = new LiabilityCalculationController(service, mockControllerComponents, authorisedAction)
   private val nino = "nino"
   private val taxYear = "2017-18"
-  private val mtditid = "id"
 
   def mockServiceSuccessCall: CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
     (service.calculateLiability(_: String, _: String)(_: HeaderCarrier))
