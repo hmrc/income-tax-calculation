@@ -16,19 +16,26 @@
 
 package helpers
 
+import com.github.tomakehurst.wiremock.client.MappingBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.JsValue
 
 trait WiremockStubHelpers {
 
-  def stubGetWithResponseBody(url: String, status: Int, response: String): StubMapping =
-    stubFor(get(urlMatching(url))
+  def stubGetWithResponseBody(url: String, status: Int, response: String, requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
+    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(get(urlMatching(url))) { (result, nxt) =>
+      result.withHeader(nxt.key(), equalTo(nxt.firstValue()))
+    }
+    stubFor(mappingWithHeaders
       .willReturn(
         aResponse()
           .withStatus(status)
           .withBody(response)
           .withHeader("Content-Type", "application/json; charset=utf-8")))
+
+  }
 
   def stubGetWithoutResponseBody(url: String, status: Int): StubMapping =
     stubFor(get(urlMatching(url))
@@ -51,13 +58,17 @@ trait WiremockStubHelpers {
           .withBody(response)
           .withHeader("Content-Type", "application/json; charset=utf-8")))
 
-  def stubPostWithoutRequestBody(url: String, status: Int, response: String): StubMapping =
-    stubFor(post(urlEqualTo(url))
+  def stubPostWithoutRequestBody(url: String, status: Int, response: String, requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
+    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(post(urlEqualTo(url))) { (result, nxt) =>
+      result.withHeader(nxt.key(), equalTo(nxt.firstValue()))
+    }
+    stubFor(mappingWithHeaders
       .willReturn(
         aResponse()
           .withStatus(status)
           .withBody(response)
           .withHeader("Content-Type", "application/json; charset=utf-8")))
+  }
 
   def stubPutWithoutResponseBody(url: String, requestBody: String, status: Int): StubMapping =
     stubFor(put(urlEqualTo(url))

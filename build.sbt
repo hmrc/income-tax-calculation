@@ -1,4 +1,3 @@
-import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
@@ -26,14 +25,14 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimum := 95,
+    ScoverageKeys.coverageMinimumStmtTotal := 95,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
 }
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     majorVersion                     := 0,
     scalaVersion                     := "2.12.12",

@@ -21,14 +21,12 @@ import akka.stream.{ActorMaterializer, Materializer}
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.AppConfig
-import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
 import controllers.predicates.AuthorisedAction
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{JsValue, Writes}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, DefaultActionBuilder, Result}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core._
@@ -36,7 +34,7 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
@@ -70,20 +68,6 @@ trait TestSuite extends AnyWordSpec with MockFactory with GuiceOneAppPerSuite wi
   def bodyOf(awaitable: Future[Result]): String = {
     val awaited = await(awaitable)
     await(awaited.body.consumeData.map(_.utf8String))
-  }
-
-  //noinspection ScalaStyle
-  def mockHttpEmptyPost(status: Int, response: LiabilityCalculationResponse) = {
-    (httpClient.POSTEmpty(_: String, _: Seq[(String, String)])(_: HttpReads[_], _: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *, *)
-      .returning(Future.successful(response))
-  }
-
-  //noinspection ScalaStyle
-  def mockHttpPost(status: Int, json: JsValue, response: LiabilityCalculationResponse) = {
-    (httpClient.POST(_: String, _: JsValue, _: Seq[(String, String)])(_: Writes[JsValue], _: HttpReads[_], _: HeaderCarrier, _: ExecutionContext))
-      .expects(*, json, *, *, *, *, *)
-      .returning(Future.successful(response))
   }
 
   val individualEnrolments: Enrolments = Enrolments(Set(
