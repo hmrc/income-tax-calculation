@@ -42,7 +42,7 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
 
   def async(block: User[AnyContent] => Future[Result]): Action[AnyContent] = defaultActionBuilder.async { implicit request =>
 
-    implicit lazy val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    implicit lazy val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     request.headers.get("mtditid").fold {
       logger.warn("[AuthorisedAction][async] - No MTDITID in the header. Returning unauthorised.")
