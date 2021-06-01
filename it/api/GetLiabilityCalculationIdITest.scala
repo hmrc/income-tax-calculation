@@ -20,12 +20,12 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.WiremockSpec
 import models.{DesErrorBodyModel, LiabilityCalculationIdModel}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
+import org.scalatest.matchers.must.Matchers
 
-class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with ScalaFutures{
+class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers{
 
   trait Setup {
     implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))

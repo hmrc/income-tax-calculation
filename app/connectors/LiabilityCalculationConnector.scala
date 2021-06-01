@@ -34,6 +34,6 @@ class LiabilityCalculationConnector @Inject()(http: HttpClient, val appConfig: A
       http.POST[JsValue,LiabilityCalculationResponse](liabilityCalculationUrl, Json.parse("""{}"""))
     }
 
-    desCall(desHeaderCarrier)
+    desCall(desHeaderCarrier(liabilityCalculationUrl))
   }
 }

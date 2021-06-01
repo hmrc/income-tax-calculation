@@ -16,18 +16,31 @@
 
 package connectors
 
+import com.github.tomakehurst.wiremock.http.HttpHeader
+import config.AppConfig
+import controllers.Assets.OK
 import helpers.WiremockSpec
 import models._
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.Configuration
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec{
+class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers{
 
   lazy val connector: LiabilityCalculationConnector = app.injector.instanceOf[LiabilityCalculationConnector]
-  implicit val hc = HeaderCarrier()
+
+  lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
+
+  def appConfig(desHost: String): AppConfig = new AppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
+    override val desBaseUrl: String = s"http://$desHost:$wireMockPort"
+  }
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+
   val nino = "nino"
   val taxYear = "2021"
   val url = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
@@ -45,6 +58,43 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec{
 
         result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
       }
+    }
+
+    "include internal headers" when {
+
+      val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
+
+      val headersSentToDes = Seq(
+        new HttpHeader(HeaderNames.authorisation, "Bearer secret"),
+        new HttpHeader(HeaderNames.xSessionId, "sessionIdValue")
+      )
+
+      val externalHost = "127.0.0.1"
+
+      "the host for DES is 'Internal'" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
+        val expectedResult = LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")
+
+        stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
+
+        val result = await(connector.calculateLiability(nino, taxYear)(hc))
+
+        result mustBe Right(expectedResult)
+      }
+
+      "the host for DES is 'External'" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
+        val connector = new LiabilityCalculationConnector(httpClient, appConfig(externalHost))
+        val expectedResult = LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")
+
+        stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
+
+        val result = await(connector.calculateLiability(nino, taxYear)(hc))
+
+        result mustBe Right(expectedResult)
+      }
+
+
     }
 
     "return a failure result" when {
