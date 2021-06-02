@@ -18,13 +18,12 @@ package connectors
 
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import config.AppConfig
-import controllers.Assets.OK
 import helpers.WiremockSpec
 import models._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
-import play.api.http.Status.SERVICE_UNAVAILABLE
+import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
