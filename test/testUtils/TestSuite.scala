@@ -17,7 +17,6 @@
 package testUtils
 
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, Materializer}
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.AppConfig
@@ -47,7 +46,6 @@ trait TestSuite extends AnyWordSpec with MockFactory with GuiceOneAppPerSuite wi
   }
 
   implicit val actorSystem: ActorSystem = ActorSystem()
-  implicit val materializer: Materializer = ActorMaterializer()
 
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
