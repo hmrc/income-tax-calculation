@@ -43,6 +43,9 @@ object LiabilityCalculationHttpParser extends DESParser {
         case BAD_REQUEST | NOT_FOUND | CONFLICT =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_DES, logMessage(response))
           handleDESError(response)
+        case UNPROCESSABLE_ENTITY =>
+          pagerDutyLog(UNPROCESSABLE_ENTITY_FROM_DES, logMessage(response))
+          handleDESError(response)
         case _ =>
           pagerDutyLog(UNEXPECTED_RESPONSE_FROM_DES, logMessage(response))
           handleDESError(response, Some(INTERNAL_SERVER_ERROR))

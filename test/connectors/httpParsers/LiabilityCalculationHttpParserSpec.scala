@@ -93,6 +93,19 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
           Left(DesErrorModel(CONFLICT, DesErrorBodyModel("CONFLICT", "The remote endpoint has indicated that final declaration has already been received")))
       }
 
+      "DES returns UNPROCESSABLE_ENTITY" in {
+        val response =
+          """
+            |{
+            |  "code": "UNPROCESSABLE_ENTITY",
+            |  "reason": "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year."
+            |}
+            |""".stripMargin
+
+        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(UNPROCESSABLE_ENTITY, response)) mustBe
+          Left(DesErrorModel(UNPROCESSABLE_ENTITY, DesErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
+      }
+
       "DES returns an unexpected error response" in {
         val response =
           """
