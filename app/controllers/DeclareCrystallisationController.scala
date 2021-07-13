@@ -32,7 +32,7 @@ class DeclareCrystallisationController @Inject()(declareCrystallisationService: 
 
   def declareCrystallisation(nino: String, taxYear: Int, calculationId: String): Action[AnyContent] = authorisedAction.async { implicit user =>
     declareCrystallisationService.declareCrystallisation(nino, taxYear, calculationId).map {
-      case Right(value) => NoContent
+      case Right(_) => NoContent
       case Left(error) => Status(error.status)(Json.toJson(error.toJson))
     }
   }

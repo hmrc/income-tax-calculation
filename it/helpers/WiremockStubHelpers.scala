@@ -43,12 +43,16 @@ trait WiremockStubHelpers {
         aResponse()
           .withStatus(status)))
 
-  def stubPostWithoutResponseBody(url: String, status: Int, requestBody: String): StubMapping =
-    stubFor(post(urlEqualTo(url)).withRequestBody(equalToJson(requestBody))
+  def stubPostWithoutResponseBody(url: String, status: Int, requestBody: String, requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
+    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(post(urlEqualTo(url))){ (result, nxt) =>
+      result.withHeader(nxt.key(), equalTo(nxt.firstValue()))
+    }
+    stubFor(mappingWithHeaders
       .willReturn(
         aResponse()
           .withStatus(status)
           .withHeader("Content-Type", "application/json; charset=utf-8")))
+  }
 
   def stubPostWithResponseBody(url: String, status: Int, requestBody: String, response: String): StubMapping =
     stubFor(post(urlEqualTo(url)).withRequestBody(equalToJson(requestBody))
