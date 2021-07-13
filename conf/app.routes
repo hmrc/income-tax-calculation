@@ -1,5 +1,5 @@
 # microservice specific routes
 
-GET        /income-tax/nino/:nino/taxYear/:taxYear/tax-calculation                  controllers.LiabilityCalculationController.calculateLiability(nino: String, taxYear: String)
+GET        /income-tax/nino/:nino/taxYear/:taxYear/tax-calculation                              controllers.LiabilityCalculationController.calculateLiability(nino: String, taxYear: String)
 
-POST       /income-tax/calculation/nino/:nino/:taxYear/:calculationId/crystallise   controllers.DeclareCrystallisationController.declareCrystallisation(nino: String, taxYear: Int, calculationId: String)
+POST       /income-tax/nino/:nino/:taxYear/:calculationId/declare-crystallisation               controllers.DeclareCrystallisationController.declareCrystallisation(nino: String, taxYear: Int, calculationId: String)
