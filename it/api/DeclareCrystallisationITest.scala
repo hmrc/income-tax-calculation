@@ -51,7 +51,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         authorised()
         stubPostWithoutRequestBody(desUrl, NO_CONTENT, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
@@ -65,7 +65,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         authorised()
         stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
@@ -80,7 +80,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         authorised()
         stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
@@ -95,7 +95,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         authorised()
         stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
@@ -114,7 +114,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         agentAuthorised()
 
         stubPostWithoutRequestBody(desUrl, NO_CONTENT, response)
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
@@ -128,7 +128,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
@@ -143,7 +143,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
@@ -158,7 +158,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, CONFLICT, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/$taxYear/$calculationId/declare-crystallisation")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader)
           .post("""{}""")) {
           result =>
