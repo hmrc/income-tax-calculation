@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 class LiabilityCalculationServiceSpec extends TestSuite {
 
-  val mockConnector = mock[LiabilityCalculationConnector]
+  val mockConnector: LiabilityCalculationConnector = mock[LiabilityCalculationConnector]
   val service = new LiabilityCalculationService(mockConnector)
 
   def liabilityCalculationConnectorMockSuccess: CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
