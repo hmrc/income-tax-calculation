@@ -106,6 +106,19 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
           Left(DesErrorModel(UNPROCESSABLE_ENTITY, DesErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
       }
 
+      "DES returns FORBIDDEN" in {
+        val response =
+          """
+            |{
+            |  "code": "FORBIDDEN",
+            |  "reason": "The remote endpoint has indicated that no income submissions exist"
+            |}
+            |""".stripMargin
+
+        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(FORBIDDEN, response)) mustBe
+          Left(DesErrorModel(FORBIDDEN, DesErrorBodyModel("FORBIDDEN", "The remote endpoint has indicated that no income submissions exist")))
+      }
+
       "DES returns an unexpected error response" in {
         val response =
           """
