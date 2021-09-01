@@ -89,7 +89,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a 4XX response when DES returns a 4XX" in new Setup {
+      "return a 4XX response when DES returns a 404 NotFound" in new Setup {
         val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
@@ -100,6 +100,51 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 404
+            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+        }
+      }
+
+      "return a 4XX response when DES returns a 409 Conflict" in new Setup {
+        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+
+        authorised()
+        stubPostWithoutRequestBody(desUrl, CONFLICT, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
+          .withHttpHeaders(mtditidHeader)
+          .post("""{}""")) {
+          result =>
+            result.status mustBe 409
+            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+        }
+      }
+
+      "return a 4XX response when DES returns a 400 BadRequest" in new Setup {
+        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+
+        authorised()
+        stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
+          .withHttpHeaders(mtditidHeader)
+          .post("""{}""")) {
+          result =>
+            result.status mustBe 400
+            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+        }
+      }
+
+      "return a 4XX response when DES returns a 422 UnprocessableEntity" in new Setup {
+        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+
+        authorised()
+        stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
+          .withHttpHeaders(mtditidHeader)
+          .post("""{}""")) {
+          result =>
+            result.status mustBe 422
             result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
@@ -152,7 +197,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a 4XX response when DES returns a 4XX" in new Setup {
+      "return a 4XX response when DES returns a 409 Conflict" in new Setup {
         val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
@@ -163,6 +208,51 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 409
+            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+        }
+      }
+
+      "return a 4XX response when DES returns a 404 NotFound" in new Setup {
+        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+
+        agentAuthorised()
+        stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
+          .withHttpHeaders(mtditidHeader)
+          .post("""{}""")) {
+          result =>
+            result.status mustBe 404
+            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+        }
+      }
+
+      "return a 4XX response when DES returns a 400 BadRequest" in new Setup {
+        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+
+        agentAuthorised()
+        stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
+          .withHttpHeaders(mtditidHeader)
+          .post("""{}""")) {
+          result =>
+            result.status mustBe 400
+            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+        }
+      }
+
+      "return a 4XX response when DES returns a 422 UnprocessableEntity" in new Setup {
+        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+
+        agentAuthorised()
+        stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
+          .withHttpHeaders(mtditidHeader)
+          .post("""{}""")) {
+          result =>
+            result.status mustBe 422
             result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
