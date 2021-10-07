@@ -26,9 +26,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LiabilityCalculationConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
 
-  def calculateLiability(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
+  def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
     val liabilityCalculationUrl: String = appConfig.desBaseUrl +
-      s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
+      s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation" + (if(crystallise) "?crystallise=true" else "")
 
     def desCall(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
       http.POST[JsValue,LiabilityCalculationResponse](liabilityCalculationUrl, Json.parse("""{}"""))

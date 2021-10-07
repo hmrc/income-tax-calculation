@@ -19,26 +19,27 @@ package services
 import connectors.LiabilityCalculationConnector
 import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
 import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.CallHandler4
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 
 class LiabilityCalculationServiceSpec extends TestSuite {
 
   val mockConnector: LiabilityCalculationConnector = mock[LiabilityCalculationConnector]
   val service = new LiabilityCalculationService(mockConnector)
 
-  def liabilityCalculationConnectorMockSuccess: CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
-    (mockConnector.calculateLiability(_: String, _: String)(_: HeaderCarrier))
-    .expects(*, *,  *)
+  def liabilityCalculationConnectorMockSuccess: CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
+    (mockConnector.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+    .expects(*, *, *, *)
     .returning(Future.successful(Right(LiabilityCalculationIdModel("id"))))
 
-  def liabilityCalculationConnectorMockFailure: CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
-    (mockConnector.calculateLiability(_: String, _: String)(_: HeaderCarrier))
-      .expects(*, *,  *)
-      .returning(Future.successful(Left(DesErrorModel(500, DesErrorBodyModel("error","error")))))
+  def liabilityCalculationConnectorMockFailure: CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
+    (mockConnector.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+      .expects(*, *, *, *)
+      .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error","error")))))
 
   ".calculateLiability" should {
 
@@ -46,7 +47,7 @@ class LiabilityCalculationServiceSpec extends TestSuite {
 
       liabilityCalculationConnectorMockSuccess
 
-      val result = await(service.calculateLiability("nino", "2018"))
+      val result = await(service.calculateLiability("nino", "2018", crystallise = false))
 
       result mustBe Right(LiabilityCalculationIdModel("id"))
     }
@@ -55,9 +56,9 @@ class LiabilityCalculationServiceSpec extends TestSuite {
 
       liabilityCalculationConnectorMockFailure
 
-      val result = await(service.calculateLiability("nino", "2018"))
+      val result = await(service.calculateLiability("nino", "2018", crystallise = false))
 
-      result mustBe Left(DesErrorModel(500, DesErrorBodyModel("error","error")))
+      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error","error")))
     }
   }
 

@@ -18,7 +18,7 @@ package controllers
 
 import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
 import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.CallHandler4
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -35,14 +35,14 @@ class LiabilityCalculationControllerSpec extends TestSuite {
   private val nino = "nino"
   private val taxYear = "2017-18"
 
-  def mockServiceSuccessCall: CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
-    (service.calculateLiability(_: String, _: String)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
+  def mockServiceSuccessCall: CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
+    (service.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+      .expects(nino, taxYear, *, *)
       .returning(Future.successful(Right(LiabilityCalculationIdModel("id"))))
 
-  def mockServiceFailCall(status: Int): CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
-    (service.calculateLiability(_: String, _: String)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
+  def mockServiceFailCall(status: Int): CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
+    (service.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+      .expects(nino, taxYear, *, *)
       .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   "liabilityCalculation" should {
@@ -53,7 +53,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceSuccessCall
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
+        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
         status(result) mustBe Status.OK
         bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
       }
@@ -65,7 +65,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(INTERNAL_SERVER_ERROR)
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
+        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
 
@@ -73,7 +73,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(BAD_REQUEST)
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
+        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
         status(result) mustBe BAD_REQUEST
       }
 
@@ -81,7 +81,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(CONFLICT)
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
+        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
         status(result) mustBe CONFLICT
       }
 
@@ -89,7 +89,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
         mockAuth()
         mockServiceFailCall(FORBIDDEN)
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
+        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
         status(result) mustBe FORBIDDEN
       }
     }
