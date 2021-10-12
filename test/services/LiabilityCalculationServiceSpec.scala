@@ -52,6 +52,15 @@ class LiabilityCalculationServiceSpec extends TestSuite {
       result mustBe Right(LiabilityCalculationIdModel("id"))
     }
 
+    "return a Right(LiabilityCalculationIdModel) with a crystallisation flag" in {
+
+      liabilityCalculationConnectorMockSuccess
+
+      val result = await(service.calculateLiability("nino", "2018", crystallise = true))
+
+      result mustBe Right(LiabilityCalculationIdModel("id"))
+    }
+
     "return a Left(DesError)" in {
 
       liabilityCalculationConnectorMockFailure
