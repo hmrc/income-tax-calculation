@@ -18,7 +18,7 @@ package controllers
 
 import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
 import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.CallHandler4
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -35,62 +35,114 @@ class LiabilityCalculationControllerSpec extends TestSuite {
   private val nino = "nino"
   private val taxYear = "2017-18"
 
-  def mockServiceSuccessCall: CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
-    (service.calculateLiability(_: String, _: String)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
+  def mockServiceSuccessCall: CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
+    (service.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+      .expects(nino, taxYear, *, *)
       .returning(Future.successful(Right(LiabilityCalculationIdModel("id"))))
 
-  def mockServiceFailCall(status: Int): CallHandler3[String, String, HeaderCarrier, Future[LiabilityCalculationResponse]] =
-    (service.calculateLiability(_: String, _: String)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
+  def mockServiceFailCall(status: Int): CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
+    (service.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+      .expects(nino, taxYear, *, *)
       .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   "liabilityCalculation" should {
 
-    "return 200 with a valid calculationId" when {
+    "without a crystallisation flag" should {
 
-      "passed a valid URI" in {
-        mockAuth()
-        mockServiceSuccessCall
+      "return 200 with a valid calculationId" when {
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
-        status(result) mustBe Status.OK
-        bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
+        "passed a valid URI" in {
+          mockAuth()
+          mockServiceSuccessCall
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe Status.OK
+          bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
+        }
+      }
+
+      "return errors" when {
+
+        "passed a 500" in {
+          mockAuth()
+          mockServiceFailCall(INTERNAL_SERVER_ERROR)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe INTERNAL_SERVER_ERROR
+        }
+
+        "passed a 400" in {
+          mockAuth()
+          mockServiceFailCall(BAD_REQUEST)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe BAD_REQUEST
+        }
+
+        "passed a 409" in {
+          mockAuth()
+          mockServiceFailCall(CONFLICT)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe CONFLICT
+        }
+
+        "passed a 403" in {
+          mockAuth()
+          mockServiceFailCall(FORBIDDEN)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe FORBIDDEN
+        }
       }
     }
+    "with a crystallisation flag" should {
 
-    "return errors" when {
+      "return 200 with a valid calculationId" when {
 
-      "passed a 500" in {
-        mockAuth()
-        mockServiceFailCall(INTERNAL_SERVER_ERROR)
+        "passed a valid URI" in {
+          mockAuth()
+          mockServiceSuccessCall
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
-        status(result) mustBe INTERNAL_SERVER_ERROR
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe Status.OK
+          bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
+        }
       }
 
-      "passed a 400" in {
-        mockAuth()
-        mockServiceFailCall(BAD_REQUEST)
+      "return errors" when {
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
-        status(result) mustBe BAD_REQUEST
-      }
+        "passed a 500" in {
+          mockAuth()
+          mockServiceFailCall(INTERNAL_SERVER_ERROR)
 
-      "passed a 409" in {
-        mockAuth()
-        mockServiceFailCall(CONFLICT)
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe INTERNAL_SERVER_ERROR
+        }
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
-        status(result) mustBe CONFLICT
-      }
+        "passed a 400" in {
+          mockAuth()
+          mockServiceFailCall(BAD_REQUEST)
 
-      "passed a 403" in {
-        mockAuth()
-        mockServiceFailCall(FORBIDDEN)
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe BAD_REQUEST
+        }
 
-        val result = controller.calculateLiability(nino, taxYear)(fakeRequestWithMtditid)
-        status(result) mustBe FORBIDDEN
+        "passed a 409" in {
+          mockAuth()
+          mockServiceFailCall(CONFLICT)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe CONFLICT
+        }
+
+        "passed a 403" in {
+          mockAuth()
+          mockServiceFailCall(FORBIDDEN)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe FORBIDDEN
+        }
       }
     }
   }

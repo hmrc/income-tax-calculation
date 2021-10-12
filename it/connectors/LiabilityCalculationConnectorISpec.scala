@@ -43,6 +43,8 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
   val nino = "nino"
   val taxYear = "2021"
   val url = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
+  val crystalliseUrl = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation?crystallise=true"
+
 
   "LiabilityCalculationConnector" should {
 
@@ -51,9 +53,19 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
       "DES returns a success result with expected JSON" in {
         val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
 
-        stubPostWithoutRequestBody(url, 200, response)
+        stubPostWithoutRequestBody(url, OK, response)
 
-        val result = await(connector.calculateLiability(nino, taxYear))
+        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false))
+
+        result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
+      }
+
+      "DES returns a success result with expected JSON and crystallise flag" in {
+        val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
+
+        stubPostWithoutRequestBody(crystalliseUrl, OK, response)
+
+        val result = await(connector.calculateLiability(nino, taxYear, crystallise = true))
 
         result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
       }
@@ -76,7 +88,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
 
         stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
 
-        val result = await(connector.calculateLiability(nino, taxYear)(hc))
+        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
 
         result mustBe Right(expectedResult)
       }
@@ -88,7 +100,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
 
         stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
 
-        val result = await(connector.calculateLiability(nino, taxYear)(hc))
+        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
 
         result mustBe Right(expectedResult)
       }
@@ -106,9 +118,25 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
             |  "reason": "Dependent systems are currently not responding."
             |}
             |""".stripMargin
-        stubPostWithoutRequestBody(url, 503, response)
+        stubPostWithoutRequestBody(url, SERVICE_UNAVAILABLE, response)
 
-        val result = await(connector.calculateLiability(nino, taxYear))
+        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false))
+
+        result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
+
+      }
+
+      "DES returns an error with crystallise flag" in {
+        val response =
+          """
+            |{
+            |  "code": "SERVICE_UNAVAILABLE",
+            |  "reason": "Dependent systems are currently not responding."
+            |}
+            |""".stripMargin
+        stubPostWithoutRequestBody(crystalliseUrl, SERVICE_UNAVAILABLE, response)
+
+        val result = await(connector.calculateLiability(nino, taxYear, crystallise = true))
 
         result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
 
