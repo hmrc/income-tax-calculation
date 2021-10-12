@@ -47,50 +47,102 @@ class LiabilityCalculationControllerSpec extends TestSuite {
 
   "liabilityCalculation" should {
 
-    "return 200 with a valid calculationId" when {
+    "without a crystallisation flag" should {
 
-      "passed a valid URI" in {
-        mockAuth()
-        mockServiceSuccessCall
+      "return 200 with a valid calculationId" when {
 
-        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
-        status(result) mustBe Status.OK
-        bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
+        "passed a valid URI" in {
+          mockAuth()
+          mockServiceSuccessCall
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe Status.OK
+          bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
+        }
+      }
+
+      "return errors" when {
+
+        "passed a 500" in {
+          mockAuth()
+          mockServiceFailCall(INTERNAL_SERVER_ERROR)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe INTERNAL_SERVER_ERROR
+        }
+
+        "passed a 400" in {
+          mockAuth()
+          mockServiceFailCall(BAD_REQUEST)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe BAD_REQUEST
+        }
+
+        "passed a 409" in {
+          mockAuth()
+          mockServiceFailCall(CONFLICT)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe CONFLICT
+        }
+
+        "passed a 403" in {
+          mockAuth()
+          mockServiceFailCall(FORBIDDEN)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
+          status(result) mustBe FORBIDDEN
+        }
       }
     }
+    "with a crystallisation flag" should {
 
-    "return errors" when {
+      "return 200 with a valid calculationId" when {
 
-      "passed a 500" in {
-        mockAuth()
-        mockServiceFailCall(INTERNAL_SERVER_ERROR)
+        "passed a valid URI" in {
+          mockAuth()
+          mockServiceSuccessCall
 
-        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
-        status(result) mustBe INTERNAL_SERVER_ERROR
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe Status.OK
+          bodyOf(result) mustBe Json.toJson(LiabilityCalculationIdModel("id")).toString()
+        }
       }
 
-      "passed a 400" in {
-        mockAuth()
-        mockServiceFailCall(BAD_REQUEST)
+      "return errors" when {
 
-        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
-        status(result) mustBe BAD_REQUEST
-      }
+        "passed a 500" in {
+          mockAuth()
+          mockServiceFailCall(INTERNAL_SERVER_ERROR)
 
-      "passed a 409" in {
-        mockAuth()
-        mockServiceFailCall(CONFLICT)
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe INTERNAL_SERVER_ERROR
+        }
 
-        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
-        status(result) mustBe CONFLICT
-      }
+        "passed a 400" in {
+          mockAuth()
+          mockServiceFailCall(BAD_REQUEST)
 
-      "passed a 403" in {
-        mockAuth()
-        mockServiceFailCall(FORBIDDEN)
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe BAD_REQUEST
+        }
 
-        val result = controller.calculateLiability(nino, taxYear, crystallise = false)(fakeRequestWithMtditid)
-        status(result) mustBe FORBIDDEN
+        "passed a 409" in {
+          mockAuth()
+          mockServiceFailCall(CONFLICT)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe CONFLICT
+        }
+
+        "passed a 403" in {
+          mockAuth()
+          mockServiceFailCall(FORBIDDEN)
+
+          val result = controller.calculateLiability(nino, taxYear, crystallise = true)(fakeRequestWithMtditid)
+          status(result) mustBe FORBIDDEN
+        }
       }
     }
   }
