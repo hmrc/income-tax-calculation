@@ -19,26 +19,25 @@ package testUtils
 import akka.actor.ActorSystem
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
-import config.AppConfig
+import config.{AppConfig, MockAppConfig}
 import controllers.predicates.AuthorisedAction
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, DefaultActionBuilder, Result}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
-trait TestSuite extends AnyWordSpec with MockFactory with GuiceOneAppPerSuite with BeforeAndAfterEach with Matchers {
+trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach with Matchers {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -53,7 +52,7 @@ trait TestSuite extends AnyWordSpec with MockFactory with GuiceOneAppPerSuite wi
   val fakeRequestWithMtditid: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("mtditid" -> "1234567890")
   implicit val emptyHeaderCarrier: HeaderCarrier = HeaderCarrier()
   val httpClient: HttpClient = mock[HttpClient]
-  lazy val mockAppConfig: AppConfig = app.injector.instanceOf[AppConfig]
+  lazy val mockAppConfig: AppConfig = new MockAppConfig
   implicit val mockControllerComponents: ControllerComponents = Helpers.stubControllerComponents()
   implicit val mockExecutionContext: ExecutionContext = ExecutionContext.Implicits.global
   implicit val mockAuthConnector: AuthConnector = mock[AuthConnector]
