@@ -20,6 +20,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import models.LiabilityCalculation.taxCalculation.TaxCalculation
 import models.LiabilityCalculation.reliefs.Reliefs
+import models.LiabilityCalculation.taxDeductedAtSource.TaxDeductedAtSource
 
 sealed trait LiabilityCalculationResponseModel
 
@@ -28,8 +29,9 @@ object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-case class LiabilityCalculationResponse(calculation: Calculation = Calculation(),
-                                  metadata: Metadata = Metadata()) extends LiabilityCalculationResponseModel
+case class LiabilityCalculationResponse(metadata: Metadata = Metadata(),
+                                        calculation: Calculation = Calculation(),
+                                       ) extends LiabilityCalculationResponseModel
 object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
 }
@@ -47,19 +49,20 @@ object Metadata {
 
 case class Calculation(
                         allowancesAndDeductions: AllowancesAndDeductions = AllowancesAndDeductions(),
-                        chargeableEventGainsIncome: ChargeableEventGainsIncome = ChargeableEventGainsIncome(),
-                        dividendsIncome: DividendsIncome = DividendsIncome(),
+                        reliefs: Reliefs = Reliefs(),
+                        taxDeductedAtSource: TaxDeductedAtSource = TaxDeductedAtSource(),
+                          giftAid: GiftAid = GiftAid(),
+                        marriageAllowanceTransferredIn: MarriageAllowanceTransferredIn = MarriageAllowanceTransferredIn(),
                         employmentAndPensionsIncome: EmploymentAndPensionsIncome = EmploymentAndPensionsIncome(),
                         employmentExpenses: EmploymentExpenses = EmploymentExpenses(),
-                        foreignIncome: ForeignIncome = ForeignIncome(),
-                        giftAid: GiftAid = GiftAid(),
-                        incomeSummaryTotals: IncomeSummaryTotals = IncomeSummaryTotals(),
-                        marriageAllowanceTransferredIn: MarriageAllowanceTransferredIn = MarriageAllowanceTransferredIn(),
-                        reliefs: Reliefs = Reliefs(),
-                        savingsAndGainsIncome: SavingsAndGainsIncome = SavingsAndGainsIncome(),
-                        shareSchemesIncome: ShareSchemesIncome = ShareSchemesIncome(),
                         stateBenefitsIncome: StateBenefitsIncome = StateBenefitsIncome(),
-                        taxCalculation: TaxCalculation = TaxCalculation()
+                        shareSchemesIncome: ShareSchemesIncome = ShareSchemesIncome(),
+                        foreignIncome: ForeignIncome = ForeignIncome(),
+                        chargeableEventGainsIncome: ChargeableEventGainsIncome = ChargeableEventGainsIncome(),
+                        savingsAndGainsIncome: SavingsAndGainsIncome = SavingsAndGainsIncome(),
+                        dividendsIncome: DividendsIncome = DividendsIncome(),
+                        incomeSummaryTotals: IncomeSummaryTotals = IncomeSummaryTotals(),
+                        taxCalculation: TaxCalculation = TaxCalculation(),
                       )
 
 object Calculation {
@@ -68,18 +71,19 @@ object Calculation {
   implicit val reads: Reads[Calculation] =
     (
       (JsPath \ "allowancesAndDeductions").read[AllowancesAndDeductions] and
-        (JsPath \ "chargeableEventGainsIncome").read[ChargeableEventGainsIncome] and
-        (JsPath \ "dividendsIncome").read[DividendsIncome] and
+        (JsPath \ "reliefs").read[Reliefs] and
+        (JsPath \ "taxDeductedAtSource").read[TaxDeductedAtSource] and
+        (JsPath \ "giftAid").read[GiftAid] and
+        (JsPath \ "marriageAllowanceTransferredIn").read[MarriageAllowanceTransferredIn] and
         (JsPath \ "employmentAndPensionsIncome").read[EmploymentAndPensionsIncome] and
         (JsPath \ "employmentExpenses").read[EmploymentExpenses] and
-        (JsPath \ "foreignIncome").read[ForeignIncome] and
-        (JsPath \ "giftAid").read[GiftAid] and
-        (JsPath \ "incomeSummaryTotals").read[IncomeSummaryTotals] and
-        (JsPath \ "marriageAllowanceTransferredIn").read[MarriageAllowanceTransferredIn] and
-        (JsPath \ "reliefs").read[Reliefs] and
-        (JsPath \ "savingsAndGainsIncome").read[SavingsAndGainsIncome] and
-        (JsPath \ "shareSchemesIncome").read[ShareSchemesIncome] and
         (JsPath \ "stateBenefitsIncome").read[StateBenefitsIncome] and
+        (JsPath \ "shareSchemesIncome").read[ShareSchemesIncome] and
+        (JsPath \ "foreignIncome").read[ForeignIncome] and
+        (JsPath \ "chargeableEventGainsIncome").read[ChargeableEventGainsIncome] and
+        (JsPath \ "savingsAndGainsIncome").read[SavingsAndGainsIncome] and
+        (JsPath \ "dividendsIncome").read[DividendsIncome] and
+        (JsPath \ "incomeSummaryTotals").read[IncomeSummaryTotals] and
         (JsPath \ "taxCalculation").read[TaxCalculation]
       ) (Calculation.apply _)
 }
@@ -87,30 +91,41 @@ object Calculation {
 
 case class AllowancesAndDeductions(
                                     personalAllowance: Option[Int] = None,
-                                    reducedPersonalAllowance: Option[Int] = None,
                                     marriageAllowanceTransferOut: MarriageAllowanceTransferOut = MarriageAllowanceTransferOut(),
-                                    pensionContributions: Option[BigDecimal] = None,
-                                    lossesAppliedToGeneralIncome: Option[Int] = None,
+                                    reducedPersonalAllowance: Option[Int] = None,
                                     giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
-                                    grossAnnuityPayments: Option[BigDecimal] = None,
+                                    lossesAppliedToGeneralIncome: Option[Int] = None,
                                     qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
                                     postCessationTradeReceipts: Option[BigDecimal] = None,
-                                    paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None
+                                    paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
+                                    grossAnnuityPayments: Option[BigDecimal] = None,
+                                    pensionContributions: Option[BigDecimal] = None
                                   )
 object AllowancesAndDeductions {
-  implicit val writes: OWrites[AllowancesAndDeductions] = Json.writes[AllowancesAndDeductions]
+  implicit val writes: OWrites[AllowancesAndDeductions] = (
+    (JsPath \ "personalAllowance").writeNullable[Int] and
+      (JsPath \ "marriageAllowanceTransferOut").write[MarriageAllowanceTransferOut] and
+      (JsPath \ "reducedPersonalAllowance").writeNullable[Int] and
+      (JsPath \ "giftOfInvestmentsAndPropertyToCharity").writeNullable[Int] and
+      (JsPath \ "lossesAppliedToGeneralIncome").writeNullable[Int] and
+      (JsPath \ "qualifyingLoanInterestFromInvestments").writeNullable[BigDecimal] and
+      (JsPath \ "post-cessationTradeReceipts").writeNullable[BigDecimal] and
+      (JsPath \ "paymentsToTradeUnionsForDeathBenefits").writeNullable[BigDecimal] and
+      (JsPath \ "grossAnnuityPayments").writeNullable[BigDecimal] and
+      (JsPath \ "pensionContributions").writeNullable[BigDecimal]
+    ) (unlift(AllowancesAndDeductions.unapply))
 
   implicit val reads: Reads[AllowancesAndDeductions] = (
     (JsPath \ "personalAllowance").readNullable[Int] and
-    (JsPath \ "reducedPersonalAllowance").readNullable[Int] and
-    (JsPath \ "marriageAllowanceTransferOut").read[MarriageAllowanceTransferOut] and
-    (JsPath \ "pensionContributions").readNullable[BigDecimal] and
-    (JsPath \ "lossesAppliedToGeneralIncome").readNullable[Int] and
-    (JsPath \ "giftOfInvestmentsAndPropertyToCharity").readNullable[Int] and
-    (JsPath \ "grossAnnuityPayments").readNullable[BigDecimal] and
-    (JsPath \ "qualifyingLoanInterestFromInvestments").readNullable[BigDecimal] and
-    (JsPath \ "post-cessationTradeReceipts").readNullable[BigDecimal] and
-    (JsPath \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal]
+      (JsPath \ "marriageAllowanceTransferOut").read[MarriageAllowanceTransferOut] and
+      (JsPath \ "reducedPersonalAllowance").readNullable[Int] and
+      (JsPath \ "giftOfInvestmentsAndPropertyToCharity").readNullable[Int] and
+      (JsPath \ "lossesAppliedToGeneralIncome").readNullable[Int] and
+      (JsPath \ "qualifyingLoanInterestFromInvestments").readNullable[BigDecimal] and
+      (JsPath \ "post-cessationTradeReceipts").readNullable[BigDecimal] and
+      (JsPath \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal] and
+      (JsPath \ "grossAnnuityPayments").readNullable[BigDecimal] and
+      (JsPath \ "pensionContributions").readNullable[BigDecimal]
     ) (AllowancesAndDeductions.apply _)
 }
 
@@ -134,8 +149,8 @@ object DividendsIncome {
 
 case class EmploymentAndPensionsIncome(
                                         totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
-                                        totalBenefitsInKind: Option[BigDecimal] = None,
-                                        totalOccupationalPensionIncome: Option[BigDecimal] = None
+                                        totalOccupationalPensionIncome: Option[BigDecimal] = None,
+                                        totalBenefitsInKind: Option[BigDecimal] = None
                                       )
 object EmploymentAndPensionsIncome {
   implicit val format: OFormat[EmploymentAndPensionsIncome] = Json.format[EmploymentAndPensionsIncome]

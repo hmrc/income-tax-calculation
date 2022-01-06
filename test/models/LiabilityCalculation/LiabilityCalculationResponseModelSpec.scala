@@ -16,13 +16,17 @@
 
 package models.LiabilityCalculation
 
-import models.LiabilityCalculation.taxCalculation.TaxCalculation
-import models.LiabilityCalculation.reliefs.Reliefs
+import models.LiabilityCalculation.taxCalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
+import models.LiabilityCalculation.reliefs.{ForeignTaxCreditRelief, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, TopSlicingRelief}
+import models.LiabilityCalculation.taxDeductedAtSource.TaxDeductedAtSource
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json._
 import testUtils.TestSuite
+import com.stephenn.scalatest.playjson.JsonMatchers
 
-class LiabilityCalculationResponseModelSpec extends TestSuite {
+import scala.io.Source
+
+class LiabilityCalculationResponseModelSpec extends TestSuite with JsonMatchers {
 
   "LastTaxCalculationResponseMode model" when {
     "successful successModelMinimal" should {
@@ -41,125 +45,280 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
           savingsAndGainsIncome = SavingsAndGainsIncome(),
           shareSchemesIncome = ShareSchemesIncome(),
           stateBenefitsIncome = StateBenefitsIncome(),
-          taxCalculation = TaxCalculation()),
+          taxCalculation = TaxCalculation(),
+          taxDeductedAtSource = TaxDeductedAtSource()
+        ),
         metadata = Metadata(
           calculationTimestamp = None,
           crystallised = None)
       )
       val expectedJson = s"""
                             |{
+                            |  "metadata" : { },
                             |  "calculation" : {
                             |    "allowancesAndDeductions" : {
                             |      "marriageAllowanceTransferOut" : { }
                             |    },
-                            |    "chargeableEventGainsIncome" : { },
-                            |    "dividendsIncome" : { },
-                            |    "employmentAndPensionsIncome" : { },
-                            |    "employmentExpenses" : { },
-                            |    "foreignIncome" : {
-                            |      "overseasIncomeAndGains" : { }
-                            |    },
                             |    "giftAid" : { },
-                            |    "incomeSummaryTotals" : { },
-                            |    "marriageAllowanceTransferredIn" : { },
                             |    "reliefs" : {
-                            |      "reliefsClaimed" : [ { } ],
                             |      "residentialFinanceCosts" : { },
+                            |      "reliefsClaimed" : [ { } ],
                             |      "foreignTaxCreditRelief" : { },
                             |      "topSlicingRelief" : { }
                             |    },
-                            |    "savingsAndGainsIncome" : { },
-                            |    "shareSchemesIncome" : { },
+                            |    "taxDeductedAtSource" : { },
+                            |    "marriageAllowanceTransferredIn" : { },
+                            |    "employmentAndPensionsIncome" : { },
+                            |    "employmentExpenses" : { },
                             |    "stateBenefitsIncome" : { },
+                            |    "shareSchemesIncome" : { },
+                            |    "foreignIncome" : {
+                            |      "overseasIncomeAndGains" : { }
+                            |    },
+                            |    "chargeableEventGainsIncome" : { },
+                            |    "savingsAndGainsIncome" : { },
+                            |    "dividendsIncome" : { },
+                            |    "incomeSummaryTotals" : { },
                             |    "taxCalculation" : {
                             |      "incomeTax" : {
-                            |        "dividends" : { },
-                            |        "savingsAndGains" : { }
+                            |        "payPensionsProfit" : {
+                            |          "taxBands" :[]
+                            |        },
+                            |        "savingsAndGains" : {
+                            |          "taxBands" : [ ]
+                            |        },
+                            |        "lumpSums" : {
+                            |          "taxBands" : [ ]
+                            |        },
+                            |        "dividends" : {
+                            |          "taxBands" : [ ]
+                            |        },
+                            |        "gainsOnLifePolicies" : {
+                            |          "taxBands" : [ ]
+                            |        }
+                            |      },
+                            |      "nics" : {
+                            |        "class4Nics" : {
+                            |          "nic4Bands" : [ ]
+                            |        },
+                            |        "class2Nics" : { }
+                            |      },
+                            |      "capitalGainsTax" : {
+                            |        "residentialPropertyAndCarriedInterest" : {
+                            |          "cgtTaxBands" : [ ]
+                            |        },
+                            |        "businessAssetsDisposalsAndInvestorsRel" : { }
                             |      }
                             |    }
-                            |  },
-                            |  "metadata" : { }
+                            |  }
                             |}
                             |""".stripMargin.trim
 
 
       "be translated to Json correctly" in {
-        Json.prettyPrint(Json.toJson(successModelMinimal)) mustBe expectedJson
+        Json.toJson(successModelMinimal).toString must matchJson(expectedJson)
       }
       "should convert from json to model" in {
-//        println(Json.toJson(successModelMinimal))
         val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.toJson(successModelMinimal))
-//        println(calcResponse)
-        Json.prettyPrint(Json.toJson(calcResponse.get)) mustBe expectedJson
+        Json.toJson(calcResponse.get).toString must matchJson(expectedJson)
       }
     }
 
-//    "successful successModelFull" should {
-//      val successModelFull = LiabilityCalculationResponse(
-//        calculation = Calculation(
-//          allowancesAndDeductions = AllowancesAndDeductions(),
-//          chargeableEventGainsIncome = ChargeableEventGainsIncome(),
-//          dividendsIncome = DividendsIncome(),
-//          employmentAndPensionsIncome = EmploymentAndPensionsIncome(),
-//          employmentExpenses = EmploymentExpenses(),
-//          foreignIncome = ForeignIncome(),
-//          giftAid = GiftAid(),
-//          incomeSummaryTotals = IncomeSummaryTotals(),
-//          marriageAllowanceTransferredIn = MarriageAllowanceTransferredIn(),
-//          reliefs = Reliefs(),
-//          savingsAndGainsIncome = SavingsAndGainsIncome(),
-//          shareSchemesIncome = ShareSchemesIncome(),
-//          stateBenefitsIncome = StateBenefitsIncome(),
-//          taxCalculation = TaxCalculation()),
-//        metadata = Metadata(
-//          calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-//          crystallised = Some(true))
-//      )
-//      val expectedJson = s"""
-//                            |{
-//                            |  "calculation" : {
-//                            |    "allowancesAndDeductions" : {
-//                            |      "marriageAllowanceTransferOut" : { }
-//                            |    },
-//                            |    "chargeableEventGainsIncome" : { },
-//                            |    "dividendsIncome" : { },
-//                            |    "employmentAndPensionsIncome" : { },
-//                            |    "employmentExpenses" : { },
-//                            |    "foreignIncome" : {
-//                            |      "overseasIncomeAndGains" : { }
-//                            |    },
-//                            |    "giftAid" : { },
-//                            |    "incomeSummaryTotals" : { },
-//                            |    "marriageAllowanceTransferredIn" : { },
-//                            |    "reliefs" : { },
-//                            |    "savingsAndGainsIncome" : { },
-//                            |    "shareSchemesIncome" : { },
-//                            |    "stateBenefitsIncome" : { },
-//                            |    "taxCalculation" : {
-//                            |      "incomeTax" : {
-//                            |        "dividends" : { },
-//                            |        "savingsAndGains" : { }
-//                            |      }
-//                            |    }
-//                            |  },
-//                            |  "metadata" : {
-//                            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-//                            |    "crystallised" : true
-//                            |  }
-//                            |}
-//                            |""".stripMargin.trim
-//
-//
-//      "be translated to Json correctly" in {
-//        Json.prettyPrint(Json.toJson(successModelFull)) mustBe expectedJson
-//      }
-//      "should convert from json to model" in {
-//        println(Json.toJson(successModelFull))
-//        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.toJson(successModelFull))
-//        println(calcResponse)
-//        Json.prettyPrint(Json.toJson(calcResponse.get)) mustBe expectedJson
-//      }
-//    }
+    "successful successModelFull" should {
+      val successModelFull = LiabilityCalculationResponse(
+        calculation = Calculation(
+          allowancesAndDeductions = AllowancesAndDeductions(
+            personalAllowance = Some(12500),
+            reducedPersonalAllowance = Some(12500),
+            marriageAllowanceTransferOut = MarriageAllowanceTransferOut(
+              personalAllowanceBeforeTransferOut = Some(5000.99),
+              transferredOutAmount = Some(5000.99)),
+            pensionContributions = Some(5000.99),
+            lossesAppliedToGeneralIncome = Some(12500),
+            giftOfInvestmentsAndPropertyToCharity = Some(12500),
+            grossAnnuityPayments = Some(5000.99),
+            qualifyingLoanInterestFromInvestments = Some(5000.99),
+            postCessationTradeReceipts = Some(5000.99),
+            paymentsToTradeUnionsForDeathBenefits = Some(5000.99)),
+          chargeableEventGainsIncome = ChargeableEventGainsIncome(
+            totalOfAllGains = Some(12500)
+          ),
+          dividendsIncome = DividendsIncome(chargeableForeignDividends = Some(12500)),
+          employmentAndPensionsIncome = EmploymentAndPensionsIncome(
+            totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
+            totalBenefitsInKind = Some(5000.99),
+            totalOccupationalPensionIncome = Some(5000.99)
+          ),
+          employmentExpenses = EmploymentExpenses(totalEmploymentExpenses = Some(5000.99)),
+          foreignIncome = ForeignIncome(
+            chargeableOverseasPensionsStateBenefitsRoyalties = Some(5000.99),
+            chargeableAllOtherIncomeReceivedWhilstAbroad = Some(5000.99),
+            overseasIncomeAndGains = OverseasIncomeAndGains(gainAmount = Some(5000.99)),
+            totalForeignBenefitsAndGifts = Some(5000.99)
+          ),
+          giftAid = GiftAid(
+            grossGiftAidPayments = Some(12500),
+            giftAidTax = Some(5000.99)
+          ),
+          incomeSummaryTotals = IncomeSummaryTotals(
+            totalSelfEmploymentProfit = Some(12500),
+            totalPropertyProfit = Some(12500),
+            totalFHLPropertyProfit = Some(12500),
+            totalForeignPropertyProfit = Some(12500),
+            totalEeaFhlProfit = Some(12500)
+          ),
+          marriageAllowanceTransferredIn = MarriageAllowanceTransferredIn(amount = Some(5000.99)),
+          reliefs = Reliefs(reliefsClaimed = Seq(ReliefsClaimed(
+            `type` = Some("vctSubscriptions"),
+            amountUsed = Some(5000.99)),
+            ReliefsClaimed(
+              `type` = Some("vctSubscriptions2"),
+              amountUsed = Some(5000.99)),
+          ),
+            residentialFinanceCosts = ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = Some(5000.99)),
+            foreignTaxCreditRelief = ForeignTaxCreditRelief(totalForeignTaxCreditRelief = Some(5000.99)),
+            topSlicingRelief = TopSlicingRelief(amount = Some(5000.99))),
+          savingsAndGainsIncome = SavingsAndGainsIncome(
+            chargeableForeignSavingsAndGains = Some(12500)
+          ),
+          shareSchemesIncome = ShareSchemesIncome(
+            totalIncome = Some(5000.99)
+          ),
+          stateBenefitsIncome = StateBenefitsIncome(totalStateBenefitsIncome = Some(5000.99)),
+          taxCalculation = TaxCalculation(
+            incomeTax = IncomeTax(
+              totalIncomeReceivedFromAllSources = Some(12500),
+              totalAllowancesAndDeductions = Some(12500),
+              totalTaxableIncome = Some(12500),
+              payPensionsProfit = PayPensionsProfit(
+                taxBands = Seq(TaxBands(
+                  name = Some("SSR"),
+                  rate = Some(20),
+                  bandLimit = Some(12500),
+                  apportionedBandLimit = Some(12500),
+                  income = Some(12500),
+                  taxAmount = Some(5000.99)
+                ))
+              ),
+              savingsAndGains = SavingsAndGains(
+                taxableIncome = Some(12500),
+                taxBands = Seq(TaxBands(
+                  name = Some("SSR"),
+                  rate = Some(20),
+                  bandLimit = Some(12500),
+                  apportionedBandLimit = Some(12500),
+                  income = Some(12500),
+                  taxAmount = Some(5000.99)
+                ))
+              ),
+              dividends = Dividends(
+                taxableIncome = Some(12500),
+                taxBands = Seq(TaxBands(
+                  name = Some("SSR"),
+                  rate = Some(20),
+                  bandLimit = Some(12500),
+                  apportionedBandLimit = Some(12500),
+                  income = Some(12500),
+                  taxAmount = Some(5000.99)
+                ))
+              ),
+              lumpSums = LumpSums(
+                taxBands = Seq(TaxBands(
+                  name = Some("SSR"),
+                  rate = Some(20),
+                  bandLimit = Some(12500),
+                  apportionedBandLimit = Some(12500),
+                  income = Some(12500),
+                  taxAmount = Some(5000.99)
+                ))
+              ),
+              gainsOnLifePolicies = GainsOnLifePolicies(
+                taxBands = Seq(TaxBands(
+                  name = Some("SSR"),
+                  rate = Some(20),
+                  bandLimit = Some(12500),
+                  apportionedBandLimit = Some(12500),
+                  income = Some(12500),
+                  taxAmount = Some(5000.99)
+                ))
+              ),
+              totalReliefs = Some(5000.99),
+              totalNotionalTax = Some(5000.99),
+              incomeTaxDueAfterTaxReductions = Some(5000.99),
+              totalPensionSavingsTaxCharges = Some(5000.99),
+              statePensionLumpSumCharges = Some(5000.99),
+              payeUnderpaymentsCodedOut = Some(5000.99)
+            ),
+            nics = Nics(
+              class4Nics = Class4Nics(nic4Bands = Seq(Nic4Bands(
+                name = Some("ZRT"),
+                income = Some(12500),
+                rate = Some(20),
+                amount = Some(5000.99)
+              ))),
+              class2Nics = Class2Nics(amount = Some(5000.99))
+            ),
+            capitalGainsTax = CapitalGainsTax(
+              totalCapitalGainsIncome = Some(5000.99),
+              adjustments = Some(-99999999999.99),
+              foreignTaxCreditRelief = Some(5000.99),
+              taxOnGainsAlreadyPaid = Some(5000.99),
+              capitalGainsTaxDue = Some(5000.99),
+              capitalGainsOverpaid = Some(5000.99),
+              residentialPropertyAndCarriedInterest = ResidentialPropertyAndCarriedInterest(
+                cgtTaxBands = Seq(CgtTaxBands(
+                  name = Some("lowerRate"),
+                  rate = Some(20),
+                  income = Some(5000.99),
+                  taxAmount = Some(5000.99)
+                ),
+                  CgtTaxBands(
+                    name = Some("lowerRate2"),
+                    rate = Some(21),
+                    income = Some(5000.99),
+                    taxAmount = Some(5000.99)
+                  ))
+              ),
+              businessAssetsDisposalsAndInvestorsRel = BusinessAssetsDisposalsAndInvestorsRel(
+                taxableGains = Some(5000.99),
+                rate = Some(20),
+                taxAmount = Some(5000.99)
+              )
+            ),
+            totalStudentLoansRepaymentAmount = Some(5000.99),
+            saUnderpaymentsCodedOut = Some(-99999999999.99),
+            totalIncomeTaxAndNicsDue = Some(-99999999999.99),
+            totalTaxDeducted = Some(-99999999999.99)
+          ),
+          taxDeductedAtSource = TaxDeductedAtSource(
+            ukLandAndProperty = Some(5000.99),
+            bbsi = Some(5000.99),
+            cis = Some(5000.99),
+            voidedIsa = Some(5000.99),
+            payeEmployments = Some(5000.99),
+            occupationalPensions = Some(5000.99),
+            stateBenefits = Some(-99999999999.99),
+            specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
+            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+          )),
+        metadata = Metadata(
+          calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+          crystallised = Some(true))
+      )
+      val source = Source.fromURL(getClass.getResource("/liabilityResponse.json"))
+      val expectedJsonFull = try source.mkString finally source.close()
+
+      val source2 = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))
+      val expectedJsonPruned = try source2.mkString finally source2.close()
+
+      "be translated to Json correctly" in {
+        Json.toJson(successModelFull).toString() must matchJson(expectedJsonPruned)
+      }
+
+      "should convert from json to model" in {
+        Json.parse(expectedJsonFull).validate[LiabilityCalculationResponse] mustBe a[JsSuccess[_]]
+      }
+    }
 
     "not successful" should {
       val errorStatus = 500

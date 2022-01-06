@@ -21,13 +21,23 @@ import play.api.libs.json._
 
 case class TaxCalculation(
                            incomeTax: IncomeTax = IncomeTax(),
-                           totalIncomeTaxAndNicsDue: Option[BigDecimal] = None
+                           nics: Nics = Nics(),
+                           capitalGainsTax: CapitalGainsTax = CapitalGainsTax(),
+                           totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
+                           saUnderpaymentsCodedOut: Option[BigDecimal] = None,
+                           totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
+                           totalTaxDeducted: Option[BigDecimal] = None
                          )
 object TaxCalculation {
   implicit val writes: OWrites[TaxCalculation] = Json.writes[TaxCalculation]
   implicit val reads: Reads[TaxCalculation] = (
     (JsPath \ "incomeTax").read[IncomeTax] and
-      (JsPath \ "totalIncomeTaxAndNicsDue").readNullable[BigDecimal]
+      (JsPath \ "nics").read[Nics] and
+      (JsPath \ "capitalGainsTax").read[CapitalGainsTax] and
+      (JsPath \ "totalStudentLoansRepaymentAmount").readNullable[BigDecimal] and
+      (JsPath \ "saUnderpaymentsCodedOut").readNullable[BigDecimal] and
+      (JsPath \ "totalIncomeTaxAndNicsDue").readNullable[BigDecimal] and
+      (JsPath \ "totalTaxDeducted").readNullable[BigDecimal]
     ) (TaxCalculation.apply _)
 }
 
