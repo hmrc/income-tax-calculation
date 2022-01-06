@@ -16,17 +16,16 @@
 
 package models.LiabilityCalculation
 
-import models.LiabilityCalculation.taxCalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
-import models.LiabilityCalculation.reliefs.{ForeignTaxCreditRelief, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, TopSlicingRelief}
+import models.LiabilityCalculation.taxCalculation._
+import models.LiabilityCalculation.reliefs._
 import models.LiabilityCalculation.taxDeductedAtSource.TaxDeductedAtSource
 import play.api.http.Status
 import play.api.libs.json._
 import testUtils.TestSuite
-import com.stephenn.scalatest.playjson.JsonMatchers
 
 import scala.io.Source
 
-class LiabilityCalculationResponseModelSpec extends TestSuite with JsonMatchers {
+class LiabilityCalculationResponseModelSpec extends TestSuite {
 
   "LastTaxCalculationResponseMode model" when {
     "successful successModelMinimal" should {
@@ -116,11 +115,11 @@ class LiabilityCalculationResponseModelSpec extends TestSuite with JsonMatchers 
 
 
       "be translated to Json correctly" in {
-        Json.toJson(successModelMinimal).toString must matchJson(expectedJson)
+        Json.toJson(successModelMinimal) mustBe Json.parse(expectedJson)
       }
       "should convert from json to model" in {
-        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.toJson(successModelMinimal))
-        Json.toJson(calcResponse.get).toString must matchJson(expectedJson)
+        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJson))
+        Json.toJson(calcResponse.get) mustBe Json.parse(expectedJson)
       }
     }
 
@@ -200,7 +199,7 @@ class LiabilityCalculationResponseModelSpec extends TestSuite with JsonMatchers 
                   taxAmount = Some(5000.99)
                 ))
               ),
-              savingsAndGains = SavingsAndGains(
+              savingsAndGains = models.LiabilityCalculation.taxCalculation.SavingsAndGains(
                 taxableIncome = Some(12500),
                 taxBands = Seq(TaxBands(
                   name = Some("SSR"),
@@ -305,18 +304,17 @@ class LiabilityCalculationResponseModelSpec extends TestSuite with JsonMatchers 
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
           crystallised = Some(true))
       )
-      val source = Source.fromURL(getClass.getResource("/liabilityResponse.json"))
-      val expectedJsonFull = try source.mkString finally source.close()
 
-      val source2 = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))
-      val expectedJsonPruned = try source2.mkString finally source2.close()
+      val source = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))
+      val expectedJsonPruned = try source.mkString finally source.close()
 
       "be translated to Json correctly" in {
-        Json.toJson(successModelFull).toString() must matchJson(expectedJsonPruned)
+        Json.toJson(successModelFull) mustBe Json.parse(expectedJsonPruned)
       }
 
       "should convert from json to model" in {
-        Json.parse(expectedJsonFull).validate[LiabilityCalculationResponse] mustBe a[JsSuccess[_]]
+        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJsonPruned))
+        Json.toJson(calcResponse.get) mustBe Json.parse(expectedJsonPruned)
       }
     }
 

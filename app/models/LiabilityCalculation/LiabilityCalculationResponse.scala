@@ -38,12 +38,12 @@ object LiabilityCalculationResponse {
 
 case class Metadata(calculationTimestamp: Option[String] = None, crystallised: Option[Boolean] = None)
 object Metadata {
-  implicit val writes: OWrites[Metadata] = Json.writes[Metadata]
+  implicit val writes: Writes[Metadata] = Json.writes[Metadata]
 
   implicit val reads: Reads[Metadata] =
     (
-      (JsPath \ "metadata" \ "calculationTimestamp" ).readNullable[String] and
-        (JsPath \ "metadata" \ "crystallised" ).readNullable[Boolean]
+      (JsPath \ "calculationTimestamp" ).readNullable[String] and
+        (JsPath \ "crystallised" ).readNullable[Boolean]
       ) (Metadata.apply _)
 }
 
