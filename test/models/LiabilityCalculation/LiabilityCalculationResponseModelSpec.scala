@@ -17,7 +17,6 @@
 package models.LiabilityCalculation
 
 import models.LiabilityCalculation.taxCalculation._
-import models.LiabilityCalculation.reliefs._
 import models.LiabilityCalculation.taxDeductedAtSource.TaxDeductedAtSource
 import play.api.http.Status
 import play.api.libs.json._
