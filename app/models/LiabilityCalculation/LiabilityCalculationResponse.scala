@@ -37,13 +37,7 @@ object LiabilityCalculationResponse {
 
 case class Metadata(calculationTimestamp: Option[String] = None, crystallised: Option[Boolean] = None)
 object Metadata {
-  implicit val writes: Writes[Metadata] = Json.writes[Metadata]
-
-  implicit val reads: Reads[Metadata] =
-    (
-      (JsPath \ "calculationTimestamp" ).readNullable[String] and
-        (JsPath \ "crystallised" ).readNullable[Boolean]
-      ) (Metadata.apply _)
+  implicit val format: OFormat[Metadata] = Json.format[Metadata]
 }
 
 case class Calculation(
@@ -65,26 +59,7 @@ case class Calculation(
                       )
 
 object Calculation {
-  implicit val writes: OWrites[Calculation] = Json.writes[Calculation]
-
-  implicit val reads: Reads[Calculation] =
-    (
-      (JsPath \ "allowancesAndDeductions").read[AllowancesAndDeductions] and
-        (JsPath \ "reliefs").read[Reliefs] and
-        (JsPath \ "taxDeductedAtSource").read[TaxDeductedAtSource] and
-        (JsPath \ "giftAid").read[GiftAid] and
-        (JsPath \ "marriageAllowanceTransferredIn").read[MarriageAllowanceTransferredIn] and
-        (JsPath \ "employmentAndPensionsIncome").read[EmploymentAndPensionsIncome] and
-        (JsPath \ "employmentExpenses").read[EmploymentExpenses] and
-        (JsPath \ "stateBenefitsIncome").read[StateBenefitsIncome] and
-        (JsPath \ "shareSchemesIncome").read[ShareSchemesIncome] and
-        (JsPath \ "foreignIncome").read[ForeignIncome] and
-        (JsPath \ "chargeableEventGainsIncome").read[ChargeableEventGainsIncome] and
-        (JsPath \ "savingsAndGainsIncome").read[SavingsAndGainsIncome] and
-        (JsPath \ "dividendsIncome").read[DividendsIncome] and
-        (JsPath \ "incomeSummaryTotals").read[IncomeSummaryTotals] and
-        (JsPath \ "taxCalculation").read[TaxCalculation]
-      ) (Calculation.apply _)
+  implicit val format: OFormat[Calculation] = Json.format[Calculation]
 }
 
 case class ChargeableEventGainsIncome(totalOfAllGains: Option[Int] = None)
@@ -118,13 +93,7 @@ case class ForeignIncome(
                           totalForeignBenefitsAndGifts: Option[BigDecimal] = None
                         )
 object ForeignIncome {
-  implicit val writes: OWrites[ForeignIncome] = Json.writes[ForeignIncome]
-  implicit val reads: Reads[ForeignIncome] = (
-    (JsPath \ "chargeableOverseasPensionsStateBenefitsRoyalties").readNullable[BigDecimal] and
-      (JsPath \ "chargeableAllOtherIncomeReceivedWhilstAbroad").readNullable[BigDecimal] and
-      (JsPath \ "overseasIncomeAndGains").read[OverseasIncomeAndGains] and
-      (JsPath \ "totalForeignBenefitsAndGifts").readNullable[BigDecimal]
-    ) (ForeignIncome.apply _)
+  implicit val format: OFormat[ForeignIncome] = Json.format[ForeignIncome]
 }
 
 case class OverseasIncomeAndGains(gainAmount: Option[BigDecimal] = None)

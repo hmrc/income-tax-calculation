@@ -24,11 +24,7 @@ case class Nics(
                  class2Nics: Class2Nics = Class2Nics()
                )
 object Nics {
-  implicit val writes: OWrites[Nics] = Json.writes[Nics]
-  implicit val reads: Reads[Nics] = (
-    (JsPath \ "class4Nics").read[Class4Nics] and
-      (JsPath \ "class2Nics").read[Class2Nics]
-    ) (Nics.apply _)
+  implicit val format: OFormat[Nics] = Json.format[Nics]
 }
 
 case class Nic4Bands(

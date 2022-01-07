@@ -16,8 +16,7 @@
 
 package models.LiabilityCalculation.taxCalculation
 
-import play.api.libs.json.{JsPath, Json, OFormat, OWrites, Reads}
-import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class CapitalGainsTax(
                             totalCapitalGainsIncome: Option[BigDecimal] = None,
@@ -30,17 +29,7 @@ case class CapitalGainsTax(
                             businessAssetsDisposalsAndInvestorsRel: BusinessAssetsDisposalsAndInvestorsRel = BusinessAssetsDisposalsAndInvestorsRel()
                           )
 object CapitalGainsTax {
-  implicit val writes: OWrites[CapitalGainsTax] = Json.writes[CapitalGainsTax]
-  implicit val reads: Reads[CapitalGainsTax] = (
-    (JsPath \ "totalCapitalGainsIncome").readNullable[BigDecimal] and
-      (JsPath \ "adjustments").readNullable[BigDecimal] and
-      (JsPath \ "foreignTaxCreditRelief").readNullable[BigDecimal] and
-      (JsPath \ "taxOnGainsAlreadyPaid").readNullable[BigDecimal] and
-      (JsPath \ "capitalGainsTaxDue").readNullable[BigDecimal] and
-      (JsPath \ "capitalGainsOverpaid").readNullable[BigDecimal] and
-      (JsPath \ "residentialPropertyAndCarriedInterest").read[ResidentialPropertyAndCarriedInterest] and
-      (JsPath \ "businessAssetsDisposalsAndInvestorsRel").read[BusinessAssetsDisposalsAndInvestorsRel]
-    ) (CapitalGainsTax.apply _)
+  implicit val format: OFormat[CapitalGainsTax] = Json.format[CapitalGainsTax]
 }
 
 case class ResidentialPropertyAndCarriedInterest(

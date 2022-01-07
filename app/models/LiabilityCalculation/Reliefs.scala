@@ -16,7 +16,6 @@
 
 package models.LiabilityCalculation
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class Reliefs(
@@ -26,27 +25,14 @@ case class Reliefs(
                     topSlicingRelief: TopSlicingRelief = TopSlicingRelief()
                   )
 object Reliefs {
-  implicit val writes: OWrites[Reliefs] = Json.writes[Reliefs]
-  implicit val reads: Reads[Reliefs] = (
-    (JsPath \ "residentialFinanceCosts").read[ResidentialFinanceCosts] and
-      (JsPath \ "reliefsClaimed").read[Seq[ReliefsClaimed]] and
-      (JsPath \ "foreignTaxCreditRelief").read[ForeignTaxCreditRelief] and
-      (JsPath \ "topSlicingRelief").read[TopSlicingRelief]
-    ) (Reliefs.apply _)
+  implicit val format: OFormat[Reliefs] = Json.format[Reliefs]
 }
 
 case class ReliefsClaimed(`type`: Option[String] = None,
                           amountUsed: Option[BigDecimal] = None)
 
 object ReliefsClaimed {
-  implicit val writes: OWrites[ReliefsClaimed] = Json.writes[ReliefsClaimed]
-  implicit val reads: Reads[ReliefsClaimed] = (
-    (JsPath \ "type").readNullable[String].map {
-      case Some("nonDeductableLoanInterest") => Some("nonDeductibleLoanInterest")
-      case other => other
-    } and
-      (JsPath \ "amountUsed").readNullable[BigDecimal]
-    )(ReliefsClaimed.apply _)
+  implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
 }
 
 case class ResidentialFinanceCosts(totalResidentialFinanceCostsRelief: Option[BigDecimal] = None)
@@ -68,4 +54,3 @@ case class SavingsAndGains(taxableIncome: Option[Int] = None)
 object SavingsAndGains {
   implicit val format: OFormat[SavingsAndGains] = Json.format[SavingsAndGains]
 }
-

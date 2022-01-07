@@ -36,23 +36,7 @@ case class IncomeTax(
                       payeUnderpaymentsCodedOut: Option[BigDecimal] = None
                     )
 object IncomeTax {
-  implicit val writes: OWrites[IncomeTax] = Json.writes[IncomeTax]
-  implicit val reads: Reads[IncomeTax] = (
-    (JsPath \ "totalIncomeReceivedFromAllSources").readNullable[Int] and
-      (JsPath \ "totalAllowancesAndDeductions").readNullable[Int] and
-      (JsPath \ "totalTaxableIncome").readNullable[Int] and
-      (JsPath \ "payPensionsProfit").read[PayPensionsProfit] and
-      (JsPath \ "savingsAndGains").read[SavingsAndGains] and
-      (JsPath \ "dividends").read[Dividends] and
-      (JsPath \ "lumpSums").read[LumpSums] and
-      (JsPath \ "gainsOnLifePolicies").read[GainsOnLifePolicies] and
-      (JsPath \ "totalReliefs").readNullable[BigDecimal] and
-      (JsPath \ "totalNotionalTax").readNullable[BigDecimal] and
-      (JsPath \ "incomeTaxDueAfterTaxReductions").readNullable[BigDecimal] and
-      (JsPath \ "totalPensionSavingsTaxCharges").readNullable[BigDecimal] and
-      (JsPath \ "statePensionLumpSumCharges").readNullable[BigDecimal] and
-      (JsPath \ "payeUnderpaymentsCodedOut").readNullable[BigDecimal]
-    ) (IncomeTax.apply _)
+  implicit val format: OFormat[IncomeTax] = Json.format[IncomeTax]
 }
 
 case class TaxBands(

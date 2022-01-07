@@ -29,15 +29,5 @@ case class TaxCalculation(
                            totalTaxDeducted: Option[BigDecimal] = None
                          )
 object TaxCalculation {
-  implicit val writes: OWrites[TaxCalculation] = Json.writes[TaxCalculation]
-  implicit val reads: Reads[TaxCalculation] = (
-    (JsPath \ "incomeTax").read[IncomeTax] and
-      (JsPath \ "nics").read[Nics] and
-      (JsPath \ "capitalGainsTax").read[CapitalGainsTax] and
-      (JsPath \ "totalStudentLoansRepaymentAmount").readNullable[BigDecimal] and
-      (JsPath \ "saUnderpaymentsCodedOut").readNullable[BigDecimal] and
-      (JsPath \ "totalIncomeTaxAndNicsDue").readNullable[BigDecimal] and
-      (JsPath \ "totalTaxDeducted").readNullable[BigDecimal]
-    ) (TaxCalculation.apply _)
+  implicit val format: OFormat[TaxCalculation] = Json.format[TaxCalculation]
 }
-
