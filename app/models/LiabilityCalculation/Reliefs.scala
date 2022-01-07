@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation.reliefs
+package models.LiabilityCalculation
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class Reliefs(
                     residentialFinanceCosts: ResidentialFinanceCosts = ResidentialFinanceCosts(),
