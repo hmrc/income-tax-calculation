@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation
+package models.liabilitycalculation
 
-import models.LiabilityCalculation.TaxCalculationModels._
+import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
 import play.api.http.Status
 import play.api.libs.json._
 import testUtils.TestSuite

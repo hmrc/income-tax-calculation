@@ -14,29 +14,10 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation
+package models.liabilitycalculation
 
-import play.api.libs.json._
-import models.LiabilityCalculation.TaxCalculationModels.TaxCalculation
-
-sealed trait LiabilityCalculationResponseModel
-
-case class LiabilityCalculationError(status: Int, message: String) extends LiabilityCalculationResponseModel
-object LiabilityCalculationError {
-  implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
-}
-
-case class LiabilityCalculationResponse(metadata: Metadata,
-                                        calculation: Option[Calculation]
-                                       ) extends LiabilityCalculationResponseModel
-object LiabilityCalculationResponse {
-  implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
-}
-
-case class Metadata(calculationTimestamp: String, crystallised: Boolean)
-object Metadata {
-  implicit val format: OFormat[Metadata] = Json.format[Metadata]
-}
+import models.liabilitycalculation.taxcalculation.TaxCalculation
+import play.api.libs.json.{Json, OFormat}
 
 case class Calculation(
                         allowancesAndDeductions: Option[AllowancesAndDeductions],
