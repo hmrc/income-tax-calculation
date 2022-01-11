@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation.taxCalculation
+package models.LiabilityCalculation.TaxCalculationModels
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class TaxCalculation(
-                           incomeTax: IncomeTax = IncomeTax(),
-                           nics: Nics = Nics(),
-                           capitalGainsTax: CapitalGainsTax = CapitalGainsTax(),
+                           incomeTax: IncomeTax,
+                           nics: Option[Nics] = None,
+                           capitalGainsTax: Option[CapitalGainsTax] = None,
                            totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
                            saUnderpaymentsCodedOut: Option[BigDecimal] = None,
-                           totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
+                           totalIncomeTaxAndNicsDue: BigDecimal,
                            totalTaxDeducted: Option[BigDecimal] = None
                          )
 object TaxCalculation {

@@ -19,28 +19,28 @@ package models.LiabilityCalculation
 import play.api.libs.json._
 
 case class Reliefs(
-                    residentialFinanceCosts: ResidentialFinanceCosts = ResidentialFinanceCosts(),
-                    reliefsClaimed: Seq[ReliefsClaimed] = Seq(ReliefsClaimed()),
-                    foreignTaxCreditRelief: ForeignTaxCreditRelief = ForeignTaxCreditRelief(),
-                    topSlicingRelief: TopSlicingRelief = TopSlicingRelief()
+                    residentialFinanceCosts: Option[ResidentialFinanceCosts],
+                    reliefsClaimed: Seq[ReliefsClaimed] = Seq(),
+                    foreignTaxCreditRelief: Option[ForeignTaxCreditRelief],
+                    topSlicingRelief: Option[TopSlicingRelief]
                   )
 object Reliefs {
   implicit val format: OFormat[Reliefs] = Json.format[Reliefs]
 }
 
-case class ReliefsClaimed(`type`: Option[String] = None,
+case class ReliefsClaimed(`type`: String,
                           amountUsed: Option[BigDecimal] = None)
 
 object ReliefsClaimed {
   implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
 }
 
-case class ResidentialFinanceCosts(totalResidentialFinanceCostsRelief: Option[BigDecimal] = None)
+case class ResidentialFinanceCosts(totalResidentialFinanceCostsRelief: BigDecimal)
 object ResidentialFinanceCosts {
   implicit val format: OFormat[ResidentialFinanceCosts] = Json.format[ResidentialFinanceCosts]
 }
 
-case class ForeignTaxCreditRelief(totalForeignTaxCreditRelief: Option[BigDecimal] = None)
+case class ForeignTaxCreditRelief(totalForeignTaxCreditRelief: BigDecimal)
 object ForeignTaxCreditRelief {
   implicit val format: OFormat[ForeignTaxCreditRelief] = Json.format[ForeignTaxCreditRelief]
 }
@@ -48,9 +48,4 @@ object ForeignTaxCreditRelief {
 case class TopSlicingRelief(amount: Option[BigDecimal] = None)
 object TopSlicingRelief {
   implicit val format: OFormat[TopSlicingRelief] = Json.format[TopSlicingRelief]
-}
-
-case class SavingsAndGains(taxableIncome: Option[Int] = None)
-object SavingsAndGains {
-  implicit val format: OFormat[SavingsAndGains] = Json.format[SavingsAndGains]
 }

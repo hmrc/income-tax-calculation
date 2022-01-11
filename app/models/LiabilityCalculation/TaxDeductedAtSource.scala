@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation.taxDeductedAtSource
+package models.LiabilityCalculation
 
 import play.api.libs.json._
 

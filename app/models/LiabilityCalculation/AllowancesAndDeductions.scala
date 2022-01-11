@@ -21,7 +21,7 @@ import play.api.libs.functional.syntax._
 
 case class AllowancesAndDeductions(
                                     personalAllowance: Option[Int] = None,
-                                    marriageAllowanceTransferOut: MarriageAllowanceTransferOut = MarriageAllowanceTransferOut(),
+                                    marriageAllowanceTransferOut: Option[MarriageAllowanceTransferOut] = None,
                                     reducedPersonalAllowance: Option[Int] = None,
                                     giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
                                     lossesAppliedToGeneralIncome: Option[Int] = None,
@@ -35,7 +35,7 @@ case class AllowancesAndDeductions(
 object AllowancesAndDeductions {
   implicit val writes: OWrites[AllowancesAndDeductions] = (
     (JsPath \ "personalAllowance").writeNullable[Int] and
-      (JsPath \ "marriageAllowanceTransferOut").write[MarriageAllowanceTransferOut] and
+      (JsPath \ "marriageAllowanceTransferOut").writeNullable[MarriageAllowanceTransferOut] and
       (JsPath \ "reducedPersonalAllowance").writeNullable[Int] and
       (JsPath \ "giftOfInvestmentsAndPropertyToCharity").writeNullable[Int] and
       (JsPath \ "lossesAppliedToGeneralIncome").writeNullable[Int] and
@@ -48,7 +48,7 @@ object AllowancesAndDeductions {
 
   implicit val reads: Reads[AllowancesAndDeductions] = (
     (JsPath \ "personalAllowance").readNullable[Int] and
-      (JsPath \ "marriageAllowanceTransferOut").read[MarriageAllowanceTransferOut] and
+      (JsPath \ "marriageAllowanceTransferOut").readNullable[MarriageAllowanceTransferOut] and
       (JsPath \ "reducedPersonalAllowance").readNullable[Int] and
       (JsPath \ "giftOfInvestmentsAndPropertyToCharity").readNullable[Int] and
       (JsPath \ "lossesAppliedToGeneralIncome").readNullable[Int] and
@@ -61,8 +61,8 @@ object AllowancesAndDeductions {
 }
 
 case class MarriageAllowanceTransferOut(
-                                         personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
-                                         transferredOutAmount: Option[BigDecimal] = None
+                                         personalAllowanceBeforeTransferOut: BigDecimal,
+                                         transferredOutAmount: BigDecimal
                                        )
 object MarriageAllowanceTransferOut {
   implicit val format: OFormat[MarriageAllowanceTransferOut] = Json.format[MarriageAllowanceTransferOut]

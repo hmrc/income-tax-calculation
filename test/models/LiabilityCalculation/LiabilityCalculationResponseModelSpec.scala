@@ -16,8 +16,7 @@
 
 package models.LiabilityCalculation
 
-import models.LiabilityCalculation.taxCalculation._
-import models.LiabilityCalculation.taxDeductedAtSource.TaxDeductedAtSource
+import models.LiabilityCalculation.TaxCalculationModels._
 import play.api.http.Status
 import play.api.libs.json._
 import testUtils.TestSuite
@@ -29,85 +28,16 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
   "LastTaxCalculationResponseMode model" when {
     "successful successModelMinimal" should {
       val successModelMinimal = LiabilityCalculationResponse(
-        calculation = Calculation(
-          allowancesAndDeductions = AllowancesAndDeductions(),
-          chargeableEventGainsIncome = ChargeableEventGainsIncome(),
-          dividendsIncome = DividendsIncome(),
-          employmentAndPensionsIncome = EmploymentAndPensionsIncome(),
-          employmentExpenses = EmploymentExpenses(),
-          foreignIncome = ForeignIncome(),
-          giftAid = GiftAid(),
-          incomeSummaryTotals = IncomeSummaryTotals(),
-          marriageAllowanceTransferredIn = MarriageAllowanceTransferredIn(),
-          reliefs = Reliefs(),
-          savingsAndGainsIncome = SavingsAndGainsIncome(),
-          shareSchemesIncome = ShareSchemesIncome(),
-          stateBenefitsIncome = StateBenefitsIncome(),
-          taxCalculation = TaxCalculation(),
-          taxDeductedAtSource = TaxDeductedAtSource()
-        ),
+        calculation = None,
         metadata = Metadata(
-          calculationTimestamp = None,
-          crystallised = None)
+          calculationTimestamp = "2019-02-15T09:35:15.094Z",
+          crystallised = true)
       )
       val expectedJson = s"""
                             |{
-                            |  "metadata" : { },
-                            |  "calculation" : {
-                            |    "allowancesAndDeductions" : {
-                            |      "marriageAllowanceTransferOut" : { }
-                            |    },
-                            |    "giftAid" : { },
-                            |    "reliefs" : {
-                            |      "residentialFinanceCosts" : { },
-                            |      "reliefsClaimed" : [ { } ],
-                            |      "foreignTaxCreditRelief" : { },
-                            |      "topSlicingRelief" : { }
-                            |    },
-                            |    "taxDeductedAtSource" : { },
-                            |    "marriageAllowanceTransferredIn" : { },
-                            |    "employmentAndPensionsIncome" : { },
-                            |    "employmentExpenses" : { },
-                            |    "stateBenefitsIncome" : { },
-                            |    "shareSchemesIncome" : { },
-                            |    "foreignIncome" : {
-                            |      "overseasIncomeAndGains" : { }
-                            |    },
-                            |    "chargeableEventGainsIncome" : { },
-                            |    "savingsAndGainsIncome" : { },
-                            |    "dividendsIncome" : { },
-                            |    "incomeSummaryTotals" : { },
-                            |    "taxCalculation" : {
-                            |      "incomeTax" : {
-                            |        "payPensionsProfit" : {
-                            |          "taxBands" :[]
-                            |        },
-                            |        "savingsAndGains" : {
-                            |          "taxBands" : [ ]
-                            |        },
-                            |        "lumpSums" : {
-                            |          "taxBands" : [ ]
-                            |        },
-                            |        "dividends" : {
-                            |          "taxBands" : [ ]
-                            |        },
-                            |        "gainsOnLifePolicies" : {
-                            |          "taxBands" : [ ]
-                            |        }
-                            |      },
-                            |      "nics" : {
-                            |        "class4Nics" : {
-                            |          "nic4Bands" : [ ]
-                            |        },
-                            |        "class2Nics" : { }
-                            |      },
-                            |      "capitalGainsTax" : {
-                            |        "residentialPropertyAndCarriedInterest" : {
-                            |          "cgtTaxBands" : [ ]
-                            |        },
-                            |        "businessAssetsDisposalsAndInvestorsRel" : { }
-                            |      }
-                            |    }
+                            |  "metadata" : {
+                            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+                            |    "crystallised" : true
                             |  }
                             |}
                             |""".stripMargin.trim
@@ -124,122 +54,122 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
 
     "successful successModelFull" should {
       val successModelFull = LiabilityCalculationResponse(
-        calculation = Calculation(
-          allowancesAndDeductions = AllowancesAndDeductions(
+        calculation = Some(Calculation(
+          allowancesAndDeductions = Some(AllowancesAndDeductions(
             personalAllowance = Some(12500),
             reducedPersonalAllowance = Some(12500),
-            marriageAllowanceTransferOut = MarriageAllowanceTransferOut(
-              personalAllowanceBeforeTransferOut = Some(5000.99),
-              transferredOutAmount = Some(5000.99)),
+            marriageAllowanceTransferOut = Some(MarriageAllowanceTransferOut(
+              personalAllowanceBeforeTransferOut = 5000.99,
+              transferredOutAmount = 5000.99)),
             pensionContributions = Some(5000.99),
             lossesAppliedToGeneralIncome = Some(12500),
             giftOfInvestmentsAndPropertyToCharity = Some(12500),
             grossAnnuityPayments = Some(5000.99),
             qualifyingLoanInterestFromInvestments = Some(5000.99),
             postCessationTradeReceipts = Some(5000.99),
-            paymentsToTradeUnionsForDeathBenefits = Some(5000.99)),
-          chargeableEventGainsIncome = ChargeableEventGainsIncome(
-            totalOfAllGains = Some(12500)
-          ),
-          dividendsIncome = DividendsIncome(chargeableForeignDividends = Some(12500)),
-          employmentAndPensionsIncome = EmploymentAndPensionsIncome(
+            paymentsToTradeUnionsForDeathBenefits = Some(5000.99))),
+          chargeableEventGainsIncome = Some(ChargeableEventGainsIncome(
+            totalOfAllGains = 12500
+          )),
+          dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+          employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
             totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
             totalBenefitsInKind = Some(5000.99),
             totalOccupationalPensionIncome = Some(5000.99)
-          ),
-          employmentExpenses = EmploymentExpenses(totalEmploymentExpenses = Some(5000.99)),
-          foreignIncome = ForeignIncome(
+          )),
+          employmentExpenses = Some(EmploymentExpenses(totalEmploymentExpenses = Some(5000.99))),
+          foreignIncome = Some(ForeignIncome(
             chargeableOverseasPensionsStateBenefitsRoyalties = Some(5000.99),
             chargeableAllOtherIncomeReceivedWhilstAbroad = Some(5000.99),
-            overseasIncomeAndGains = OverseasIncomeAndGains(gainAmount = Some(5000.99)),
+            overseasIncomeAndGains = Some(OverseasIncomeAndGains(gainAmount = 5000.99)),
             totalForeignBenefitsAndGifts = Some(5000.99)
-          ),
-          giftAid = GiftAid(
-            grossGiftAidPayments = Some(12500),
-            giftAidTax = Some(5000.99)
-          ),
-          incomeSummaryTotals = IncomeSummaryTotals(
+          )),
+          giftAid = Some(GiftAid(
+            grossGiftAidPayments = 12500,
+            giftAidTax = 5000.99
+          )),
+          incomeSummaryTotals = Some(IncomeSummaryTotals(
             totalSelfEmploymentProfit = Some(12500),
             totalPropertyProfit = Some(12500),
             totalFHLPropertyProfit = Some(12500),
             totalForeignPropertyProfit = Some(12500),
             totalEeaFhlProfit = Some(12500)
-          ),
-          marriageAllowanceTransferredIn = MarriageAllowanceTransferredIn(amount = Some(5000.99)),
-          reliefs = Reliefs(reliefsClaimed = Seq(ReliefsClaimed(
-            `type` = Some("vctSubscriptions"),
+          )),
+          marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
+          reliefs = Some(Reliefs(reliefsClaimed = Seq(ReliefsClaimed(
+            `type` = "vctSubscriptions",
             amountUsed = Some(5000.99)),
             ReliefsClaimed(
-              `type` = Some("vctSubscriptions2"),
+              `type` = "vctSubscriptions2",
               amountUsed = Some(5000.99)),
           ),
-            residentialFinanceCosts = ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = Some(5000.99)),
-            foreignTaxCreditRelief = ForeignTaxCreditRelief(totalForeignTaxCreditRelief = Some(5000.99)),
-            topSlicingRelief = TopSlicingRelief(amount = Some(5000.99))),
-          savingsAndGainsIncome = SavingsAndGainsIncome(
+            residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
+            foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
+            topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
+          savingsAndGainsIncome = Some(SavingsAndGainsIncome(
             chargeableForeignSavingsAndGains = Some(12500)
-          ),
-          shareSchemesIncome = ShareSchemesIncome(
-            totalIncome = Some(5000.99)
-          ),
-          stateBenefitsIncome = StateBenefitsIncome(totalStateBenefitsIncome = Some(5000.99)),
-          taxCalculation = TaxCalculation(
+          )),
+          shareSchemesIncome = Some(ShareSchemesIncome(
+            totalIncome = 5000.99
+          )),
+          stateBenefitsIncome = Some(StateBenefitsIncome(totalStateBenefitsIncome = Some(5000.99))),
+          taxCalculation = Some(TaxCalculation(
             incomeTax = IncomeTax(
-              totalIncomeReceivedFromAllSources = Some(12500),
-              totalAllowancesAndDeductions = Some(12500),
-              totalTaxableIncome = Some(12500),
-              payPensionsProfit = PayPensionsProfit(
+              totalIncomeReceivedFromAllSources = 12500,
+              totalAllowancesAndDeductions = 12500,
+              totalTaxableIncome = 12500,
+              payPensionsProfit = Some(PayPensionsProfit(
                 taxBands = Seq(TaxBands(
-                  name = Some("SSR"),
-                  rate = Some(20),
-                  bandLimit = Some(12500),
-                  apportionedBandLimit = Some(12500),
-                  income = Some(12500),
-                  taxAmount = Some(5000.99)
+                  name = "SSR",
+                  rate = 20,
+                  bandLimit = 12500,
+                  apportionedBandLimit = 12500,
+                  income = 12500,
+                  taxAmount = 5000.99
                 ))
-              ),
-              savingsAndGains = models.LiabilityCalculation.taxCalculation.SavingsAndGains(
-                taxableIncome = Some(12500),
+              )),
+              savingsAndGains = Some(SavingsAndGains(
+                taxableIncome = 12500,
                 taxBands = Seq(TaxBands(
-                  name = Some("SSR"),
-                  rate = Some(20),
-                  bandLimit = Some(12500),
-                  apportionedBandLimit = Some(12500),
-                  income = Some(12500),
-                  taxAmount = Some(5000.99)
+                  name = "SSR",
+                  rate = 20,
+                  bandLimit = 12500,
+                  apportionedBandLimit = 12500,
+                  income = 12500,
+                  taxAmount = 5000.99
                 ))
-              ),
-              dividends = Dividends(
-                taxableIncome = Some(12500),
+              )),
+              dividends = Some(Dividends(
+                taxableIncome = 12500,
                 taxBands = Seq(TaxBands(
-                  name = Some("SSR"),
-                  rate = Some(20),
-                  bandLimit = Some(12500),
-                  apportionedBandLimit = Some(12500),
-                  income = Some(12500),
-                  taxAmount = Some(5000.99)
+                  name = "SSR",
+                  rate = 20,
+                  bandLimit = 12500,
+                  apportionedBandLimit = 12500,
+                  income = 12500,
+                  taxAmount = 5000.99
                 ))
-              ),
-              lumpSums = LumpSums(
+              )),
+              lumpSums = Some(LumpSums(
                 taxBands = Seq(TaxBands(
-                  name = Some("SSR"),
-                  rate = Some(20),
-                  bandLimit = Some(12500),
-                  apportionedBandLimit = Some(12500),
-                  income = Some(12500),
-                  taxAmount = Some(5000.99)
+                  name = "SSR",
+                  rate = 20,
+                  bandLimit = 12500,
+                  apportionedBandLimit = 12500,
+                  income = 12500,
+                  taxAmount = 5000.99
                 ))
-              ),
-              gainsOnLifePolicies = GainsOnLifePolicies(
+              )),
+              gainsOnLifePolicies = Some(GainsOnLifePolicies(
                 taxBands = Seq(TaxBands(
-                  name = Some("SSR"),
-                  rate = Some(20),
-                  bandLimit = Some(12500),
-                  apportionedBandLimit = Some(12500),
-                  income = Some(12500),
-                  taxAmount = Some(5000.99)
+                  name = "SSR",
+                  rate = 20,
+                  bandLimit = 12500,
+                  apportionedBandLimit = 12500,
+                  income = 12500,
+                  taxAmount = 5000.99
                 ))
-              ),
+              )),
               totalReliefs = Some(5000.99),
               totalNotionalTax = Some(5000.99),
               incomeTaxDueAfterTaxReductions = Some(5000.99),
@@ -247,48 +177,48 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
               statePensionLumpSumCharges = Some(5000.99),
               payeUnderpaymentsCodedOut = Some(5000.99)
             ),
-            nics = Nics(
-              class4Nics = Class4Nics(nic4Bands = Seq(Nic4Bands(
-                name = Some("ZRT"),
-                income = Some(12500),
-                rate = Some(20),
-                amount = Some(5000.99)
-              ))),
-              class2Nics = Class2Nics(amount = Some(5000.99))
-            ),
-            capitalGainsTax = CapitalGainsTax(
-              totalCapitalGainsIncome = Some(5000.99),
+            nics = Some(Nics(
+              class4Nics = Some(Class4Nics(nic4Bands = Seq(Nic4Bands(
+                name = "ZRT",
+                income = 12500,
+                rate = 20,
+                amount = 5000.99
+              )))),
+              class2Nics = Some(Class2Nics(amount = Some(5000.99)))
+            )),
+            capitalGainsTax = Some(CapitalGainsTax(
+              totalCapitalGainsIncome = 5000.99,
               adjustments = Some(-99999999999.99),
               foreignTaxCreditRelief = Some(5000.99),
               taxOnGainsAlreadyPaid = Some(5000.99),
-              capitalGainsTaxDue = Some(5000.99),
+              capitalGainsTaxDue = 5000.99,
               capitalGainsOverpaid = Some(5000.99),
-              residentialPropertyAndCarriedInterest = ResidentialPropertyAndCarriedInterest(
+              residentialPropertyAndCarriedInterest = Some(ResidentialPropertyAndCarriedInterest(
                 cgtTaxBands = Seq(CgtTaxBands(
-                  name = Some("lowerRate"),
-                  rate = Some(20),
-                  income = Some(5000.99),
-                  taxAmount = Some(5000.99)
+                  name = "lowerRate",
+                  rate = 20,
+                  income = 5000.99,
+                  taxAmount = 5000.99
                 ),
                   CgtTaxBands(
-                    name = Some("lowerRate2"),
-                    rate = Some(21),
-                    income = Some(5000.99),
-                    taxAmount = Some(5000.99)
+                    name = "lowerRate2",
+                    rate = 21,
+                    income = 5000.99,
+                    taxAmount = 5000.99
                   ))
-              ),
-              businessAssetsDisposalsAndInvestorsRel = BusinessAssetsDisposalsAndInvestorsRel(
+              )),
+              businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(
                 taxableGains = Some(5000.99),
                 rate = Some(20),
                 taxAmount = Some(5000.99)
-              )
-            ),
+              ))
+            )),
             totalStudentLoansRepaymentAmount = Some(5000.99),
             saUnderpaymentsCodedOut = Some(-99999999999.99),
-            totalIncomeTaxAndNicsDue = Some(-99999999999.99),
+            totalIncomeTaxAndNicsDue = -99999999999.99,
             totalTaxDeducted = Some(-99999999999.99)
-          ),
-          taxDeductedAtSource = TaxDeductedAtSource(
+          )),
+          taxDeductedAtSource = Some(TaxDeductedAtSource(
             ukLandAndProperty = Some(5000.99),
             bbsi = Some(5000.99),
             cis = Some(5000.99),
@@ -298,10 +228,10 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
             stateBenefits = Some(-99999999999.99),
             specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
             inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
-          )),
+          )))),
         metadata = Metadata(
-          calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-          crystallised = Some(true))
+          calculationTimestamp = "2019-02-15T09:35:15.094Z",
+          crystallised = true)
       )
 
       val source = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation.taxCalculation
+package models.LiabilityCalculation.TaxCalculationModels
 
 import play.api.libs.json.{JsPath, Json, OFormat, OWrites, Reads}
 import play.api.libs.functional.syntax._
 
 case class IncomeTax(
-                      totalIncomeReceivedFromAllSources: Option[Int] = None,
-                      totalAllowancesAndDeductions: Option[Int] = None,
-                      totalTaxableIncome: Option[Int] = None,
-                      payPensionsProfit: PayPensionsProfit = PayPensionsProfit(),
-                      savingsAndGains: SavingsAndGains = SavingsAndGains(),
-                      dividends: Dividends = Dividends(),
-                      lumpSums: LumpSums = LumpSums(),
-                      gainsOnLifePolicies: GainsOnLifePolicies = GainsOnLifePolicies(),
+                      totalIncomeReceivedFromAllSources: Int,
+                      totalAllowancesAndDeductions: Int,
+                      totalTaxableIncome: Int,
+                      payPensionsProfit: Option[PayPensionsProfit] = None,
+                      savingsAndGains: Option[SavingsAndGains] = None,
+                      dividends: Option[Dividends] = None,
+                      lumpSums: Option[LumpSums] = None,
+                      gainsOnLifePolicies: Option[GainsOnLifePolicies] = None,
                       totalReliefs: Option[BigDecimal] = None,
                       totalNotionalTax: Option[BigDecimal] = None,
                       incomeTaxDueAfterTaxReductions: Option[BigDecimal] = None,
@@ -40,12 +40,12 @@ object IncomeTax {
 }
 
 case class TaxBands(
-                     name: Option[String] = None,
-                     rate: Option[BigDecimal] = None,
-                     bandLimit: Option[Int] = None,
-                     apportionedBandLimit: Option[Int] = None,
-                     income: Option[Int] = None,
-                     taxAmount: Option[BigDecimal] = None
+                     name: String,
+                     rate: BigDecimal,
+                     bandLimit: Int,
+                     apportionedBandLimit: Int,
+                     income: Int,
+                     taxAmount: BigDecimal
                    )
 object TaxBands {
   implicit val format: OFormat[TaxBands] = Json.format[TaxBands]
@@ -56,7 +56,7 @@ object PayPensionsProfit {
   implicit val format: OFormat[PayPensionsProfit] = Json.format[PayPensionsProfit]
 }
 
-case class SavingsAndGains(taxableIncome: Option[Int] = None, taxBands: Seq[TaxBands] = Seq())
+case class SavingsAndGains(taxableIncome: Int, taxBands: Seq[TaxBands] = Seq())
 object SavingsAndGains {
   implicit val format: OFormat[SavingsAndGains] = Json.format[SavingsAndGains]
 }
@@ -66,7 +66,7 @@ object LumpSums {
   implicit val format: OFormat[LumpSums] = Json.format[LumpSums]
 }
 
-case class Dividends(taxableIncome: Option[Int] = None, taxBands: Seq[TaxBands] = Seq())
+case class Dividends(taxableIncome: Int, taxBands: Seq[TaxBands] = Seq())
 object Dividends {
   implicit val format: OFormat[Dividends] = Json.format[Dividends]
 }

@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation.taxCalculation
+package models.LiabilityCalculation.TaxCalculationModels
 
 import play.api.libs.json.{JsPath, Json, OFormat, OWrites, Reads}
 import play.api.libs.functional.syntax._
 
 case class Nics(
-                 class4Nics: Class4Nics = Class4Nics(),
-                 class2Nics: Class2Nics = Class2Nics()
+                 class4Nics: Option[Class4Nics] = None,
+                 class2Nics: Option[Class2Nics] = None
                )
 object Nics {
   implicit val format: OFormat[Nics] = Json.format[Nics]
 }
 
 case class Nic4Bands(
-                      name: Option[String] = None,
-                      income: Option[Int] = None,
-                      rate: Option[BigDecimal] = None,
-                      amount: Option[BigDecimal] = None
+                      name: String,
+                      income: Int,
+                      rate: BigDecimal,
+                      amount: BigDecimal
                     )
 object Nic4Bands {
   implicit val format: OFormat[Nic4Bands] = Json.format[Nic4Bands]

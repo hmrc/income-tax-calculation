@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package models.LiabilityCalculation.taxCalculation
+package models.LiabilityCalculation.TaxCalculationModels
 
 import play.api.libs.json._
 
 case class CapitalGainsTax(
-                            totalCapitalGainsIncome: Option[BigDecimal] = None,
+                            totalCapitalGainsIncome: BigDecimal,
                             adjustments: Option[BigDecimal] = None,
                             foreignTaxCreditRelief: Option[BigDecimal] = None,
                             taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
-                            capitalGainsTaxDue: Option[BigDecimal] = None,
+                            capitalGainsTaxDue: BigDecimal,
                             capitalGainsOverpaid: Option[BigDecimal] = None,
-                            residentialPropertyAndCarriedInterest: ResidentialPropertyAndCarriedInterest = ResidentialPropertyAndCarriedInterest(),
-                            businessAssetsDisposalsAndInvestorsRel: BusinessAssetsDisposalsAndInvestorsRel = BusinessAssetsDisposalsAndInvestorsRel()
+                            residentialPropertyAndCarriedInterest: Option[ResidentialPropertyAndCarriedInterest] = None,
+                            businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None
                           )
 object CapitalGainsTax {
   implicit val format: OFormat[CapitalGainsTax] = Json.format[CapitalGainsTax]
@@ -40,10 +40,10 @@ object ResidentialPropertyAndCarriedInterest {
 }
 
 case class CgtTaxBands(
-                        name: Option[String] = None,
-                        rate: Option[BigDecimal] = None,
-                        income: Option[BigDecimal] = None,
-                        taxAmount: Option[BigDecimal] = None
+                        name: String,
+                        rate: BigDecimal,
+                        income: BigDecimal,
+                        taxAmount: BigDecimal
                       )
 object CgtTaxBands {
   implicit val format: OFormat[CgtTaxBands] = Json.format[CgtTaxBands]

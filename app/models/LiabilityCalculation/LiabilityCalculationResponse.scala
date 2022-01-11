@@ -17,9 +17,7 @@
 package models.LiabilityCalculation
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import models.LiabilityCalculation.taxCalculation.TaxCalculation
-import models.LiabilityCalculation.taxDeductedAtSource.TaxDeductedAtSource
+import models.LiabilityCalculation.TaxCalculationModels.TaxCalculation
 
 sealed trait LiabilityCalculationResponseModel
 
@@ -28,41 +26,41 @@ object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-case class LiabilityCalculationResponse(metadata: Metadata = Metadata(),
-                                        calculation: Calculation = Calculation()
+case class LiabilityCalculationResponse(metadata: Metadata,
+                                        calculation: Option[Calculation]
                                        ) extends LiabilityCalculationResponseModel
 object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
 }
 
-case class Metadata(calculationTimestamp: Option[String] = None, crystallised: Option[Boolean] = None)
+case class Metadata(calculationTimestamp: String, crystallised: Boolean)
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]
 }
 
 case class Calculation(
-                        allowancesAndDeductions: AllowancesAndDeductions = AllowancesAndDeductions(),
-                        reliefs: Reliefs = Reliefs(),
-                        taxDeductedAtSource: TaxDeductedAtSource = TaxDeductedAtSource(),
-                        giftAid: GiftAid = GiftAid(),
-                        marriageAllowanceTransferredIn: MarriageAllowanceTransferredIn = MarriageAllowanceTransferredIn(),
-                        employmentAndPensionsIncome: EmploymentAndPensionsIncome = EmploymentAndPensionsIncome(),
-                        employmentExpenses: EmploymentExpenses = EmploymentExpenses(),
-                        stateBenefitsIncome: StateBenefitsIncome = StateBenefitsIncome(),
-                        shareSchemesIncome: ShareSchemesIncome = ShareSchemesIncome(),
-                        foreignIncome: ForeignIncome = ForeignIncome(),
-                        chargeableEventGainsIncome: ChargeableEventGainsIncome = ChargeableEventGainsIncome(),
-                        savingsAndGainsIncome: SavingsAndGainsIncome = SavingsAndGainsIncome(),
-                        dividendsIncome: DividendsIncome = DividendsIncome(),
-                        incomeSummaryTotals: IncomeSummaryTotals = IncomeSummaryTotals(),
-                        taxCalculation: TaxCalculation = TaxCalculation()
+                        allowancesAndDeductions: Option[AllowancesAndDeductions],
+                        reliefs: Option[Reliefs],
+                        taxDeductedAtSource: Option[TaxDeductedAtSource],
+                        giftAid: Option[GiftAid],
+                        marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn],
+                        employmentAndPensionsIncome: Option[EmploymentAndPensionsIncome],
+                        employmentExpenses: Option[EmploymentExpenses],
+                        stateBenefitsIncome: Option[StateBenefitsIncome],
+                        shareSchemesIncome: Option[ShareSchemesIncome],
+                        foreignIncome: Option[ForeignIncome],
+                        chargeableEventGainsIncome: Option[ChargeableEventGainsIncome],
+                        savingsAndGainsIncome: Option[SavingsAndGainsIncome],
+                        dividendsIncome: Option[DividendsIncome],
+                        incomeSummaryTotals: Option[IncomeSummaryTotals],
+                        taxCalculation: Option[TaxCalculation]
                       )
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
 }
 
-case class ChargeableEventGainsIncome(totalOfAllGains: Option[Int] = None)
+case class ChargeableEventGainsIncome(totalOfAllGains: Int)
 object ChargeableEventGainsIncome {
   implicit val format: OFormat[ChargeableEventGainsIncome] = Json.format[ChargeableEventGainsIncome]
 }
@@ -89,21 +87,21 @@ object EmploymentExpenses {
 case class ForeignIncome(
                           chargeableOverseasPensionsStateBenefitsRoyalties: Option[BigDecimal] = None,
                           chargeableAllOtherIncomeReceivedWhilstAbroad: Option[BigDecimal] = None,
-                          overseasIncomeAndGains: OverseasIncomeAndGains = OverseasIncomeAndGains(),
+                          overseasIncomeAndGains: Option[OverseasIncomeAndGains],
                           totalForeignBenefitsAndGifts: Option[BigDecimal] = None
                         )
 object ForeignIncome {
   implicit val format: OFormat[ForeignIncome] = Json.format[ForeignIncome]
 }
 
-case class OverseasIncomeAndGains(gainAmount: Option[BigDecimal] = None)
+case class OverseasIncomeAndGains(gainAmount: BigDecimal)
 object OverseasIncomeAndGains {
   implicit val format: OFormat[OverseasIncomeAndGains] = Json.format[OverseasIncomeAndGains]
 }
 
 case class GiftAid(
-                    grossGiftAidPayments: Option[Int] = None,
-                    giftAidTax: Option[BigDecimal] = None
+                    grossGiftAidPayments: Int,
+                    giftAidTax: BigDecimal
                   )
 object GiftAid {
   implicit val format: OFormat[GiftAid] = Json.format[GiftAid]
@@ -132,7 +130,7 @@ object SavingsAndGainsIncome {
   implicit val format: OFormat[SavingsAndGainsIncome] = Json.format[SavingsAndGainsIncome]
 }
 
-case class ShareSchemesIncome(totalIncome: Option[BigDecimal] = None)
+case class ShareSchemesIncome(totalIncome: BigDecimal)
 object ShareSchemesIncome {
   implicit val format: OFormat[ShareSchemesIncome] = Json.format[ShareSchemesIncome]
 }
