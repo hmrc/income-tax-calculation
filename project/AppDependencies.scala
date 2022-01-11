@@ -7,7 +7,6 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "bootstrap-backend-play-28"  % "5.16.0",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"  % "2.12.2"
   )
-
   val test = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"   % "5.16.0" % "test, it",
     "org.scalatest"           %% "scalatest"                % "3.2.9"  % "test, it",
