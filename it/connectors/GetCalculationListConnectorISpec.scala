@@ -18,9 +18,12 @@ package connectors
 
 import config.BackendAppConfig
 import helpers.WiremockSpec
+import models.{GetCalculationListModel, LiabilityCalculationIdModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
+import play.api.http.Status.OK
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -36,9 +39,26 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val nino = "nino"
+  val nino = "123456789"
   val url = s"/income-tax/list-of-calculation-results/$nino"
 
+  "GetCalculationListConnector" should {
+
+    "return a success result" when {
+
+      "DES returns a success with expected JSON" in {
+        val response = Json.toJson(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")).toString()
+        stubPostWithoutRequestBody(url, OK, response)
+        val result = await(connector.calcList(nino))
+
+        result mustBe Right(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z"))
+
+      }
+
+    }
+
+
+  }
 
 
 }

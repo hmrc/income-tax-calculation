@@ -23,14 +23,14 @@ import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
 object GetCalculationListHttpParser extends DESParser {
-  type GetCalculationListResponse = Either[DesErrorModel, Seq[CalculationsListResponse]]
+  type GetCalculationListResponse = Either[DesErrorModel, Seq[GetCalculationListModel]]
 
   override val parserName: String = "GetCalculationListHttpParser"
 
   implicit object CreateIncomeSourcesHttpReads extends HttpReads[GetCalculationListResponse] {
     override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponse = {
       response.status match {
-        case OK => response.json.validate[Seq[CalculationsListResponse]].fold[GetCalculationListResponse](
+        case OK => response.json.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](
           _ => badSuccessJsonFromDES,
           parsedModel => Right(parsedModel)
         )
