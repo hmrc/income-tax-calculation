@@ -27,7 +27,7 @@ object GetCalculationListHttpParser extends DESParser {
 
   override val parserName: String = "GetCalculationListHttpParser"
 
-  implicit object CreateIncomeSourcesHttpReads extends HttpReads[GetCalculationListResponse] {
+  implicit object GetCalculationListHttpReads extends HttpReads[GetCalculationListResponse] {
     override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponse = {
       response.status match {
         case OK => response.json.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](

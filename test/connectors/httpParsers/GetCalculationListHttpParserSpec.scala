@@ -16,7 +16,10 @@
 
 package connectors.httpParsers
 
+import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
+import play.api.http.Status._
 import testUtils.TestSuite
+import uk.gov.hmrc.http.HttpResponse
 
 class GetCalculationListHttpParserSpec extends TestSuite {
 
