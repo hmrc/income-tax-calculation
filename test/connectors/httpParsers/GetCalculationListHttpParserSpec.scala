@@ -24,10 +24,10 @@ import uk.gov.hmrc.http.HttpResponse
 
 class GetCalculationListHttpParserSpec extends TestSuite {
 
-  val parser = GetCalculationListHttpParser
+  val parser: GetCalculationListHttpParser.type = GetCalculationListHttpParser
 
 
-  "CreateIncomeSourcesHttpReads" should {
+  "GetCalculationListHttpReads" should {
     "return a GetCalculationsList model" when {
       "DES returns 200" in {
 

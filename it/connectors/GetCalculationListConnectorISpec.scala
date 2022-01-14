@@ -43,9 +43,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   val url = s"/income-tax/list-of-calculation-results/$nino"
 
   "GetCalculationListConnector" should {
-
     "return a success result" when {
-
       "DES returns a success with expected JSON" in {
         val response =
           Json.toJson(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
@@ -54,13 +52,11 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
         val result = await(connector.calcList(nino))
 
         result mustBe Right(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
-
       }
     }
   }
 
   "return a failure result" when {
-
     "DES returns an 503 error" in {
       val response =
         """
@@ -77,7 +73,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
     }
 
 
-    "DES returns an 500 error" in {
+    "DES returns an 500 when parsing error occurs" in {
       val response = Json.toJson(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")).toString()
 
       stubPostWithoutRequestBody(url, OK, response)
@@ -85,7 +81,6 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
       val result = await(connector.calcList(nino))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
-
     }
   }
 
