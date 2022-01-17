@@ -42,7 +42,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   val nino = "nino"
   val taxYear = "2021"
   val url = s"/income-tax/list-of-calculation-results/$nino"
-  val taxYearUrl = s"/income-tax/list-of-calculation-results/$nino/?taxYear=$taxYear"
+  val taxYearUrl = s"/income-tax/list-of-calculation-results/$nino?taxYear=$taxYear"
 
 
   "GetCalculationListConnector" should {
