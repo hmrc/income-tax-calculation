@@ -29,7 +29,7 @@ class CalculationDetailsHttpParserSpec extends TestSuite {
   "CreateIncomeSourcesHttpReads" should {
     "return a calculation id model" when {
       "DES returns 200" in {
-        val response = SuccessexpectedJsonFull
+        val response = SuccessExpectedJsonFull
 
         parser.CalculationDetailsHttpReads.read("GET", "url", HttpResponse(OK, response)) mustBe
           Right(successModelFull)

@@ -16,8 +16,8 @@
 
 package testConstants
 
-import models.liabilitycalculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, ForeignIncome, ForeignTaxCreditRelief, GiftAid, IncomeSummaryTotals, LiabilityCalculationResponse, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, Metadata, OverseasIncomeAndGains, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, TaxDeductedAtSource, TopSlicingRelief}
-import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
+import models.liabilitycalculation._
+import models.liabilitycalculation.taxcalculation._
 
 import scala.io.Source
 
@@ -205,5 +205,5 @@ object GetCalculationDetailsConstants {
   )
 
   val source = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))
-  val SuccessexpectedJsonFull = try source.mkString finally source.close()
+  val SuccessExpectedJsonFull = try source.mkString finally source.close()
 }

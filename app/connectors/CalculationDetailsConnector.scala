@@ -27,8 +27,8 @@ class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
                                             val appConfig: AppConfig)
                                            (implicit ec: ExecutionContext) {
 
-  def getCalculationDetails(taxableEntityId: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-    val getCalculationDetailsUrl: String = appConfig.desBaseUrl + s"/income-tax/view/calculations/liability/$taxableEntityId/$calculationId"
+  def getCalculationDetails(nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    val getCalculationDetailsUrl: String = appConfig.desBaseUrl + s"/income-tax/view/calculations/liability/$nino/$calculationId"
 
     httpClient.GET(url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
   }
