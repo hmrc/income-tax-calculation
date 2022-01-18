@@ -19,7 +19,7 @@ package models.liabilitycalculation
 import models.liabilitycalculation.taxcalculation._
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.GetCalculationDetailsConstants._
+import testConstants.GetCalculationDetailsConstants.{successExpectedJsonFull, successModelFull}
 import testUtils.TestSuite
 
 import scala.io.Source
@@ -56,12 +56,12 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
     "successful successModelFull" should {
 
       "be translated to Json correctly" in {
-        Json.toJson(successModelFull) mustBe Json.parse(SuccessExpectedJsonFull)
+        Json.toJson(successModelFull) mustBe Json.parse(successExpectedJsonFull)
       }
 
       "should convert from json to model" in {
-        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(SuccessExpectedJsonFull))
-        Json.toJson(calcResponse.get) mustBe Json.parse(SuccessExpectedJsonFull)
+        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(successExpectedJsonFull))
+        Json.toJson(calcResponse.get) mustBe Json.parse(successExpectedJsonFull)
       }
     }
 

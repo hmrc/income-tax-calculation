@@ -18,7 +18,7 @@ package connectors.httpParsers
 
 import models.{DesErrorBodyModel, DesErrorModel}
 import play.api.http.Status._
-import testConstants.GetCalculationDetailsConstants._
+import testConstants.GetCalculationDetailsConstants.{successExpectedJsonFull, successModelFull}
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HttpResponse
 
@@ -29,7 +29,7 @@ class CalculationDetailsHttpParserSpec extends TestSuite {
   "CreateIncomeSourcesHttpReads" should {
     "return a calculation id model" when {
       "DES returns 200" in {
-        val response = SuccessExpectedJsonFull
+        val response = successExpectedJsonFull
 
         parser.CalculationDetailsHttpReads.read("GET", "url", HttpResponse(OK, response)) mustBe
           Right(successModelFull)
