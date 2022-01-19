@@ -34,12 +34,14 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
   lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
 
-  def appConfig(desHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
-    override val desBaseUrl: String = s"http://$desHost:$wireMockPort"
+  def appConfig(ifHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
+    override val ifBaseUrl: String = s"http://$ifHost:$wireMockPort"
   }
 
   "CalculationDetailsConnector" should {
 
+    val appConfigWithInternalHost = appConfig("localhost")
+    val connector = new CalculationDetailsConnector(httpClient, appConfigWithInternalHost)
 
     val nino = "taxable_entity_id"
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"

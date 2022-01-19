@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetCalculationListConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
 
   def calcList(nino: String, taxYear: String, optionalTaxYear: Boolean)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-    val getCalcListUrl: String = appConfig.desBaseUrl +
+    val getCalcListUrl: String = appConfig.ifBaseUrl +
       s"/income-tax/list-of-calculation-results/$nino" + (if(optionalTaxYear) s"?taxYear=$taxYear" else "")
 
     def desCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {

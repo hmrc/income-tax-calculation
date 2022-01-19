@@ -22,6 +22,8 @@ class MockAppConfig extends AppConfig {
 
   override val desBaseUrl: String = "/des"
 
+  override val ifBaseUrl: String = "/if"
+
   override val auditingEnabled: Boolean = true
 
   override val graphiteHost: String = "/graphite"

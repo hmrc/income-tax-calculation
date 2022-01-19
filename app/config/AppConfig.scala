@@ -34,6 +34,7 @@ trait AppConfig {
 
   val environment: String
   val authorisationToken: String
+  val ifBaseUrl: String
 
 }
 
@@ -42,6 +43,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
   val desBaseUrl: String = servicesConfig.baseUrl("des")
+  val ifBaseUrl: String = servicesConfig.baseUrl("if")
 
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
