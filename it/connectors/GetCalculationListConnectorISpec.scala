@@ -40,9 +40,9 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  val taxYear = "2021"
+  val taxYear = Some("2021")
   val url = s"/income-tax/list-of-calculation-results/$nino"
-  val taxYearUrl = s"/income-tax/list-of-calculation-results/$nino?taxYear=$taxYear"
+  val taxYearUrl = s"/income-tax/list-of-calculation-results/$nino?taxYear=${taxYear.get}"
 
   "GetCalculationListConnector" should {
 
@@ -55,7 +55,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
           Json.toJson(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
 
         stubPostWithoutRequestBody(url, OK, response)
-        val result = await(connector.calcList(nino, taxYear, optionalTaxYear = false))
+        val result = await(connector.calcList(nino, None))
 
         result mustBe Right(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
       }
@@ -66,7 +66,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
           Json.toJson(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
 
         stubPostWithoutRequestBody(taxYearUrl, OK, response)
-        val result = await(connector.calcList(nino, taxYear, optionalTaxYear = true))
+        val result = await(connector.calcList(nino, taxYear))
 
         result mustBe Right(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
       }
@@ -87,7 +87,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
           |""".stripMargin
       stubPostWithoutRequestBody(url, SERVICE_UNAVAILABLE, response)
 
-      val result = await(connector.calcList(nino, taxYear, optionalTaxYear = false))
+      val result = await(connector.calcList(nino, None))
 
       result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
@@ -101,7 +101,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
       stubPostWithoutRequestBody(url, OK, response)
 
-      val result = await(connector.calcList(nino, taxYear, optionalTaxYear = false))
+      val result = await(connector.calcList(nino, None))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
     }
@@ -119,7 +119,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
           |""".stripMargin
       stubPostWithoutRequestBody(taxYearUrl, SERVICE_UNAVAILABLE, response)
 
-      val result = await(connector.calcList(nino, taxYear, optionalTaxYear = true))
+      val result = await(connector.calcList(nino, taxYear))
 
       result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
@@ -133,7 +133,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
       stubPostWithoutRequestBody(taxYearUrl, OK, response)
 
-      val result = await(connector.calcList(nino, taxYear, optionalTaxYear = true))
+      val result = await(connector.calcList(nino, taxYear))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
     }

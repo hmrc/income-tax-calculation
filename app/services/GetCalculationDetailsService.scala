@@ -18,6 +18,8 @@ package services
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.{CalculationDetailsConnector, GetCalculationListConnector}
+import models.{DesErrorBodyModel, DesErrorModel}
+import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -26,8 +28,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetCalculationDetailsService @Inject()(calculationDetailsConnector: CalculationDetailsConnector,
                                              listCalculationDetailsConnector: GetCalculationListConnector) (implicit ec: ExecutionContext) {
 
-  def getCalculationDetails(nino: String, taxYear: String, OptionalTaxYear: Boolean)(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {
-    listCalculationDetailsConnector.calcList(nino, taxYear, OptionalTaxYear).flatMap {
+  def getCalculationDetails(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {
+    listCalculationDetailsConnector.calcList(nino, taxYear).flatMap {
+      case Right(listOfCalculationDetails) if(listOfCalculationDetails.isEmpty) =>
+        Future.successful(Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel.parsingError)))
       case Right(listOfCalculationDetails) =>
         calculationDetailsConnector.getCalculationDetails(nino, listOfCalculationDetails.head.calculationId).map {
           case Right(calculationDetails) => Right(calculationDetails)

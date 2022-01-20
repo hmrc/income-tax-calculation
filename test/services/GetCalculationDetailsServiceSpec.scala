@@ -35,7 +35,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val service = new GetCalculationDetailsService(mockSingleCalculationConnector, mockListCalculationConnector)
 
   val nino = "AA123456A"
-  val taxYear = "2022"
+  val taxYear = Some("2022")
   val optionalTaxYear = false
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
@@ -45,9 +45,9 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(Future.successful(Right((successModelFull))))
 
-  def listCalculationDetailsSuccess: CallHandler4[String, String, Boolean, HeaderCarrier, Future[GetCalculationListResponse]] =
-    (mockListCalculationConnector.calcList(_: String, _: String, _: Boolean)(_: HeaderCarrier))
-      .expects(*, *, *, *)
+  def listCalculationDetailsSuccess: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponse]] =
+    (mockListCalculationConnector.calcList(_: String, _: Option[String])(_: HeaderCarrier))
+      .expects(*, *, *)
       .returning(
         Future.successful(
           Right(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")))
@@ -59,9 +59,9 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
 
-  def listCalculationDetailsFailure: CallHandler4[String, String, Boolean, HeaderCarrier, Future[GetCalculationListResponse]] =
-    (mockListCalculationConnector.calcList(_: String, _: String, _: Boolean)(_: HeaderCarrier))
-      .expects(*, *, *, *)
+  def listCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponse]] =
+    (mockListCalculationConnector.calcList(_: String, _: Option[String])(_: HeaderCarrier))
+      .expects(*, *, *)
       .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
 
   ".getCalculationDetails" should {
@@ -71,7 +71,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       listCalculationDetailsSuccess
 
-      val result = await(service.getCalculationDetails(nino, taxYear, optionalTaxYear))
+      val result = await(service.getCalculationDetails(nino, taxYear))
 
       result mustBe Right(successModelFull)
     }
@@ -80,7 +80,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       listCalculationDetailsFailure
 
-      val result = await(service.getCalculationDetails(nino, taxYear, optionalTaxYear))
+      val result = await(service.getCalculationDetails(nino, taxYear))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
     }
@@ -90,7 +90,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       listCalculationDetailsSuccess
       getCalculationDetailsFailure
 
-      val result = await(service.getCalculationDetails(nino, taxYear, optionalTaxYear))
+      val result = await(service.getCalculationDetails(nino, taxYear))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
     }
