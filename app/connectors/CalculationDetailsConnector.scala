@@ -18,6 +18,8 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
+import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
@@ -25,11 +27,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
                                             val appConfig: AppConfig)
-                                           (implicit ec: ExecutionContext) {
+                                           (implicit ec: ExecutionContext) extends IFConnector {
 
-  def getCalculationDetails(nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+  def getCalculationDetails(nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$nino/$calculationId"
 
-    httpClient.GET(url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
+    def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+      httpClient.GET(url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
+    }
+
+    iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
   }
 }

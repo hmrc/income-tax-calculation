@@ -36,6 +36,7 @@ trait AppConfig {
   val authorisationToken: String
   val ifBaseUrl: String
 
+  def iFAuthorisationToken(api: String): String
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -50,5 +51,6 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
 
   val environment: String = config.get[String]("microservice.services.des.environment")
   val authorisationToken: String = config.get[String]("microservice.services.des.authorisation-token")
+  def iFAuthorisationToken(api:String): String = config.get[String](s"microservice.services.if.authorisation-token.$api")
 
 }

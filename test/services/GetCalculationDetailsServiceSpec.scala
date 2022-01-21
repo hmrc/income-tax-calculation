@@ -21,7 +21,7 @@ import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListRes
 import connectors.{CalculationDetailsConnector, GetCalculationListConnector}
 import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModel}
 import org.scalamock.handlers.{CallHandler3, CallHandler4}
-import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 import testConstants.GetCalculationDetailsConstants.successModelFull
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
@@ -64,6 +64,11 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
 
+  def emptyListCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponse]] =
+    (mockListCalculationConnector.calcList(_: String, _: Option[String])(_: HeaderCarrier))
+      .expects(*, *, *)
+      .returning(Future.successful(Right(Seq.empty[GetCalculationListModel])))
+
   ".getCalculationDetails" should {
 
     "return a Right when successful" in {
@@ -74,6 +79,15 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       val result = await(service.getCalculationDetails(nino, taxYear))
 
       result mustBe Right(successModelFull)
+    }
+
+    "return a Left(DesError) when calling list calculations returns an empty calculation" in {
+
+      emptyListCalculationDetailsFailure
+
+      val result = await(service.getCalculationDetails(nino, taxYear))
+
+      result mustBe Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel("PARSING_ERROR","Error parsing response from DES")))
     }
 
     "return a Left(DesError) when calling list calculations and not call get calculations" in {
