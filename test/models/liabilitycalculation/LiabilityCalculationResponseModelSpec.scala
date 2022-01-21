@@ -16,13 +16,10 @@
 
 package models.liabilitycalculation
 
-import models.liabilitycalculation.taxcalculation._
 import play.api.http.Status
 import play.api.libs.json._
 import testConstants.GetCalculationDetailsConstants.{successExpectedJsonFull, successModelFull}
 import testUtils.TestSuite
-
-import scala.io.Source
 
 class LiabilityCalculationResponseModelSpec extends TestSuite {
 
