@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation
+package models.calculation
 
 import play.api.libs.json._
 
@@ -26,15 +26,15 @@ object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-case class LiabilityCalculationResponse(
+case class CalculationResponseModel(
                                          inputs: Inputs,
                                          metadata: Metadata,
                                          messages: Option[Messages],
                                          calculation: Option[Calculation]
                                        ) extends LiabilityCalculationResponseModel
 
-object LiabilityCalculationResponse {
-  implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
+object CalculationResponseModel {
+  implicit val format: OFormat[CalculationResponseModel] = Json.format[CalculationResponseModel]
 }
 
 case class Metadata(calculationTimestamp: String, crystallised: Boolean)

@@ -18,21 +18,21 @@ package connectors.httpParsers
 
 
 import models.DesErrorModel
-import models.liabilitycalculation.{LiabilityCalculationResponse}
+import models.calculation.CalculationResponseModel
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
 object CalculationDetailsHttpParser extends DESParser {
-  type CalculationDetailResponse = Either[DesErrorModel, LiabilityCalculationResponse]
+  type CalculationDetailResponse = Either[DesErrorModel, CalculationResponseModel]
 
   override val parserName: String = "CalculationDetailsHttpParser"
 
   implicit object CalculationDetailsHttpReads extends HttpReads[CalculationDetailResponse] {
     override def read(method: String, url: String, response: HttpResponse): CalculationDetailResponse = {
       response.status match {
-        case OK => response.json.validate[LiabilityCalculationResponse].fold[CalculationDetailResponse](
+        case OK => response.json.validate[CalculationResponseModel].fold[CalculationDetailResponse](
           _ => badSuccessJsonFromDES,
           parsedModel => Right(parsedModel)
         )

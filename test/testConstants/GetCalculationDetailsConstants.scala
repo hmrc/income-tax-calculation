@@ -16,14 +16,14 @@
 
 package testConstants
 
-import models.liabilitycalculation._
-import models.liabilitycalculation.taxcalculation._
+import models.calculation._
+import models.calculation.taxcalculation._
 
 import scala.io.Source
 
 object GetCalculationDetailsConstants {
 
-  val successModelFull = LiabilityCalculationResponse(
+  val successModelFull = CalculationResponseModel(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),

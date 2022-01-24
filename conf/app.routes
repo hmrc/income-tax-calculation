@@ -3,3 +3,5 @@
 GET        /income-tax/nino/:nino/taxYear/:taxYear/tax-calculation                              controllers.LiabilityCalculationController.calculateLiability(nino: String, taxYear: String, crystallise:Boolean ?= false)
 
 POST       /income-tax/nino/:nino/taxYear/:taxYear/:calculationId/declare-crystallisation               controllers.DeclareCrystallisationController.declareCrystallisation(nino: String, taxYear: Int, calculationId: String)
+
+GET        /income-tax/nino/:nino                              controllers.CalculationDetailController.calculationDetail(nino: String, taxYear: Option[String])
