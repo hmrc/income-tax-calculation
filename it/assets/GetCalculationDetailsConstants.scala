@@ -16,12 +16,12 @@
 
 package assets
 
-import models.liabilitycalculation._
-import models.liabilitycalculation.taxcalculation._
+import models.calculation._
+import models.calculation.taxcalculation._
 
 object GetCalculationDetailsConstants {
 
-  val successModelFull = LiabilityCalculationResponse(
+  val successModelFull = CalculationResponseModel(
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
         personalAllowance = Some(12500),

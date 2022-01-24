@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation
+package models.calculation
 
 import play.api.http.Status
 import play.api.libs.json._
 import testConstants.GetCalculationDetailsConstants.{successExpectedJsonFull, successModelFull}
 import testUtils.TestSuite
 
-class LiabilityCalculationResponseModelSpec extends TestSuite {
+class CalculationResponseModelModelSpec extends TestSuite {
 
   "LastTaxCalculationResponseMode model" when {
     "successful successModelMinimal" should {
-      val successModelMinimal = LiabilityCalculationResponse(
+      val successModelMinimal = CalculationResponseModel(
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = "2019-02-15T09:35:15.094Z",
@@ -45,7 +45,7 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
         Json.toJson(successModelMinimal) mustBe Json.parse(expectedJson)
       }
       "should convert from json to model" in {
-        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJson))
+        val calcResponse = Json.fromJson[CalculationResponseModel](Json.parse(expectedJson))
         Json.toJson(calcResponse.get) mustBe Json.parse(expectedJson)
       }
     }
@@ -57,7 +57,7 @@ class LiabilityCalculationResponseModelSpec extends TestSuite {
       }
 
       "should convert from json to model" in {
-        val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(successExpectedJsonFull))
+        val calcResponse = Json.fromJson[CalculationResponseModel](Json.parse(successExpectedJsonFull))
         Json.toJson(calcResponse.get) mustBe Json.parse(successExpectedJsonFull)
       }
     }
