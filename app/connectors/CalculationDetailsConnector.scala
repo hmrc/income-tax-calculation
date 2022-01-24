@@ -18,8 +18,7 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
-import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
-import play.api.libs.json.{JsValue, Json}
+
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject

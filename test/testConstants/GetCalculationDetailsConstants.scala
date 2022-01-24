@@ -24,6 +24,14 @@ import scala.io.Source
 object GetCalculationDetailsConstants {
 
   val successModelFull = CalculationResponseModel(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = Some(true)
+    )),
+    messages = Some(Messages(
+      info = Some(Seq(Message(id = "infoId1", text = "info msg text1"))),
+      warnings = Some(Seq(Message(id = "warnId1", text = "warn msg text1"))),
+      errors = Some(Seq(Message(id = "errorId1", text = "error msg text1")))
+    )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
         personalAllowance = Some(12500),

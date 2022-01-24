@@ -22,6 +22,14 @@ import models.calculation.taxcalculation._
 object GetCalculationDetailsConstants {
 
   val successModelFull = CalculationResponseModel(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = Some(true)
+    )),
+    messages = Some(Messages(
+      info = Some(Seq(Message(id = "infoId1", text = "info msg text1"))),
+      warnings = Some(Seq(Message(id = "warnId1", text = "warn msg text1"))),
+      errors = Some(Seq(Message(id = "errorId1", text = "error msg text1")))
+    )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
         personalAllowance = Some(12500),
@@ -204,6 +212,32 @@ object GetCalculationDetailsConstants {
 
   val successExpectedJsonFull = s"""
                                    |{
+                                   |  "inputs": {
+                                   |    "personalInformation": {
+                                   |      "taxRegime": "UK",
+                                   |      "class2VoluntaryContributions": true
+                                   |    }
+                                   |  },
+                                   |  "messages": {
+                                   |    "info": [
+                                   |      {
+                                   |        "id": "infoId1",
+                                   |        "text": "info msg text1"
+                                   |      }
+                                   |    ],
+                                   |    "warnings": [
+                                   |      {
+                                   |        "id": "warnId1",
+                                   |        "text": "warn msg text1"
+                                   |      }
+                                   |    ],
+                                   |    "errors": [
+                                   |      {
+                                   |        "id": "errorId1",
+                                   |        "text": "error msg text1"
+                                   |      }
+                                   |    ]
+                                   |  },
                                    |  "metadata" : {
                                    |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
                                    |    "crystallised" : true

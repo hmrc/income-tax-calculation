@@ -16,8 +16,7 @@
 
 package models.calculation.taxcalculation
 
-import play.api.libs.json.{JsPath, Json, OFormat, OWrites, Reads}
-import play.api.libs.functional.syntax._
+import play.api.libs.json.{Json, OFormat}
 
 case class Nics(
                  class4Nics: Option[Class4Nics] = None,
