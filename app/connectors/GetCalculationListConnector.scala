@@ -32,7 +32,7 @@ class GetCalculationListConnector @Inject()(http: HttpClient, val appConfig: App
       s"${appConfig.ifBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
     def iFCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-      http.POST[JsValue,GetCalculationListResponse](getCalcListUrl, Json.parse("""{}"""))
+      http.GET(url = getCalcListUrl)(GetCalculationListHttpReads, hc, ec)
     }
 
     iFCall(iFHeaderCarrier(getCalcListUrl, "1404"))
