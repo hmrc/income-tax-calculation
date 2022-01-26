@@ -26,13 +26,13 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
-class CalculationDetailController @Inject()(GetCalculationDetailsService: GetCalculationDetailsService,
+class CalculationDetailController @Inject()(getCalculationDetailsService: GetCalculationDetailsService,
                                             cc: ControllerComponents,
                                             authorisedAction: AuthorisedAction)
                                            (implicit ec: ExecutionContext) extends BackendController(cc) {
 
   def calculationDetail(nino: String, taxYear: Option[String]): Action[AnyContent] = authorisedAction.async { implicit user =>
-    GetCalculationDetailsService.getCalculationDetails(nino, taxYear).map {
+    getCalculationDetailsService.getCalculationDetails(nino, taxYear).map {
       case Right(success) =>
         logger.debug(s"[CalculationDetailController][calculationDetail] - Successful Response: $success")
         Ok(Json.toJson(success))
