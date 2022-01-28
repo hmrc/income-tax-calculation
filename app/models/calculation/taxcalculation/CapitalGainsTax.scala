@@ -19,15 +19,17 @@ package models.calculation.taxcalculation
 import play.api.libs.json._
 
 case class CapitalGainsTax(
-                            totalCapitalGainsIncome: BigDecimal,
+                            totalTaxableGains: BigDecimal,
                             adjustments: Option[BigDecimal] = None,
                             foreignTaxCreditRelief: Option[BigDecimal] = None,
                             taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
                             capitalGainsTaxDue: BigDecimal,
                             capitalGainsOverpaid: Option[BigDecimal] = None,
                             residentialPropertyAndCarriedInterest: Option[ResidentialPropertyAndCarriedInterest] = None,
+                            otherGains: Option[OtherGains] = None,
                             businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None
                           )
+
 object CapitalGainsTax {
   implicit val format: OFormat[CapitalGainsTax] = Json.format[CapitalGainsTax]
 }
@@ -35,8 +37,17 @@ object CapitalGainsTax {
 case class ResidentialPropertyAndCarriedInterest(
                                                   cgtTaxBands: Seq[CgtTaxBands] = Seq()
                                                 )
+
 object ResidentialPropertyAndCarriedInterest {
   implicit val format: OFormat[ResidentialPropertyAndCarriedInterest] = Json.format[ResidentialPropertyAndCarriedInterest]
+}
+
+case class OtherGains(
+                       cgtTaxBands: Seq[CgtTaxBands] = Seq()
+                     )
+
+object OtherGains {
+  implicit val format: OFormat[OtherGains] = Json.format[OtherGains]
 }
 
 case class CgtTaxBands(
@@ -45,6 +56,7 @@ case class CgtTaxBands(
                         income: BigDecimal,
                         taxAmount: BigDecimal
                       )
+
 object CgtTaxBands {
   implicit val format: OFormat[CgtTaxBands] = Json.format[CgtTaxBands]
 }
@@ -52,8 +64,9 @@ object CgtTaxBands {
 case class BusinessAssetsDisposalsAndInvestorsRel(
                                                    taxableGains: Option[BigDecimal] = None,
                                                    rate: Option[BigDecimal] = None,
-                                                   taxAmount  : Option[BigDecimal] = None
+                                                   taxAmount: Option[BigDecimal] = None
                                                  )
+
 object BusinessAssetsDisposalsAndInvestorsRel {
   implicit val format: OFormat[BusinessAssetsDisposalsAndInvestorsRel] = Json.format[BusinessAssetsDisposalsAndInvestorsRel]
 }
