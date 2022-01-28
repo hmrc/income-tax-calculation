@@ -19,7 +19,6 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.GetCalculationListHttpParser._
 import javax.inject.Inject
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
