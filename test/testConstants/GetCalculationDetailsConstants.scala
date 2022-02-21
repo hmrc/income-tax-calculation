@@ -227,5 +227,5 @@ object GetCalculationDetailsConstants {
   )
 
   val source = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))
-  val successExpectedJsonFull = try source.mkString finally source.close()
+  val successCalcDetailsExpectedJsonFull = try source.mkString finally source.close()
 }

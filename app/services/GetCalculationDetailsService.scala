@@ -33,11 +33,15 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnector: Calcul
       case Right(listOfCalculationDetails) if(listOfCalculationDetails.isEmpty) =>
         Future.successful(Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel.parsingError)))
       case Right(listOfCalculationDetails) =>
-        calculationDetailsConnector.getCalculationDetails(nino, listOfCalculationDetails.head.calculationId).map {
-          case Right(calculationDetails) => Right(calculationDetails)
-          case Left(desError) => Left(desError)
-        }
+        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId)
       case Left(desError) => Future.successful(Left(desError))
+    }
+  }
+
+  def getCalculationDetailsByCalcId(nino: String, calcId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    calculationDetailsConnector.getCalculationDetails(nino, calcId).map {
+      case Right(calculationDetails) => Right(calculationDetails)
+      case Left(desError) => Left(desError)
     }
   }
 }

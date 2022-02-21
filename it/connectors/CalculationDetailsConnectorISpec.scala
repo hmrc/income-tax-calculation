@@ -24,7 +24,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
 import play.api.http.Status._
-import assets.GetCalculationDetailsConstants.{successExpectedJsonFull, successModelFull}
+import assets.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull, successModelFull}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -55,7 +55,7 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
       "the host for DES is 'internal'" in {
         implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
 
-        stubGetWithResponseBody(url, OK, successExpectedJsonFull, headersSentToBenefits)
+        stubGetWithResponseBody(url, OK, successCalcDetailsExpectedJsonFull, headersSentToBenefits)
 
         val result = await(connector.getCalculationDetails(nino, calculationId)(headerCarrier))
 
