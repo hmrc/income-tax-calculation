@@ -33,8 +33,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
   lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
 
-  def appConfig(ifHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
-    override val ifBaseUrl: String = s"http://$ifHost:$wireMockPort"
+  def appConfig(desHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
+    override val desBaseUrl: String = s"http://$desHost:$wireMockPort"
   }
 
   implicit val hc: HeaderCarrier = HeaderCarrier()

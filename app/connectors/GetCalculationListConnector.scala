@@ -18,22 +18,22 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.GetCalculationListHttpParser._
-import javax.inject.Inject
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetCalculationListConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends IFConnector {
+class GetCalculationListConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
 
     val getCalcListUrl: String =
-      s"${appConfig.ifBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
+      s"${appConfig.desBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
-    def iFCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+    def desCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
       http.GET(url = getCalcListUrl)(GetCalculationListHttpReads, hc, ec)
     }
 
-    iFCall(iFHeaderCarrier(getCalcListUrl, "1404"))
+    desCall(desHeaderCarrier(getCalcListUrl))
   }
 }
