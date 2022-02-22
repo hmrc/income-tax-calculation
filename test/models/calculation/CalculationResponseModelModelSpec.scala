@@ -18,7 +18,7 @@ package models.calculation
 
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.GetCalculationDetailsConstants.{successExpectedJsonFull, successModelFull}
+import testConstants.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull, successModelFull}
 import testUtils.TestSuite
 
 class CalculationResponseModelModelSpec extends TestSuite {
@@ -56,12 +56,12 @@ class CalculationResponseModelModelSpec extends TestSuite {
     "successful successModelFull" should {
 
       "be translated to Json correctly" in {
-        Json.toJson(successModelFull) mustBe Json.parse(successExpectedJsonFull)
+        Json.toJson(successModelFull) mustBe Json.parse(successCalcDetailsExpectedJsonFull)
       }
 
       "should convert from json to model" in {
-        val calcResponse = Json.fromJson[CalculationResponseModel](Json.parse(successExpectedJsonFull))
-        Json.toJson(calcResponse.get) mustBe Json.parse(successExpectedJsonFull)
+        val calcResponse = Json.fromJson[CalculationResponseModel](Json.parse(successCalcDetailsExpectedJsonFull))
+        Json.toJson(calcResponse.get) mustBe Json.parse(successCalcDetailsExpectedJsonFull)
       }
     }
 

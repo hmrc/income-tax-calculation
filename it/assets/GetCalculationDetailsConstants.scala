@@ -224,7 +224,7 @@ object GetCalculationDetailsConstants {
       crystallised = true)
   )
 
-  val successExpectedJsonFull = s"""
+  val successCalcDetailsExpectedJsonFull = s"""
                                    |{
                                    |  "inputs": {
                                    |    "personalInformation": {

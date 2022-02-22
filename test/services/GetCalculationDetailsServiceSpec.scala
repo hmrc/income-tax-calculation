@@ -109,4 +109,23 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
     }
   }
+  ".getCalculationDetailsByCalcId" should {
+
+    "return a Right when successful" in {
+      getCalculationDetailsSuccess
+
+      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId))
+
+      result mustBe Right(successModelFull)
+    }
+
+
+    "return a Left(DesError) when calling get calculations returns a DES error" in {
+      getCalculationDetailsFailure
+
+      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId))
+
+      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+    }
+  }
 }

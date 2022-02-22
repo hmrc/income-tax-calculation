@@ -50,8 +50,17 @@ class CalculationDetailControllerSpec extends TestSuite {
       .expects(nino, Some(taxYear), *)
       .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
+  def calculationSuccessResponseByCalcId: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
+    (service.getCalculationDetailsByCalcId(_: String, _: String)(_: HeaderCarrier))
+      .expects(nino, calculationId, *)
+      .returning(Future.successful(Right(successModelFull)))
 
-  "CalculationDetailController" should {
+  def calculationErrorResponseByCalcId(status: Int): CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
+    (service.getCalculationDetailsByCalcId(_: String, _: String)(_: HeaderCarrier))
+      .expects(nino, calculationId, *)
+      .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
+
+  "CalculationDetailController.calculationDetail" should {
 
     "return a success response with a calculation model" in {
 
@@ -101,6 +110,60 @@ class CalculationDetailControllerSpec extends TestSuite {
       calculationErrorResponse(FORBIDDEN)
 
       val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
+      status(result) mustBe Status.FORBIDDEN
+
+    }
+  }
+  "CalculationDetailController.calculationDetailByCalcId" should {
+
+    "return a success response with a calculation model" in {
+
+      mockAuth()
+      calculationSuccessResponseByCalcId
+
+      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      status(result) mustBe Status.OK
+      bodyOf(result) mustBe Json.toJson(successModelFull).toString()
+
+    }
+
+
+    "return a 500 error response with a calculation error" in {
+
+      mockAuth()
+      calculationErrorResponseByCalcId(INTERNAL_SERVER_ERROR)
+
+      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      status(result) mustBe Status.INTERNAL_SERVER_ERROR
+
+    }
+
+    "return a 503 error response with a calculation error" in {
+
+      mockAuth()
+      calculationErrorResponseByCalcId(SERVICE_UNAVAILABLE)
+
+      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      status(result) mustBe Status.SERVICE_UNAVAILABLE
+
+    }
+
+    "return a 400 error response with a calculation error" in {
+
+      mockAuth()
+      calculationErrorResponseByCalcId(BAD_REQUEST)
+
+      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      status(result) mustBe Status.BAD_REQUEST
+
+    }
+
+    "return a 403 error response with a calculation error" in {
+
+      mockAuth()
+      calculationErrorResponseByCalcId(FORBIDDEN)
+
+      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
       status(result) mustBe Status.FORBIDDEN
 
     }
