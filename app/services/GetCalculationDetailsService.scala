@@ -39,9 +39,6 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnector: Calcul
   }
 
   def getCalculationDetailsByCalcId(nino: String, calcId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-    calculationDetailsConnector.getCalculationDetails(nino, calcId).map {
-      case Right(calculationDetails) => Right(calculationDetails)
-      case Left(desError) => Left(desError)
-    }
+    calculationDetailsConnector.getCalculationDetails(nino, calcId)
   }
 }
