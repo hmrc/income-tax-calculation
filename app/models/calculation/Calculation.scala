@@ -34,7 +34,8 @@ case class Calculation(
                         savingsAndGainsIncome: Option[SavingsAndGainsIncome],
                         dividendsIncome: Option[DividendsIncome],
                         incomeSummaryTotals: Option[IncomeSummaryTotals],
-                        taxCalculation: Option[TaxCalculation]
+                        taxCalculation: Option[TaxCalculation],
+                        endOfYearEstimate: Option[EndOfYearEstimate]
                       )
 
 object Calculation {
