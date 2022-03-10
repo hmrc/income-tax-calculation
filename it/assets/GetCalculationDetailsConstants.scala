@@ -249,7 +249,7 @@ object GetCalculationDetailsConstants {
       )))),
     metadata = Metadata(
       calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      crystallised = Some(true))
   )
 
   val successCalcDetailsExpectedJsonFull =
