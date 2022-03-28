@@ -249,7 +249,8 @@ object GetCalculationDetailsConstants {
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true))
+      crystallised = Some(true),
+      calculationReason = Some("customerRequest"))
   )
 
   val successCalcDetailsExpectedJsonFull =
@@ -283,7 +284,8 @@ object GetCalculationDetailsConstants {
        |  },
        |  "metadata" : {
        |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-       |    "crystallised" : true
+       |    "crystallised" : true,
+       |    "calculationReason": "customerRequest"
        |  },
        |  "calculation" : {
        |    "allowancesAndDeductions" : {
