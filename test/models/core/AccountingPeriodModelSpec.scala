@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package config
+package models.core
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import play.api.libs.json._
+import testConstants.AccountingPeriodTestConstants.{testAccountingPeriodJson, testAccountingPeriodModel, testAccountingPeriodToJson}
+import testUtils.TestSuite
 
-class Modules extends AbstractModule {
+class AccountingPeriodModelSpec extends TestSuite {
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
+  "The AccountingPeriodModel" should {
+
+    "read from the DES Json" in {
+      Json.fromJson(testAccountingPeriodJson)(AccountingPeriodModel.desReads) mustBe JsSuccess(testAccountingPeriodModel)
+    }
+
+    "write to Json" in {
+      Json.toJson(testAccountingPeriodModel) mustBe testAccountingPeriodToJson
+    }
+
   }
 
 }

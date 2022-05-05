@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package config
+package testConstants
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+object BaseIntegrationTestConstants {
 
-class Modules extends AbstractModule {
+  val testMtditidEnrolmentKey = "HMRC-MTD-IT"
+  val testMtditidEnrolmentIdentifier = "MTDITID"
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
-  }
+  val testNinoEnrolmentKey = "HMRC-NI"
+  val testNinoEnrolmentIdentifier = "NINO"
+  val testNino = "BB123456A"
+  val testMtdbsa = "XIAT0000000000A"
+  val testMtdRef = "123456789012345"
+  val testYear = "2018"
+  val testCalcType = "it"
 
 }

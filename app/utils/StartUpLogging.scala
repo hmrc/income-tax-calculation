@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package utils
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import repositories.TaxYearsDataRepositoryImpl
 
-class Modules extends AbstractModule {
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
-  }
-
+class StartUpLogging @Inject()(implicit val ec: ExecutionContext,
+                               repo: TaxYearsDataRepositoryImpl) {
+  repo.logOutIndexes
 }

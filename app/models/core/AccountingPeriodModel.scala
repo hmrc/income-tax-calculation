@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package config
+package models.core
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
-class Modules extends AbstractModule {
+import java.time.LocalDate
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
-  }
+case class AccountingPeriodModel(start: LocalDate, end: LocalDate)
 
+object AccountingPeriodModel {
+
+  val desReads: Reads[AccountingPeriodModel] = (
+    (__ \ "accountingPeriodStartDate").read[LocalDate] and
+      (__ \ "accountingPeriodEndDate").read[LocalDate]
+    ) (AccountingPeriodModel.apply _)
+
+  implicit val format: Format[AccountingPeriodModel] = Json.format[AccountingPeriodModel]
 }

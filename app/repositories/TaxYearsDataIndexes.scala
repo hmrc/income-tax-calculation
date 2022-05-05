@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package config
+package repositories
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import java.util.concurrent.TimeUnit
+import config.AppConfig
+import org.mongodb.scala.model.Indexes.{ascending}
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 
-class Modules extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
+private[repositories] object TaxYearsDataIndexes {
+  def indexes(appConfig: AppConfig): Seq[IndexModel] = {
+    Seq(
+      IndexModel(ascending("nino"), IndexOptions().unique(true).name("TaxYearDataLookupIndex")),
+      IndexModel(ascending("lastUpdated"), IndexOptions().expireAfter(appConfig.mongoTTL, TimeUnit.MINUTES).name("TaxYearDataTTL"))
+    )
   }
-
 }

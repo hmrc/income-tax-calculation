@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package config
+package testConstants
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import models.core.AccountingPeriodModel
+import play.api.libs.json.Json
 
-class Modules extends AbstractModule {
+import java.time.LocalDate
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
-  }
+object AccountingPeriodTestConstants {
+
+  val testAccountingPeriodModel = AccountingPeriodModel(
+    start = LocalDate.parse("2017-06-01"),
+    end = LocalDate.parse("2018-05-31")
+  )
+
+  val testAccountingPeriodJson = Json.obj(
+    "accountingPeriodStartDate" -> "2017-06-01",
+    "accountingPeriodEndDate" -> "2018-05-31"
+  )
+
+  val testAccountingPeriodToJson = Json.obj(
+    "start" -> "2017-06-01",
+    "end" -> "2018-05-31"
+  )
 
 }
