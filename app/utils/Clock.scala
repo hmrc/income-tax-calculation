@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package utils
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import org.joda.time.{DateTime, DateTimeZone}
 
-class Modules extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
-  }
-
+trait Clock {
+  def now(zone: DateTimeZone = DateTimeZone.UTC): DateTime = DateTime.now(zone)
 }
+
+object Clock extends Clock

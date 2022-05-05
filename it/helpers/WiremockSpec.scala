@@ -24,6 +24,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.Application
 import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{WSClient, WSRequest}
@@ -47,11 +48,15 @@ trait WiremockSpec extends BeforeAndAfterEach with BeforeAndAfterAll with GuiceO
   def servicesToUrlConfig: Seq[(String, String)] = connectedServices
     .flatMap(service => Seq(s"microservice.services.$service.host" -> s"localhost", s"microservice.services.$service.port" -> wireMockPort.toString))
 
-  override implicit lazy val app = GuiceApplicationBuilder()
+  override implicit lazy val app: Application = GuiceApplicationBuilder()
     .configure(
-      ("auditing.consumer.baseUri.port" -> wireMockPort) +:
+      ("useEncryption" -> true) +: ("auditing.consumer.baseUri.port" -> wireMockPort) +:
         servicesToUrlConfig: _*
     )
+    .build()
+
+  lazy val appWithInvalidEncryptionKey: Application = GuiceApplicationBuilder()
+    .configure(("useEncryption" -> true) +: ("mongodb.encryption.key" -> "key") +: ("auditing.consumer.baseUri.port" -> wireMockPort) +: servicesToUrlConfig: _*)
     .build()
 
   override def beforeAll(): Unit = {

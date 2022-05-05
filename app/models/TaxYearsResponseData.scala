@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import play.api.libs.json.{Json, OFormat}
 
-class Modules extends AbstractModule {
+case class TaxYearsResponseData(taxYears: Seq[Int])
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
-  }
-
+object TaxYearsResponseData {
+  implicit val formats: OFormat[TaxYearsResponseData] = Json.format[TaxYearsResponseData]
 }

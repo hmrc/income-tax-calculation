@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package config
+package services
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import connectors.GetBusinessDetailsConnector
+import connectors.httpParsers.GetBusinessDetailsHttpParser.GetBusinessDetailsResponse
+import uk.gov.hmrc.http.HeaderCarrier
 
-class Modules extends AbstractModule {
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
+class GetBusinessDetailsService @Inject()(getBusinessDetailsConnector: GetBusinessDetailsConnector) (implicit ec: ExecutionContext) {
+  def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
+    getBusinessDetailsConnector.getBusinessDetails(nino)
   }
-
 }

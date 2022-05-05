@@ -14,19 +14,31 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import play.api.libs.json.{JsObject, Json}
+import testUtils.TestSuite
 
-class Modules extends AbstractModule {
+class TaxYearsResponseDataSpec extends TestSuite {
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
+  val validJson: JsObject = Json.obj(
+    "taxYears" -> Seq(2016,2017,2018,2019,2020,2021,2022,2023)
+  )
+
+  val validModel: TaxYearsResponseData = TaxYearsResponseData(
+    taxYears = Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023)
+  )
+
+  "TaxYearsResponseData" should {
+
+    "correctly parse from Json" in {
+      validJson.as[TaxYearsResponseData] mustBe validModel
+    }
+
+    "correctly parse to Json" in {
+      Json.toJson(validModel) mustBe validJson
+    }
+
   }
 
 }

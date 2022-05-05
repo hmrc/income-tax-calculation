@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package config
+package testUtils
 
-import com.google.inject.AbstractModule
-import repositories.{TaxYearsDataRepository, TaxYearsDataRepositoryImpl}
-import utils.{Clock, StartUpLogging}
+import org.joda.time.{DateTime, DateTimeZone}
+import utils.Clock
 
-class Modules extends AbstractModule {
+object TestingClock extends Clock {
+  private val year = 2021
+  private val month = 1
+  private val day = 1
+  private val hour = 0
+  private val minute = 0
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[BackendAppConfig]).asEagerSingleton()
-    bind(classOf[Clock]).toInstance(Clock)
-    bind(classOf[TaxYearsDataRepository]).to(classOf[TaxYearsDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[StartUpLogging]).asEagerSingleton()
-  }
-
+  override def now(zone: DateTimeZone = DateTimeZone.UTC): DateTime = new DateTime(year, month, day, hour, minute, zone)
 }

@@ -32,5 +32,35 @@ class MockAppConfig extends AppConfig {
 
   override val authorisationToken: String = "someToken"
 
-  override def  iFAuthorisationToken(api: String): String = "someToken"
+  override def iFAuthorisationToken(api: String): String = "someToken"
+
+  override lazy val encryptionKey: String = "key"
+
+  override lazy val mongoTTL: Int = 60
+
+  override lazy val useEncryption: Boolean = true
+
+  def config(encrypt: Boolean = true): AppConfig = new AppConfig() {
+    override val authBaseUrl: String = "/auth"
+
+    override val desBaseUrl: String = "/des"
+
+    override val ifBaseUrl: String = "/if"
+
+    override val auditingEnabled: Boolean = true
+
+    override val graphiteHost: String = "/graphite"
+
+    override val environment: String = "dev"
+
+    override val authorisationToken: String = "someToken"
+
+    override def iFAuthorisationToken(api: String): String = "someToken"
+
+    override lazy val encryptionKey: String = "encryptionKey12345"
+
+    override lazy val mongoTTL: Int = 60
+
+    override lazy val useEncryption: Boolean = encrypt
+  }
 }
