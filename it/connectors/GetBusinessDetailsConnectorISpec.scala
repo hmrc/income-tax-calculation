@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import config.BackendAppConfig
 import helpers.WiremockSpec
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.{DesErrorBodyModel, DesErrorModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -29,7 +29,6 @@ import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
 import java.time.LocalDate
 
 class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers {
@@ -151,7 +150,20 @@ class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
     "handle errors" when {
       val desErrorBodyModel = DesErrorBodyModel("DES_CODE", "DES_REASON")
 
-      Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
+      Seq(NOT_FOUND).foreach { status =>
+        s"DES returns $status" in {
+          val desError = DesErrorModel(status, desErrorBodyModel)
+          implicit val hc: HeaderCarrier = HeaderCarrier()
+
+          stubGetWithResponseBody(url, status, desError.toJson.toString)
+
+          val result = await(connector.getBusinessDetails(nino)(hc))
+
+          result mustBe Right(IncomeSourceDetailsError(404,"""{"code":"DES_CODE","reason":"DES_REASON"}"""))
+        }
+      }
+
+      Seq(BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
         s"DES returns $status" in {
           val desError = DesErrorModel(status, desErrorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
