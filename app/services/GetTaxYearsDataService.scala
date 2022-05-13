@@ -31,12 +31,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetTaxYearsDataService @Inject()(getBusinessDetailsService: GetBusinessDetailsService,
                                        taxYearsDataRepository: TaxYearsDataRepository,
                                        clock: Clock) (implicit ec: ExecutionContext) extends Logging {
-  def getTaxYearsData(nino: String)(implicit hc: HeaderCarrier): Future[Either[DesErrorModel, TaxYearsData]] = {
+  def getTaxYearsData(nino: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Either[DesErrorModel, TaxYearsData]] = {
     taxYearsDataRepository.find(nino).flatMap {
       case Right(Some(taxYearsData: TaxYearsData)) =>
         Future.successful(Right(taxYearsData))
       case _: Either[DatabaseError, Option[TaxYearsData]] =>
-        getBusinessDetailsService.getBusinessDetails(nino).flatMap {
+        getBusinessDetailsService.getBusinessDetails(nino, mtditid).flatMap {
           case Right(success: IncomeSourceDetailsModel) =>
             val taxYearsData = TaxYearsData(success.nino, success.taxYears, clock.now(DateTimeZone.UTC))
             taxYearsDataRepository.createOrUpdate(taxYearsData).map {

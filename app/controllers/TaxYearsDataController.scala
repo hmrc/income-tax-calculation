@@ -35,7 +35,7 @@ class TaxYearsDataController @Inject()(getTaxYearsDataService: GetTaxYearsDataSe
                                       (implicit ec: ExecutionContext) extends BackendController(cc) {
 
   def getTaxYearsData(nino: String): Action[AnyContent] = authorisedAction.async { implicit user =>
-    getTaxYearsDataService.getTaxYearsData(nino).map {
+    getTaxYearsDataService.getTaxYearsData(nino, user.mtditid).map {
       case Right(taxYearsData: TaxYearsData) =>
         logger.debug(s"[TaxYearsController][getTaxYearsData] - Successful Response: $taxYearsData")
         Ok(Json.toJson(TaxYearsResponseData(taxYearsData.taxYears)))

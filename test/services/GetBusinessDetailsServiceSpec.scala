@@ -19,14 +19,14 @@ package services
 import connectors.httpParsers.GetBusinessDetailsHttpParser.GetBusinessDetailsResponse
 import connectors.GetBusinessDetailsConnector
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.{DesErrorBodyModel, DesErrorModel}
 import org.scalamock.handlers.CallHandler2
-import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
-
 import java.time.LocalDate
+
 import scala.concurrent.Future
 
 class GetBusinessDetailsServiceSpec extends TestSuite {
@@ -69,6 +69,11 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
       .expects(*, *)
       .returning(Future.successful(Right((successModel))))
 
+  def getBusinessDetails404: CallHandler2[String, HeaderCarrier, Future[GetBusinessDetailsResponse]] =
+    (mockGetBusinessDetailsConnector.getBusinessDetails(_: String)(_: HeaderCarrier))
+      .expects(*, *)
+      .returning(Future.successful(Right(IncomeSourceDetailsError(NOT_FOUND,"Not found"))))
+
   def getBusinessDetailsFailure: CallHandler2[String, HeaderCarrier, Future[GetBusinessDetailsResponse]] =
     (mockGetBusinessDetailsConnector.getBusinessDetails(_: String)(_: HeaderCarrier))
       .expects(*, *)
@@ -79,16 +84,23 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
     "return a Right when successful" in {
       getBusinessDetailsSuccess
 
-      val result = await(service.getBusinessDetails("BB123456A"))
+      val result = await(service.getBusinessDetails("BB123456A","12345"))
 
       result mustBe Right(successModel)
+    }
+    "return a Right when 404 and default the model" in {
+      getBusinessDetails404
+
+      val result = await(service.getBusinessDetails("BB123456A","12345"))
+
+      result mustBe Right(IncomeSourceDetailsModel("BB123456A","12345",None,List.empty,None))
     }
 
     "return a Left(DesError) when calling get business details returns a DES error" in {
 
       getBusinessDetailsFailure
 
-      val result = await(service.getBusinessDetails("BB123456A"))
+      val result = await(service.getBusinessDetails("BB123456A","12345"))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
     }

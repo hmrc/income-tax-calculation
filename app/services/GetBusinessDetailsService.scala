@@ -17,14 +17,19 @@
 package services
 
 import connectors.GetBusinessDetailsConnector
-import connectors.httpParsers.GetBusinessDetailsHttpParser.GetBusinessDetailsResponse
 import uk.gov.hmrc.http.HeaderCarrier
-
 import javax.inject.Inject
+import models.DesErrorModel
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class GetBusinessDetailsService @Inject()(getBusinessDetailsConnector: GetBusinessDetailsConnector) (implicit ec: ExecutionContext) {
-  def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
-    getBusinessDetailsConnector.getBusinessDetails(nino)
+  def getBusinessDetails(nino: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Either[DesErrorModel, IncomeSourceDetailsModel]] = {
+    getBusinessDetailsConnector.getBusinessDetails(nino).map {
+      case Left(error) => Left(error)
+      case Right(model: IncomeSourceDetailsModel) => Right(model)
+      case Right(_: IncomeSourceDetailsError) => Right(IncomeSourceDetailsModel(nino,mtditid,None,List.empty,None))
+    }
   }
 }

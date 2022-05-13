@@ -20,15 +20,15 @@ import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.mongo.TaxYearsData
 import models.{DesErrorBodyModel, DesErrorModel, TaxYearsResponseData}
-import org.scalamock.handlers.CallHandler2
+import org.scalamock.handlers.{CallHandler2, CallHandler3}
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
 import play.api.libs.json.Json
 import services.GetTaxYearsDataService
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
-
 import java.time.LocalDate
+
 import scala.concurrent.Future
 
 class TaxYearsDataControllerSpec extends TestSuite {
@@ -70,14 +70,14 @@ class TaxYearsDataControllerSpec extends TestSuite {
   val taxYearsData = TaxYearsData(nino, successModel.taxYears)
   val taxYearsResponseData = TaxYearsResponseData(taxYearsData.taxYears)
 
-  def taxYearsSuccessResponse: CallHandler2[String, HeaderCarrier, Future[Either[DesErrorModel, TaxYearsData]]] =
-    (service.getTaxYearsData(_: String)(_: HeaderCarrier))
-      .expects(nino, *)
+  def taxYearsSuccessResponse: CallHandler3[String, String, HeaderCarrier, Future[Either[DesErrorModel, TaxYearsData]]] =
+    (service.getTaxYearsData(_: String, _: String)(_: HeaderCarrier))
+      .expects(nino, *, *)
       .returning(Future.successful(Right(taxYearsData)))
 
-  def taxYearsErrorResponse(status: Int): CallHandler2[String, HeaderCarrier, Future[Either[DesErrorModel, TaxYearsData]]] =
-    (service.getTaxYearsData(_: String)(_: HeaderCarrier))
-      .expects(nino, *)
+  def taxYearsErrorResponse(status: Int): CallHandler3[String, String, HeaderCarrier, Future[Either[DesErrorModel, TaxYearsData]]] =
+    (service.getTaxYearsData(_: String, _:String)(_: HeaderCarrier))
+      .expects(nino, *, *)
       .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   "TaxYearsController.getTaxYearsData" should {
