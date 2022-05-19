@@ -90,7 +90,8 @@ object GetCalculationDetailsConstants {
       shareSchemesIncome = Some(ShareSchemesIncome(
         totalIncome = 5000.99
       )),
-      stateBenefitsIncome = Some(StateBenefitsIncome(totalStateBenefitsIncome = Some(5000.99))),
+      stateBenefitsIncome = Some(StateBenefitsIncome(totalStateBenefitsIncome = Some(5000.99),
+        totalStateBenefitsIncomeExcStatePensionLumpSum = Some(5000.99))),
       taxCalculation = Some(TaxCalculation(
         incomeTax = IncomeTax(
           totalIncomeReceivedFromAllSources = 12500,
