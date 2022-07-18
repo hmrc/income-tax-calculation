@@ -24,6 +24,7 @@ import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
 import org.scalatest.matchers.must.Matchers
+import play.api.http.HeaderNames
 
 class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers{
 
@@ -34,6 +35,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
     val desUrl = s"/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation"
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val mtditidHeader = ("mtditid", "555555555")
+    val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
     val requestHeaders: Seq[HttpHeader] = Seq(new HttpHeader("mtditid", "555555555"))
     auditStubs()
   }
@@ -50,7 +52,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 200, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 200
@@ -68,7 +70,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 500, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 500
@@ -85,7 +87,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 503, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 503
@@ -102,7 +104,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 404, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 404
@@ -122,7 +124,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 200, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 200
@@ -140,7 +142,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 500, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 500
@@ -157,7 +159,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 503, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 503
@@ -174,7 +176,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
         stubPostWithoutRequestBody(desUrl, 404, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get) {
           result =>
             result.status mustBe 404
