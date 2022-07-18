@@ -23,6 +23,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.http.HeaderNames
 import play.api.http.Status._
 import play.api.libs.json.{JsString, Json}
 
@@ -36,6 +37,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
     val desUrl = s"/income-tax/calculation/nino/$nino/$taxYear/$calculationId/crystallise"
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val mtditidHeader: (String, String) = ("mtditid", "555555555")
+    val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
     val requestHeaders: Seq[HttpHeader] = Seq(new HttpHeader("mtditid", "555555555"))
     auditStubs()
   }
@@ -52,7 +54,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, NO_CONTENT, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 204
@@ -66,7 +68,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 500
@@ -81,7 +83,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 503
@@ -96,7 +98,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 404
@@ -111,7 +113,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, CONFLICT, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 409
@@ -126,7 +128,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 400
@@ -141,7 +143,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 422
@@ -160,7 +162,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
 
         stubPostWithoutRequestBody(desUrl, NO_CONTENT, response)
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 204
@@ -174,7 +176,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 500
@@ -189,7 +191,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 503
@@ -204,7 +206,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, CONFLICT, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 409
@@ -219,7 +221,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 404
@@ -234,7 +236,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 400
@@ -249,7 +251,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
-          .withHttpHeaders(mtditidHeader)
+          .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
           result =>
             result.status mustBe 422
