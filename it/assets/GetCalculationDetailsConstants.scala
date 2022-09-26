@@ -19,6 +19,8 @@ package assets
 import models.calculation._
 import models.calculation.taxcalculation._
 
+import java.time.LocalDate
+
 object GetCalculationDetailsConstants {
 
   val successModelFull = CalculationResponseModel(
@@ -251,7 +253,9 @@ object GetCalculationDetailsConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      periodFrom = Some(LocalDate.of(2019,1,1)),
+      periodTo = Some(LocalDate.of(2020,1,1)))
   )
 
   val successCalcDetailsExpectedJsonFull =
@@ -286,7 +290,9 @@ object GetCalculationDetailsConstants {
        |  "metadata" : {
        |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
        |    "crystallised" : true,
-       |    "calculationReason": "customerRequest"
+       |    "calculationReason": "customerRequest",
+       |    "periodFrom": "2019-01-01",
+       |    "periodTo": "2020-01-01"
        |  },
        |  "calculation" : {
        |    "allowancesAndDeductions" : {
