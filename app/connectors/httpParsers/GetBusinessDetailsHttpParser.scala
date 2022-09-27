@@ -32,7 +32,7 @@ object GetBusinessDetailsHttpParser extends DESParser {
     override def read(method: String, url: String, response: HttpResponse): GetBusinessDetailsResponse = {
       response.status match {
         case OK => response.json.validate[IncomeSourceDetailsModel](IncomeSourceDetailsModel.desReads).fold[GetBusinessDetailsResponse](
-          _ => badSuccessJsonFromDES,
+          validationErrors => badSuccessJsonFromDES(validationErrors),
           parsedModel => Right(parsedModel)
         )
         case NOT_FOUND => Right(IncomeSourceDetailsError(NOT_FOUND,response.body))

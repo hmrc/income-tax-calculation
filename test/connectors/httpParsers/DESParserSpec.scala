@@ -18,7 +18,7 @@ package connectors.httpParsers
 
 import models.{DesErrorBodyModel, DesErrorModel, DesErrorsBodyModel}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsValue, Json, JsonValidationError, __}
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HttpResponse
 
@@ -53,8 +53,10 @@ class DESParserSpec extends TestSuite {
           |} CorrelationId: 1234645654645""".stripMargin)
     }
     "return the the correct error" in {
-      val result = FakeParser.badSuccessJsonFromDES
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR,DesErrorBodyModel("PARSING_ERROR","Error parsing response from DES")))
+      val result = FakeParser.badSuccessJsonFromDES(Seq(((__ \ "some" \ "path"), Seq(JsonValidationError(
+        messages = Seq("err msg1", "err msg2"))))))
+      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR,
+        DesErrorBodyModel("PARSING_ERROR","Error parsing response from DES - List((/some/path,List(JsonValidationError(List(err msg1, err msg2),WrappedArray()))))")))
     }
     "handle multiple errors" in {
       val result = FakeParser.handleDESError(httpResponse())

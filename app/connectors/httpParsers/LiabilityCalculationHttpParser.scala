@@ -31,7 +31,7 @@ object LiabilityCalculationHttpParser extends DESParser {
     override def read(method: String, url: String, response: HttpResponse): LiabilityCalculationResponse = {
       response.status match {
         case OK => response.json.validate[LiabilityCalculationIdModel].fold[LiabilityCalculationResponse](
-          _ => badSuccessJsonFromDES,
+          validationErrors => badSuccessJsonFromDES(validationErrors),
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
