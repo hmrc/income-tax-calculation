@@ -31,7 +31,7 @@ object GetCalculationListHttpParser extends DESParser {
     override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponse = {
       response.status match {
         case OK => response.json.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](
-          _ => badSuccessJsonFromDES,
+          validationErrors => badSuccessJsonFromDES(validationErrors),
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>

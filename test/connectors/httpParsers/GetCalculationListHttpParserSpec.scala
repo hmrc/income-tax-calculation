@@ -151,7 +151,8 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError))
+          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
+            "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),WrappedArray()))))")))
       }
 
       "DES returns a bad json body" in {

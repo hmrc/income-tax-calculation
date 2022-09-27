@@ -103,7 +103,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
       val result = await(connector.calcList(nino, None))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
+      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
+        "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),WrappedArray()))))")))
     }
 
     "DES returns an 503 error with OptionalTaxYear" in {
@@ -135,7 +136,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
       val result = await(connector.calcList(nino, taxYear))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
+      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR,
+        DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),WrappedArray()))))")))
     }
   }
 
