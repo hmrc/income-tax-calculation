@@ -41,7 +41,7 @@ object Class2Nics {
   implicit val format: OFormat[Class2Nics] = Json.format[Class2Nics]
 }
 
-case class Class4Nics(nic4Bands: Seq[Nic4Bands] = Seq())
+case class Class4Nics(nic4Bands: Seq[Nic4Bands])
 object Class4Nics {
   implicit val format: OFormat[Class4Nics] = Json.format[Class4Nics]
 }

@@ -18,7 +18,7 @@ package models.calculation
 
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull, successModelFull}
+import testConstants.GetCalculationDetailsConstants._
 import testUtils.TestSuite
 
 class CalculationResponseModelModelSpec extends TestSuite {
@@ -34,16 +34,17 @@ class CalculationResponseModelModelSpec extends TestSuite {
           crystallised = Some(true),
           calculationReason = Some("customerRequest"))
       )
-      val expectedJson = s"""
-                            |{
-                            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
-                            |  "metadata" : {
-                            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-                            |    "crystallised" : true,
-                            |    "calculationReason": "customerRequest"
-                            |  }
-                            |}
-                            |""".stripMargin.trim
+      val expectedJson =
+        s"""
+           |{
+           |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
+           |  "metadata" : {
+           |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+           |    "crystallised" : true,
+           |    "calculationReason": "customerRequest"
+           |  }
+           |}
+           |""".stripMargin.trim
 
 
       "be translated to Json correctly" in {
@@ -52,6 +53,16 @@ class CalculationResponseModelModelSpec extends TestSuite {
       "should convert from json to model" in {
         val calcResponse = Json.fromJson[CalculationResponseModel](Json.parse(expectedJson))
         Json.toJson(calcResponse.get) mustBe Json.parse(expectedJson)
+      }
+    }
+
+    "successful with zero length or null arrays" should {
+      "be translated to Json correctly" in {
+        Json.toJson(arrayTestFull) mustBe Json.parse(successCalcDetailsNullArraysExpectedJsonFull)
+      }
+      "should convert from json to model" in {
+        val calcModel = Json.fromJson[CalculationResponseModel](Json.parse(successCalcDetailsNullArraysExpectedJsonFull))
+        Json.toJson(calcModel.get) mustBe Json.parse(successCalcDetailsNullArraysExpectedJsonFull)
       }
     }
 
