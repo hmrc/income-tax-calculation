@@ -16,18 +16,17 @@
 
 package services
 
-import connectors.httpParsers.GetBusinessDetailsHttpParser.GetBusinessDetailsResponse
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.mongo.{DataNotFoundError, DatabaseError, MongoError, TaxYearsData}
 import models.{DesErrorBodyModel, DesErrorModel}
-import org.scalamock.handlers.{CallHandler1, CallHandler2, CallHandler3}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import org.scalamock.handlers.{CallHandler1, CallHandler3}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import repositories.TaxYearsDataRepository
 import testUtils.{TestSuite, TestingClock}
 import uk.gov.hmrc.http.HeaderCarrier
-import java.time.LocalDate
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class GetTaxYearsDataServiceSpec extends TestSuite {

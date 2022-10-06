@@ -20,15 +20,15 @@ import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.mongo.TaxYearsData
 import models.{DesErrorBodyModel, DesErrorModel, TaxYearsResponseData}
-import org.scalamock.handlers.{CallHandler2, CallHandler3}
+import org.scalamock.handlers.CallHandler3
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
 import play.api.libs.json.Json
 import services.GetTaxYearsDataService
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
-import java.time.LocalDate
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class TaxYearsDataControllerSpec extends TestSuite {
