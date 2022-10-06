@@ -21,10 +21,13 @@ import play.api.libs.json._
 import testConstants.GetCalculationDetailsConstants._
 import testUtils.TestSuite
 
+import java.time.LocalDate
+
 class CalculationResponseModelModelSpec extends TestSuite {
 
   "LastTaxCalculationResponseMode model" when {
     "successful successModelMinimal" should {
+      val taxYear = 2020
       val successModelMinimal = CalculationResponseModel(
         inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
         messages = None,
@@ -32,20 +35,23 @@ class CalculationResponseModelModelSpec extends TestSuite {
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
           crystallised = Some(true),
-          calculationReason = Some("customerRequest"))
+          calculationReason = Some("customerRequest"),
+          periodFrom = Some(LocalDate.of(taxYear-1,1,1)),
+          periodTo = Some(LocalDate.of(taxYear,1,1)))
       )
-      val expectedJson =
-        s"""
-           |{
-           |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
-           |  "metadata" : {
-           |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-           |    "crystallised" : true,
-           |    "calculationReason": "customerRequest"
-           |  }
-           |}
-           |""".stripMargin.trim
 
+      val expectedJson = s"""
+                            |{
+                            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
+                            |  "metadata" : {
+                            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+                            |    "crystallised" : true,
+                            |    "calculationReason": "customerRequest",
+                            |    "periodFrom": "2019-01-01",
+                            |    "periodTo": "2020-01-01"
+                            |  }
+                            |}
+                            |""".stripMargin.trim
 
       "be translated to Json correctly" in {
         Json.toJson(successModelMinimal) mustBe Json.parse(expectedJson)

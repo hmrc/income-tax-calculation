@@ -18,6 +18,8 @@ package models.calculation
 
 import play.api.libs.json._
 
+import java.time.LocalDate
+
 sealed trait LiabilityCalculationResponseModel
 
 case class LiabilityCalculationError(status: Int, message: String) extends LiabilityCalculationResponseModel
@@ -37,7 +39,12 @@ object CalculationResponseModel {
   implicit val format: OFormat[CalculationResponseModel] = Json.format[CalculationResponseModel]
 }
 
-case class Metadata(calculationTimestamp: Option[String], crystallised: Option[Boolean], calculationReason: Option[String])
+case class Metadata(
+                     calculationTimestamp: Option[String],
+                     crystallised: Option[Boolean],
+                     calculationReason: Option[String],
+                     periodFrom: Option[LocalDate],
+                     periodTo: Option[LocalDate])
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]
