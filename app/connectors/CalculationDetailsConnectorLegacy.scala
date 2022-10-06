@@ -24,9 +24,9 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
-                                            val appConfig: AppConfig)
-                                           (implicit ec: ExecutionContext) extends IFConnector {
+class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
+                                                  val appConfig: AppConfig)
+                                                 (implicit ec: ExecutionContext) extends IFConnector {
 
   def getCalculationDetails(nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$nino/$calculationId"

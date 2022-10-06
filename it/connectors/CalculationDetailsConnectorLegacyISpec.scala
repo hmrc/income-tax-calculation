@@ -28,9 +28,9 @@ import assets.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers {
+class CalculationDetailsConnectorLegacyISpec extends AnyWordSpec with WiremockSpec with Matchers {
 
-  lazy val connector: CalculationDetailsConnector = app.injector.instanceOf[CalculationDetailsConnector]
+  lazy val connector: CalculationDetailsConnectorLegacy = app.injector.instanceOf[CalculationDetailsConnectorLegacy]
 
   lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
 
@@ -41,7 +41,7 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
   "CalculationDetailsConnector" should {
 
     val appConfigWithInternalHost = appConfig("localhost")
-    val connector = new CalculationDetailsConnector(httpClient, appConfigWithInternalHost)
+    val connector = new CalculationDetailsConnectorLegacy(httpClient, appConfigWithInternalHost)
 
     val nino = "taxable_entity_id"
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
