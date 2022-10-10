@@ -18,9 +18,9 @@ package services
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
-import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
+import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModel}
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 import testConstants.GetCalculationDetailsConstants.successModelFull
 import testUtils.TestSuite
@@ -30,9 +30,10 @@ import scala.concurrent.Future
 
 class GetCalculationDetailsServiceSpec extends TestSuite {
 
-  val mockSingleCalculationConnector: CalculationDetailsConnectorLegacy = mock[CalculationDetailsConnectorLegacy]
+  val mockSingleCalculationConnectorLegacy: CalculationDetailsConnectorLegacy = mock[CalculationDetailsConnectorLegacy]
+  val mockSingleCalculationConnector: CalculationDetailsConnector = mock[CalculationDetailsConnector]
   val mockListCalculationConnector: GetCalculationListConnector = mock[GetCalculationListConnector]
-  val service = new GetCalculationDetailsService(mockSingleCalculationConnector, mockListCalculationConnector)
+  val service = new GetCalculationDetailsService(mockSingleCalculationConnectorLegacy, mockSingleCalculationConnector, mockListCalculationConnector)
 
   val nino = "AA123456A"
   val taxYear = Some("2022")
@@ -40,9 +41,14 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
 
-  def getCalculationDetailsSuccess: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
-    (mockSingleCalculationConnector.getCalculationDetails(_: String, _: String)(_: HeaderCarrier))
+  def getCalculationDetailsSuccessLegacy: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
+    (mockSingleCalculationConnectorLegacy.getCalculationDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
+      .returning(Future.successful(Right((successModelFull))))
+
+  def getCalculationDetailsSuccess: CallHandler4[String, String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
+    (mockSingleCalculationConnector.getCalculationDetails(_: String, _: String, _: String)(_: HeaderCarrier))
+      .expects(*, *, *, *)
       .returning(Future.successful(Right((successModelFull))))
 
   def listCalculationDetailsSuccess: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponse]] =
@@ -54,8 +60,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
       )
 
-  def getCalculationDetailsFailure: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
-    (mockSingleCalculationConnector.getCalculationDetails(_: String, _: String)(_: HeaderCarrier))
+  def getCalculationDetailsFailureLegacy: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
+    (mockSingleCalculationConnectorLegacy.getCalculationDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
 
@@ -72,7 +78,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   ".getCalculationDetails" should {
 
     "return a Right when successful" in {
-      getCalculationDetailsSuccess
+      getCalculationDetailsSuccessLegacy
 
       listCalculationDetailsSuccess
 
@@ -102,7 +108,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     "return a Left(DesError) when calling list calculations succeeds however calling get calculations returns a DES error" in {
 
       listCalculationDetailsSuccess
-      getCalculationDetailsFailure
+      getCalculationDetailsFailureLegacy
 
       val result = await(service.getCalculationDetails(nino, taxYear))
 
@@ -111,19 +117,26 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   }
   ".getCalculationDetailsByCalcId" should {
 
-    "return a Right when successful" in {
+    "return a Right when successful and tax year >= 2024" in {
       getCalculationDetailsSuccess
 
-      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId))
+      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, Some("2024")))
 
       result mustBe Right(successModelFull)
     }
 
+    "return a Right when successful" in {
+      getCalculationDetailsSuccessLegacy
+
+      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, taxYear))
+
+      result mustBe Right(successModelFull)
+    }
 
     "return a Left(DesError) when calling get calculations returns a DES error" in {
-      getCalculationDetailsFailure
+      getCalculationDetailsFailureLegacy
 
-      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId))
+      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, taxYear))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
     }

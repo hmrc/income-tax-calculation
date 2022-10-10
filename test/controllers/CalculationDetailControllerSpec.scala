@@ -18,7 +18,7 @@ package controllers
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import models.{DesErrorBodyModel, DesErrorModel}
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
 import play.api.libs.json.Json
@@ -50,14 +50,14 @@ class CalculationDetailControllerSpec extends TestSuite {
       .expects(nino, Some(taxYear), *)
       .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
-  def calculationSuccessResponseByCalcId: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
-    (service.getCalculationDetailsByCalcId(_: String, _: String)(_: HeaderCarrier))
-      .expects(nino, calculationId, *)
+  def calculationSuccessResponseByCalcId: CallHandler4[String, String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
+    (service.getCalculationDetailsByCalcId(_: String, _: String, _: Option[String])(_: HeaderCarrier))
+      .expects(nino, calculationId, Some(taxYear), *)
       .returning(Future.successful(Right(successModelFull)))
 
-  def calculationErrorResponseByCalcId(status: Int): CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
-    (service.getCalculationDetailsByCalcId(_: String, _: String)(_: HeaderCarrier))
-      .expects(nino, calculationId, *)
+  def calculationErrorResponseByCalcId(status: Int): CallHandler4[String, String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
+    (service.getCalculationDetailsByCalcId(_: String, _: String, _: Option[String])(_: HeaderCarrier))
+      .expects(nino, calculationId, Some(taxYear), *)
       .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   "CalculationDetailController.calculationDetail" should {
@@ -121,7 +121,7 @@ class CalculationDetailControllerSpec extends TestSuite {
       mockAuth()
       calculationSuccessResponseByCalcId
 
-      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      val result = controller.calculationDetailByCalcId(nino, calculationId, Some(taxYear))(fakeRequestWithMtditid)
       status(result) mustBe Status.OK
       bodyOf(result) mustBe Json.toJson(successModelFull).toString()
 
@@ -133,7 +133,7 @@ class CalculationDetailControllerSpec extends TestSuite {
       mockAuth()
       calculationErrorResponseByCalcId(INTERNAL_SERVER_ERROR)
 
-      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      val result = controller.calculationDetailByCalcId(nino, calculationId, Some(taxYear))(fakeRequestWithMtditid)
       status(result) mustBe Status.INTERNAL_SERVER_ERROR
 
     }
@@ -143,7 +143,7 @@ class CalculationDetailControllerSpec extends TestSuite {
       mockAuth()
       calculationErrorResponseByCalcId(SERVICE_UNAVAILABLE)
 
-      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      val result = controller.calculationDetailByCalcId(nino, calculationId, Some(taxYear))(fakeRequestWithMtditid)
       status(result) mustBe Status.SERVICE_UNAVAILABLE
 
     }
@@ -153,7 +153,7 @@ class CalculationDetailControllerSpec extends TestSuite {
       mockAuth()
       calculationErrorResponseByCalcId(BAD_REQUEST)
 
-      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      val result = controller.calculationDetailByCalcId(nino, calculationId, Some(taxYear))(fakeRequestWithMtditid)
       status(result) mustBe Status.BAD_REQUEST
 
     }
@@ -163,7 +163,7 @@ class CalculationDetailControllerSpec extends TestSuite {
       mockAuth()
       calculationErrorResponseByCalcId(FORBIDDEN)
 
-      val result = controller.calculationDetailByCalcId(nino, calculationId)(fakeRequestWithMtditid)
+      val result = controller.calculationDetailByCalcId(nino, calculationId, Some(taxYear))(fakeRequestWithMtditid)
       status(result) mustBe Status.FORBIDDEN
 
     }
