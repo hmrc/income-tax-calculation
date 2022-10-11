@@ -21,6 +21,6 @@ object TaxYear {
   def updatedFormat(year: String): String = {
     val endYear: Int = year.substring(year.length - 2).toInt
     val startYear: Int = endYear - 1
-    s"$startYear-$endYear"
+    s"20$startYear-$endYear"
   }
 }
