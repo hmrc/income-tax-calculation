@@ -20,7 +20,7 @@ import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResp
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{DesErrorBodyModel, DesErrorModel}
 import play.api.http.Status.NO_CONTENT
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import utils.TaxYear
 
 import javax.inject.Inject
@@ -41,11 +41,17 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   }
 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+
+    val Pattern = "([0-9]{4})".r
+
     taxYear match {
-      case Some(year) if year.toInt >= 2024 =>
-        calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year), nino, calcId)
-      case _ =>
-        calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
+      case Some(Pattern(year)) =>
+        if(year.toInt >= 2024) {
+          calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year), nino, calcId)
+        } else {
+          calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
+        }
+      case _ => throw new InternalServerException("[GetCalculationDetailsService][getCalculationDetailsByCalcId]: Could not parse Tax year")
     }
   }
 }
