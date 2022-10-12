@@ -18,7 +18,7 @@ package models.calculation
 
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull, successModelFull}
+import testConstants.GetCalculationDetailsConstants._
 import testUtils.TestSuite
 
 import java.time.LocalDate
@@ -39,6 +39,7 @@ class CalculationResponseModelModelSpec extends TestSuite {
           periodFrom = Some(LocalDate.of(taxYear-1,1,1)),
           periodTo = Some(LocalDate.of(taxYear,1,1)))
       )
+
       val expectedJson = s"""
                             |{
                             |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
@@ -52,13 +53,22 @@ class CalculationResponseModelModelSpec extends TestSuite {
                             |}
                             |""".stripMargin.trim
 
-
       "be translated to Json correctly" in {
         Json.toJson(successModelMinimal) mustBe Json.parse(expectedJson)
       }
       "should convert from json to model" in {
         val calcResponse = Json.fromJson[CalculationResponseModel](Json.parse(expectedJson))
         Json.toJson(calcResponse.get) mustBe Json.parse(expectedJson)
+      }
+    }
+
+    "successful with zero length or null arrays" should {
+      "be translated to Json correctly" in {
+        Json.toJson(arrayTestFull) mustBe Json.parse(successCalcDetailsNullArraysExpectedJsonFull)
+      }
+      "should convert from json to model" in {
+        val calcModel = Json.fromJson[CalculationResponseModel](Json.parse(successCalcDetailsNullArraysExpectedJsonFull))
+        Json.toJson(calcModel.get) mustBe Json.parse(successCalcDetailsNullArraysExpectedJsonFull)
       }
     }
 
