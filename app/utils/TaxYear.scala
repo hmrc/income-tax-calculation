@@ -19,8 +19,8 @@ package utils
 object TaxYear {
 
   def updatedFormat(year: String): String = {
-    val endYear: Int = year.substring(year.length - 2).toInt
+    val endYear: Int = year.toInt
     val startYear: Int = endYear - 1
-    s"20$startYear-$endYear"
+    s"$startYear-${endYear.toString.substring(year.length - 2)}"
   }
 }
