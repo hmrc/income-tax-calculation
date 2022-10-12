@@ -117,7 +117,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   }
   ".getCalculationDetailsByCalcId" should {
 
-    "return a Right when successful and tax year >= 2024" in {
+    "return a Right when successful and tax year is 23-24 or later" in {
       getCalculationDetailsSuccess
 
       val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, Some("2024")))
