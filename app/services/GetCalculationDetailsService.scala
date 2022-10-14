@@ -21,6 +21,7 @@ import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegac
 import models.{DesErrorBodyModel, DesErrorModel}
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.TaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,27 +42,11 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
 
-    convert(taxYear) match {
+    TaxYear.convert(taxYear) match {
       case Right(year) if year >= 2024 =>
-        calculationDetailsConnector.getCalculationDetails(updatedFormat(year.toString), nino, calcId)
+        calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId)
       case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
       case Left(error) => throw new RuntimeException(error)
     }
-  }
-
-  def convert(taxYear: Option[String]): Either[String, Int] = {
-
-    def isValidFormat(year: String): Boolean = year.length == 4 && year.forall(_.isDigit)
-
-    taxYear match {
-      case Some(year) if isValidFormat(year) => Right(year.toInt)
-      case _ => Left("Failed to parse Tax year")
-    }
-  }
-
-  def updatedFormat(year: String): String = {
-    val endYear: Int = year.toInt
-    val startYear: Int = endYear - 1
-    s"$startYear-${endYear.toString.substring(year.length - 2)}"
   }
 }
