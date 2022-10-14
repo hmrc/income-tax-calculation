@@ -115,6 +115,27 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
     }
   }
+
+  ".convert" should {
+
+    "return a Left(String) if the tax year given does not contain digits exclusively" in {
+      service.convert(Some("20a2")) mustBe Left("Failed to parse Tax year")
+    }
+    "return a Left(String) if the tax year given is not 4 characters long" in {
+      service.convert(Some("20211")) mustBe Left("Failed to parse Tax year")
+    }
+    "return a Right(Int) if the tax year given is 4 characters long and contains only digits" in {
+      service.convert(Some("2021")) mustBe Right(2021)
+    }
+  }
+
+  ".updatedFormat" should {
+
+    "return a tax year of the format" in {
+      service.updatedFormat("2021") mustBe "2020-21"
+    }
+  }
+
   ".getCalculationDetailsByCalcId" should {
 
     "return a Right when successful and tax year is 23-24 or later" in {
@@ -125,7 +146,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Right(successModelFull)
     }
 
-    "return a Right when successful" in {
+    "return a Right when successful and tax year is 22-23 or prior" in {
       getCalculationDetailsSuccessLegacy
 
       val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, taxYear))
