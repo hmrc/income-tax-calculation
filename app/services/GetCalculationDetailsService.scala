@@ -17,7 +17,7 @@
 package services
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import connectors.{CalculationDetailsConnector, GetCalculationListConnector}
+import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{DesErrorBodyModel, DesErrorModel}
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetCalculationDetailsService @Inject()(calculationDetailsConnector: CalculationDetailsConnector,
+class GetCalculationDetailsService @Inject()(calculationDetailsConnector: CalculationDetailsConnectorLegacy,
                                              listCalculationDetailsConnector: GetCalculationListConnector) (implicit ec: ExecutionContext) {
 
   def getCalculationDetails(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {

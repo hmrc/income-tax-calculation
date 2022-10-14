@@ -18,7 +18,7 @@ package connectors.httpParsers
 
 import models.{DesErrorBodyModel, DesErrorModel, DesErrorsBodyModel}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.libs.json.{JsError, JsPath, JsonValidationError}
+import play.api.libs.json.{JsPath, JsonValidationError}
 import uk.gov.hmrc.http.HttpResponse
 import utils.PagerDutyHelper.PagerDutyKeys.{BAD_SUCCESS_JSON_FROM_DES, UNEXPECTED_RESPONSE_FROM_DES}
 import utils.PagerDutyHelper.{getCorrelationId, pagerDutyLog}

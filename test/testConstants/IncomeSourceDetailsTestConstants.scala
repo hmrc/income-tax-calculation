@@ -21,7 +21,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
 import testConstants.BaseIntegrationTestConstants.testNino
 import testConstants.BaseTestConstants.testMtdId
-import testConstants.BusinessDetailsTestConstants.{testBusinessDetailsJson, testBusinessDetailsModel, testBusinessDetailsToJson, testMinimumBusinessDetailsJson, testMinimumBusinessDetailsModel, testMinimumBusinessDetailsToJson}
+import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants.{testPropertyDetailsJson, testPropertyDetailsModel, testPropertyDetailsToJson}
 import uk.gov.hmrc.http.HttpResponse
 
@@ -70,7 +70,7 @@ object IncomeSourceDetailsTestConstants {
 
   val testIncomeSourceDetailsError = IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Dummy error message")
 
-  val successResponse = HttpResponse(Status.OK, Some(testIncomeSourceDetailsJson))
-  val badJson = HttpResponse(Status.OK, Some(Json.toJson("{}")))
-  val badResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, responseString = Some("Dummy error message"))
+  val successResponse: HttpResponse = HttpResponse(status = Status.OK, json = testIncomeSourceDetailsJson, headers = Map.empty)
+  val badJson: HttpResponse = HttpResponse(status = Status.OK, json = Json.toJson("{}"), headers = Map.empty)
+  val badResponse: HttpResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, body = "Dummy error message")
 }

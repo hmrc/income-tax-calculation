@@ -18,9 +18,9 @@ package services
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
-import connectors.{CalculationDetailsConnector, GetCalculationListConnector}
+import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModel}
-import org.scalamock.handlers.{CallHandler3, CallHandler4}
+import org.scalamock.handlers.CallHandler3
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 import testConstants.GetCalculationDetailsConstants.successModelFull
 import testUtils.TestSuite
@@ -30,7 +30,7 @@ import scala.concurrent.Future
 
 class GetCalculationDetailsServiceSpec extends TestSuite {
 
-  val mockSingleCalculationConnector: CalculationDetailsConnector = mock[CalculationDetailsConnector]
+  val mockSingleCalculationConnector: CalculationDetailsConnectorLegacy = mock[CalculationDetailsConnectorLegacy]
   val mockListCalculationConnector: GetCalculationListConnector = mock[GetCalculationListConnector]
   val service = new GetCalculationDetailsService(mockSingleCalculationConnector, mockListCalculationConnector)
 
