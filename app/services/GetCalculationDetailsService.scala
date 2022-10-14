@@ -43,9 +43,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
 
     TaxYear.convert(taxYear) match {
-      case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
-      case Right(year) if year >= 2024 =>
-        calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId)
+      case Right(Some(year)) if year >= 2024 => calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId)
       case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
       case Left(error) => throw new RuntimeException(error)
     }

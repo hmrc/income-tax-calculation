@@ -28,7 +28,7 @@ class TaxYearSpec extends TestSuite {
       TaxYear.convert(Some("20211")) mustBe Left("Failed to parse Tax year")
     }
     "return a Right(Int) if the tax year given is 4 characters long and contains only digits" in {
-      TaxYear.convert(Some("2021")) mustBe Right(2021)
+      TaxYear.convert(Some("2021")) mustBe Right(Some(2021))
     }
   }
 

@@ -18,13 +18,15 @@ package utils
 
 object TaxYear {
 
-  def convert(taxYear: Option[String]): Either[String, Int] = {
+  def convert(taxYear: Option[String]): Either[String, Option[Int]] = {
 
     def isValidFormat(year: String): Boolean = year.length == 4 && year.forall(_.isDigit)
 
     taxYear match {
-      case Some(year) if isValidFormat(year) => Right(year.toInt)
-      case _ => Left("Failed to parse Tax year")
+      case Some(year) =>
+        if (isValidFormat(year)) { Right(Some(year.toInt)) }
+        else { Left("Failed to parse Tax year") }
+      case _ => Right(None)
     }
   }
 
