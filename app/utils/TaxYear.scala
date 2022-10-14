@@ -16,10 +16,6 @@
 
 package utils
 
-class TaxYear {
-
-}
-
 object TaxYear {
 
   def convert(taxYear: Option[String]): Either[String, Int] = {
