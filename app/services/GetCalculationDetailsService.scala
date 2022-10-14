@@ -51,10 +51,10 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
   def convert(taxYear: Option[String]): Either[String, Int] = {
 
-    val Pattern = "([0-9]{4})".r
+    def isValidFormat(year: String): Boolean = year.length == 4 && year.forall(_.isDigit)
 
     taxYear match {
-      case Some(Pattern(year)) => Right(year.toInt)
+      case Some(year) if isValidFormat(year) => Right(year.toInt)
       case _ => Left("Failed to parse Tax year")
     }
   }
