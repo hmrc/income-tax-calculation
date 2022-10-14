@@ -42,16 +42,23 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
 
+    convert(taxYear) match {
+      case Right(year) if year >= 2024 =>
+          calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId)
+      case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
+      case Left(error) => throw new RuntimeException(error)
+    }
+  }
+
+  def convert(taxYear: Option[String]): Either[String, Int] = {
+
     val Pattern = "([0-9]{4})".r
 
     taxYear match {
-      case Some(Pattern(year)) =>
-        if(year.toInt >= 2024) {
-          calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year), nino, calcId)
-        } else {
-          calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
-        }
-      case _ => throw new InternalServerException("[GetCalculationDetailsService][getCalculationDetailsByCalcId]: Could not parse Tax year")
+      case Some(Pattern(year)) => Right(year.toInt)
+      case _ => Left("Failed to parse Tax year")
     }
   }
 }
+
+
