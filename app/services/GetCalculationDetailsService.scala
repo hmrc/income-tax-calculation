@@ -17,15 +17,17 @@
 package services
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
+import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{DesErrorBodyModel, DesErrorModel}
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.TaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetCalculationDetailsService @Inject()(calculationDetailsConnector: CalculationDetailsConnectorLegacy,
+class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
+                                             calculationDetailsConnector: CalculationDetailsConnector,
                                              listCalculationDetailsConnector: GetCalculationListConnector) (implicit ec: ExecutionContext) {
 
   def getCalculationDetails(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {
@@ -33,12 +35,19 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnector: Calcul
       case Right(listOfCalculationDetails) if(listOfCalculationDetails.isEmpty) =>
         Future.successful(Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel.parsingError)))
       case Right(listOfCalculationDetails) =>
-        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId)
+        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
       case Left(desError) => Future.successful(Left(desError))
     }
   }
 
-  def getCalculationDetailsByCalcId(nino: String, calcId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-    calculationDetailsConnector.getCalculationDetails(nino, calcId)
+  def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+
+    TaxYear.convert(taxYear) match {
+      case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
+      case Right(year) if year >= 2024 =>
+        calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId)
+      case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
+      case Left(error) => throw new RuntimeException(error)
+    }
   }
 }

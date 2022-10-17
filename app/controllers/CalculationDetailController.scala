@@ -43,8 +43,8 @@ class CalculationDetailController @Inject()(getCalculationDetailsService: GetCal
     }
   }
 
-  def calculationDetailByCalcId(nino: String, calcId: String): Action[AnyContent] = authorisedAction.async { implicit user =>
-    getCalculationDetailsService.getCalculationDetailsByCalcId(nino, calcId).map {
+  def calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String]): Action[AnyContent] = authorisedAction.async { implicit user =>
+    getCalculationDetailsService.getCalculationDetailsByCalcId(nino, calcId, taxYear).map {
       case Right(success) =>
         logger.debug(s"[CalculationDetailController][calculationDetailByCalcId] - Successful Response: $success")
         Ok(Json.toJson(success))
