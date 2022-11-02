@@ -49,6 +49,9 @@
 
     <logger name="application" level="DEBUG"/>
 
+    <logger name="controllers.CalculationDetailController" level="DEBUG" />
+    <logger name="controllers.TaxYearsDataController" level="DEBUG" />
+
     <logger name="connector" level="TRACE">
         <appender-ref ref="STDOUT"/>
     </logger>
