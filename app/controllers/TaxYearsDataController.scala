@@ -19,9 +19,9 @@ package controllers
 import controllers.predicates.AuthorisedAction
 import models.TaxYearsResponseData
 import models.mongo.TaxYearsData
+import play.api.Logging
 
 import javax.inject.Inject
-import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.GetTaxYearsDataService
@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 class TaxYearsDataController @Inject()(getTaxYearsDataService: GetTaxYearsDataService,
                                        cc: ControllerComponents,
                                        authorisedAction: AuthorisedAction)
-                                      (implicit ec: ExecutionContext) extends BackendController(cc) {
+                                      (implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
   def getTaxYearsData(nino: String): Action[AnyContent] = authorisedAction.async { implicit user =>
     getTaxYearsDataService.getTaxYearsData(nino, user.mtditid).map {

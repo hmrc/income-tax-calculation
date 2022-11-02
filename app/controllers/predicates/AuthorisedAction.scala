@@ -20,7 +20,7 @@ import common.{EnrolmentIdentifiers, EnrolmentKeys}
 
 import javax.inject.Inject
 import models.User
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Unauthorized
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -33,9 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
                                    defaultActionBuilder: DefaultActionBuilder,
-                                   val cc: ControllerComponents) extends AuthorisedFunctions {
+                                   val cc: ControllerComponents) extends AuthorisedFunctions with Logging {
 
-  lazy val logger: Logger = Logger.apply(this.getClass)
   implicit val executionContext: ExecutionContext = cc.executionContext
 
   val unauthorized: Future[Result] = Future(Unauthorized)

@@ -17,8 +17,9 @@
 package controllers
 
 import controllers.predicates.AuthorisedAction
+import play.api.Logging
+
 import javax.inject.Inject
-import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.GetCalculationDetailsService
@@ -29,7 +30,7 @@ import scala.concurrent.ExecutionContext
 class CalculationDetailController @Inject()(getCalculationDetailsService: GetCalculationDetailsService,
                                             cc: ControllerComponents,
                                             authorisedAction: AuthorisedAction)
-                                           (implicit ec: ExecutionContext) extends BackendController(cc) {
+                                           (implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
   def calculationDetail(nino: String, taxYear: Option[String]): Action[AnyContent] = authorisedAction.async { implicit user =>
     getCalculationDetailsService.getCalculationDetails(nino, taxYear).map {
