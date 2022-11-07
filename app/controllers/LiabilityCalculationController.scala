@@ -36,7 +36,7 @@ class LiabilityCalculationController @Inject()(liabilityCalculationService: Liab
     liabilityCalculationService.calculateLiability(nino, taxYear, crystallise).map {
       case Right(value) => Ok(Json.toJson(value))
       case Left(error) =>
-        logger.error(s"[LiabilityCalculationController][calculateLiability] - Error Response: $error")
+        logger.error(s"[LiabilityCalculationController][calculateLiability] - Error Response: $error, nino: $nino")
         Status(error.status)(error.toJson)
     }
   }
