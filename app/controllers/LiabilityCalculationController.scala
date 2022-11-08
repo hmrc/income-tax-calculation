@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.predicates.AuthorisedAction
+import play.api.Logging
 import javax.inject.Inject
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -28,12 +29,14 @@ import scala.concurrent.ExecutionContext
 class LiabilityCalculationController @Inject()(liabilityCalculationService: LiabilityCalculationService,
                                                cc: ControllerComponents,
                                                authorisedAction: AuthorisedAction)
-                                              (implicit ec: ExecutionContext) extends BackendController(cc) {
+                                              (implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
   def calculateLiability(nino: String, taxYear: String, crystallise: Boolean): Action[AnyContent] = authorisedAction.async { implicit user =>
     liabilityCalculationService.calculateLiability(nino, taxYear, crystallise).map {
       case Right(value) => Ok(Json.toJson(value))
-      case Left(error) => Status(error.status)(error.toJson)
+      case Left(error) =>
+        logger.error(s"[LiabilityCalculationController][calculateLiability] - Error Response: $error, taxYear: $taxYear")
+        Status(error.status)(error.toJson)
     }
   }
 
