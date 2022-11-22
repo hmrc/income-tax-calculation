@@ -31,7 +31,7 @@ trait DESParser {
     Some(s"[$parserName][read] Received ${response.status} from DES. Body:${response.body}" + getCorrelationId(response))
   }
 
-  def badSuccessJsonFromDES[Response](validationErrors: Seq[(JsPath, Seq[JsonValidationError])] ): Either[DesErrorModel, Response] = {
+  def badSuccessJsonFromDES[Response](validationErrors: collection.Seq[(JsPath, collection.Seq[JsonValidationError])] ): Either[DesErrorModel, Response] = {
     pagerDutyLog(BAD_SUCCESS_JSON_FROM_DES, Some(s"[$parserName][read] Invalid Json from DES. " + validationErrors))
     Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES - " + validationErrors)))
   }
