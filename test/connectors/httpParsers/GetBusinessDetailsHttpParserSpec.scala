@@ -148,7 +148,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(OK, response)) mustBe
           Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
-            "Error parsing response from DES - List((/nino,List(JsonValidationError(List(error.path.missing),WrappedArray()))), (/mtdbsa,List(JsonValidationError(List(error.path.missing),WrappedArray()))))")))
+            "Error parsing response from DES - List((/mtdbsa,List(JsonValidationError(List(error.path.missing),List()))), (/nino,List(JsonValidationError(List(error.path.missing),List()))))")))
       }
 
       "DES returns a bad json body" in {
