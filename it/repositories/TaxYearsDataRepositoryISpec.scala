@@ -69,7 +69,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
     "fail to find data" in new EmptyDatabase {
       implicit val textAndKey: TextAndKey = TextAndKey(taxYearsData.nino, appConfig.encryptionKey)
       countFromOtherDatabase mustBe 0
-      await(repoWithInvalidEncryption.collection.insertOne(taxYearsData.encrypted).toFuture())
+      await(repoWithInvalidEncryption.collection.insertOne(taxYearsData.encrypted()).toFuture())
       countFromOtherDatabase mustBe 1
       private val res = await(repoWithInvalidEncryption.find(taxYearsData.nino))
       res mustBe Left(EncryptionDecryptionError(
@@ -99,7 +99,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
       count mustBe 1
 
       private val res2 = await(underTest.createOrUpdate(taxYearsData.copy(nino = "AA234567A")))
-      res2.left.get.message must include("Command failed with error 11000 (DuplicateKey)")
+      res2.left.toOption.get.message must include("Command failed with error 11000 (DuplicateKey)")
       count mustBe 1
     }
 
@@ -144,8 +144,8 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
 
       private val findResult = await(underTest.find(data.nino))
 
-      findResult.right.get.map(_.copy(lastUpdated = data.lastUpdated)) mustBe Some(data)
-      findResult.right.get.map(_.lastUpdated.isAfter(data.lastUpdated)) mustBe Some(true)
+      findResult.toOption.get.map(_.copy(lastUpdated = data.lastUpdated)) mustBe Some(data)
+      findResult.toOption.get.map(_.lastUpdated.isAfter(data.lastUpdated)) mustBe Some(true)
     }
 
     "find a document in collection with all fields present" in new EmptyDatabase {
@@ -156,7 +156,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
         await(underTest.find(taxYearsData.nino))
       }
 
-      findResult mustBe Right(Some(taxYearsData.copy(lastUpdated = findResult.right.get.get.lastUpdated)))
+      findResult mustBe Right(Some(taxYearsData.copy(lastUpdated = findResult.toOption.get.get.lastUpdated)))
     }
 
     "return None when find operation succeeds but no data is found for the given inputs" in new EmptyDatabase {
@@ -170,7 +170,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
       await(underTest.createOrUpdate(taxYearsData)) mustBe Right(())
       count mustBe 1
 
-      private val encryptedTaxYearsData: EncryptedTaxYearsData = taxYearsData.encrypted
+      private val encryptedTaxYearsData: EncryptedTaxYearsData = taxYearsData.encrypted()
 
       private val caught = intercept[MongoWriteException](await(underTest.collection.insertOne(encryptedTaxYearsData).toFuture()))
 
