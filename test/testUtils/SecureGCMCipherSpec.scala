@@ -103,7 +103,7 @@ class SecureGCMCipherSpec extends TestSuite {
         override val ALGORITHM_TO_TRANSFORM_STRING: String = "invalid"
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.encrypt(textToEncrypt, associatedText, secretKey)
+        secureGCMEncrypter.encrypt((textToEncrypt, associatedText, secretKey))
       )
       assert(encryptedAttempt.failureReason.contains("Algorithm being requested is not available in this environment"))
     }
@@ -113,7 +113,7 @@ class SecureGCMCipherSpec extends TestSuite {
         override def getCipherInstance: Cipher = throw new NoSuchPaddingException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.encrypt(textToEncrypt, associatedText, secretKey)
+        secureGCMEncrypter.encrypt((textToEncrypt, associatedText, secretKey))
       )
       assert(encryptedAttempt.failureReason.contains("Padding Scheme being requested is not available this environment"))
     }
@@ -123,7 +123,7 @@ class SecureGCMCipherSpec extends TestSuite {
         override def getCipherInstance: Cipher = throw new InvalidAlgorithmParameterException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.encrypt(textToEncrypt, associatedText, secretKey)
+        secureGCMEncrypter.encrypt((textToEncrypt, associatedText, secretKey))
       )
       assert(encryptedAttempt.failureReason.contains("Algorithm parameters being specified are not valid"))
     }
@@ -133,7 +133,7 @@ class SecureGCMCipherSpec extends TestSuite {
         override def getCipherInstance: Cipher = throw new IllegalStateException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.encrypt(textToEncrypt, associatedText, secretKey)
+        secureGCMEncrypter.encrypt((textToEncrypt, associatedText, secretKey))
       )
       assert(encryptedAttempt.failureReason.contains("Cipher is in an illegal state"))
     }
@@ -143,7 +143,7 @@ class SecureGCMCipherSpec extends TestSuite {
         override def getCipherInstance: Cipher = throw new UnsupportedOperationException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.encrypt(textToEncrypt, associatedText, secretKey)
+        secureGCMEncrypter.encrypt((textToEncrypt, associatedText, secretKey))
       )
       assert(encryptedAttempt.failureReason.contains("Provider might not be supporting this method"))
     }
@@ -153,7 +153,7 @@ class SecureGCMCipherSpec extends TestSuite {
         override def getCipherInstance: Cipher = throw new IllegalBlockSizeException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.encrypt(textToEncrypt, associatedText, secretKey)
+        secureGCMEncrypter.encrypt((textToEncrypt, associatedText, secretKey))
       )
       assert(encryptedAttempt.failureReason.contains("Error occured due to block size"))
     }
@@ -163,7 +163,7 @@ class SecureGCMCipherSpec extends TestSuite {
         override def getCipherInstance: Cipher = throw new RuntimeException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.encrypt(textToEncrypt, associatedText, secretKey)
+        secureGCMEncrypter.encrypt((textToEncrypt, associatedText, secretKey))
       )
       assert(encryptedAttempt.failureReason.contains("Unexpected exception"))
     }
