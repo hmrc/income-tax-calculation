@@ -57,7 +57,7 @@ trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach wit
   implicit val mockExecutionContext: ExecutionContext = ExecutionContext.Implicits.global
   implicit val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val defaultActionBuilder: DefaultActionBuilder = DefaultActionBuilder(mockControllerComponents.parsers.default)
-  val authorisedAction = new AuthorisedAction()(mockAuthConnector, defaultActionBuilder, mockControllerComponents)
+  val authorisedAction = new AuthorisedAction()(mockAuthConnector, defaultActionBuilder, mockControllerComponents, mockAppConfig)
 
 
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
