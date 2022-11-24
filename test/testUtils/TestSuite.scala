@@ -73,14 +73,13 @@ trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach wit
 
   //noinspection ScalaStyle
   def mockAuth(enrolments: Enrolments = individualEnrolments) = {
-
     (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.affinityGroup, *, *)
       .returning(Future.successful(Some(AffinityGroup.Individual)))
 
     (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-      .returning(Future.successful(enrolments and ConfidenceLevel.L200))
+      .returning(Future.successful(enrolments and ConfidenceLevel.L250))
   }
 
   val agentEnrolments: Enrolments = Enrolments(Set(

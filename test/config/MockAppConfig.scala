@@ -40,7 +40,7 @@ class MockAppConfig extends AppConfig {
 
   override lazy val useEncryption: Boolean = true
 
-  override val confidenceLevel = 200
+  override val confidenceLevel = 250
 
   def config(encrypt: Boolean = true): AppConfig = new AppConfig() {
     override val authBaseUrl: String = "/auth"
@@ -65,7 +65,7 @@ class MockAppConfig extends AppConfig {
 
     override lazy val useEncryption: Boolean = encrypt
 
-    override val confidenceLevel = 200
+    override val confidenceLevel = 250
 
   }
 }

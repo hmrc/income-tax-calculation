@@ -73,7 +73,7 @@ trait AuthStubs {
       Json.obj("allEnrolments" -> enrolments)
   }
 
-  def authorised(response: JsObject = successfulAuthResponse(Some(Individual), Some(ConfidenceLevel.L200),mtditEnrolment,ninoEnrolment)): StubMapping = {
+  def authorised(response: JsObject = successfulAuthResponse(Some(Individual), Some(ConfidenceLevel.L250),mtditEnrolment,ninoEnrolment)): StubMapping = {
     stubFor(post(urlMatching(authoriseUri))
       .willReturn(
         aResponse()
@@ -96,7 +96,7 @@ trait AuthStubs {
       .willReturn(
         aResponse()
           .withStatus(OK)
-          .withBody(successfulAuthResponse(Some(Individual), Some(ConfidenceLevel.L200), otherEnrolment).toString())
+          .withBody(successfulAuthResponse(Some(Individual), Some(ConfidenceLevel.L250), otherEnrolment).toString())
           .withHeader("Content-Type", "application/json; charset=utf-8")))
   }
 
