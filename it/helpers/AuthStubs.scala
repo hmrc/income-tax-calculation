@@ -18,15 +18,23 @@ package helpers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlMatching}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import com.typesafe.config.ConfigFactory
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
 
+import scala.util.{Failure, Success}
+
 trait AuthStubs {
 
   private val authoriseUri: String = "/auth/authorise"
   private val AGENT_ENROLMENT_KEY = "HMRC-AS-AGENT"
+
+  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.fromInt(ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")) match {
+    case Success(value) => value
+    case Failure(ex) => throw ex
+  }
 
   val otherEnrolment: JsObject = Json.obj(
     "key" -> "HMRC-OTHER-ENROLMENT",
@@ -73,7 +81,7 @@ trait AuthStubs {
       Json.obj("allEnrolments" -> enrolments)
   }
 
-  def authorised(response: JsObject = successfulAuthResponse(Some(Individual), Some(ConfidenceLevel.L250),mtditEnrolment,ninoEnrolment)): StubMapping = {
+  def authorised(response: JsObject = successfulAuthResponse(Some(Individual), Some(confidenceLevel),mtditEnrolment,ninoEnrolment)): StubMapping = {
     stubFor(post(urlMatching(authoriseUri))
       .willReturn(
         aResponse()
@@ -96,7 +104,7 @@ trait AuthStubs {
       .willReturn(
         aResponse()
           .withStatus(OK)
-          .withBody(successfulAuthResponse(Some(Individual), Some(ConfidenceLevel.L250), otherEnrolment).toString())
+          .withBody(successfulAuthResponse(Some(Individual), Some(confidenceLevel), otherEnrolment).toString())
           .withHeader("Content-Type", "application/json; charset=utf-8")))
   }
 
