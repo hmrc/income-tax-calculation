@@ -16,6 +16,8 @@
 
 package config
 
+import com.typesafe.config.ConfigFactory
+
 class MockAppConfig extends AppConfig {
 
   override val authBaseUrl: String = "/auth"
@@ -40,7 +42,7 @@ class MockAppConfig extends AppConfig {
 
   override lazy val useEncryption: Boolean = true
 
-  override val confidenceLevel = 200
+  override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
   def config(encrypt: Boolean = true): AppConfig = new AppConfig() {
     override val authBaseUrl: String = "/auth"
@@ -65,7 +67,7 @@ class MockAppConfig extends AppConfig {
 
     override lazy val useEncryption: Boolean = encrypt
 
-    override val confidenceLevel = 200
+    override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
   }
 }

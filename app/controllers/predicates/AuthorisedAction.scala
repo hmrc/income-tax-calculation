@@ -66,7 +66,7 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
 
   val minimumConfidenceLevel: Int = ConfidenceLevel.fromInt(appConfig.confidenceLevel) match {
     case Success(value) => value.level
-    case Failure(ex) => throw ex
+    case Failure(ex) => ConfidenceLevel.L250.level
   }
 
   private[predicates] def individualAuthentication[A](block: User[A] => Future[Result], requestMtdItId: String)
@@ -95,7 +95,7 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
             unauthorized
         }
       case _ =>
-        logger.info("[AuthorisedAction][individualAuthentication] User has confidence level below 200.")
+        logger.info(s"[AuthorisedAction][individualAuthentication] User has confidence level below ${appConfig.confidenceLevel}.")
         unauthorized
     }
   }
