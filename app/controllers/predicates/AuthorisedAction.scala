@@ -17,6 +17,7 @@
 package controllers.predicates
 
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
+import config.AppConfig
 
 import javax.inject.Inject
 import models.User
@@ -30,10 +31,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
                                    defaultActionBuilder: DefaultActionBuilder,
-                                   val cc: ControllerComponents) extends AuthorisedFunctions with Logging {
+                                   val cc: ControllerComponents, appConfig: AppConfig) extends AuthorisedFunctions with Logging {
 
   implicit val executionContext: ExecutionContext = cc.executionContext
 
@@ -62,7 +64,10 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
     )
   }
 
-  val minimumConfidenceLevel: Int = ConfidenceLevel.L200.level
+  val minimumConfidenceLevel: Int = ConfidenceLevel.fromInt(appConfig.confidenceLevel) match {
+    case Success(value) => value.level
+    case Failure(ex) => ConfidenceLevel.L250.level
+  }
 
   private[predicates] def individualAuthentication[A](block: User[A] => Future[Result], requestMtdItId: String)
                                                      (implicit request: Request[A], hc: HeaderCarrier): Future[Result] = {
@@ -90,7 +95,7 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
             unauthorized
         }
       case _ =>
-        logger.info("[AuthorisedAction][individualAuthentication] User has confidence level below 200.")
+        logger.info(s"[AuthorisedAction][individualAuthentication] User has confidence level below ${appConfig.confidenceLevel}.")
         unauthorized
     }
   }

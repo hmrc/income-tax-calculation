@@ -42,6 +42,7 @@ trait AppConfig {
   val mongoTTL: Int
   val encryptionKey: String
   val useEncryption: Boolean
+  val confidenceLevel: Int
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -63,4 +64,6 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   lazy val mongoTTL: Int = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
 
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("useEncryption")
+
+  override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
 }
