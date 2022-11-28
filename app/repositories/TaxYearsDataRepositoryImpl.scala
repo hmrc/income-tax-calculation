@@ -76,7 +76,7 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
         Try {
           encryptedData.map { encryptedTaxYearsData: EncryptedTaxYearsData =>
             implicit val textAndKey: TextAndKey = TextAndKey(encryptedTaxYearsData.nino, appConfig.encryptionKey)
-            encryptedTaxYearsData.decrypted
+            encryptedTaxYearsData.decrypted()
           }
         }.toEither match {
           case Left(exception: Exception) => handleEncryptionDecryptionException(exception, start)
@@ -90,7 +90,7 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
 
     Try {
       implicit val textAndKey: TextAndKey = TextAndKey(taxYearsData.nino, appConfig.encryptionKey)
-      taxYearsData.encrypted
+      taxYearsData.encrypted()
     }.toEither match {
       case Left(exception: Exception) => Future.successful(handleEncryptionDecryptionException(exception, start))
       case Right(encryptedData) =>

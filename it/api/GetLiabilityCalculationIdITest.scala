@@ -53,7 +53,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 200
             result.body mustBe
@@ -71,7 +71,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -88,7 +88,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -105,7 +105,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 404
             result.body mustBe
@@ -125,7 +125,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 200
             result.body mustBe
@@ -143,7 +143,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -160,7 +160,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -177,7 +177,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 404
             result.body mustBe

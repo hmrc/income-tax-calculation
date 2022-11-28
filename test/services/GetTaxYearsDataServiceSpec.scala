@@ -105,7 +105,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
   def createOrUpdateSuccess: CallHandler1[TaxYearsData, Future[Either[DatabaseError, Unit]]] =
     (mockTaxYearsDataRepository.createOrUpdate(_: TaxYearsData))
       .expects(*)
-      .returning(Future.successful(Right()))
+      .returning(Future.successful(Right(())))
 
   def createOrUpdateFailure: CallHandler1[TaxYearsData, Future[Either[DatabaseError, Unit]]] =
     (mockTaxYearsDataRepository.createOrUpdate(_: TaxYearsData))

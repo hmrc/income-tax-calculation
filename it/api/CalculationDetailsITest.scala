@@ -58,7 +58,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
@@ -75,7 +75,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
@@ -93,7 +93,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -111,7 +111,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -128,7 +128,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -146,7 +146,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -163,7 +163,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 404
             result.body mustBe
@@ -182,7 +182,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
@@ -200,7 +200,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -218,7 +218,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -235,7 +235,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -253,7 +253,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -270,7 +270,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 404
             result.body mustBe
@@ -292,7 +292,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
@@ -310,7 +310,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -327,7 +327,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -344,7 +344,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 404
             result.body mustBe
@@ -363,7 +363,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         whenReady(buildClient(
           s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details",additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
@@ -382,7 +382,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         whenReady(buildClient(
           s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 500
             result.body mustBe
@@ -400,7 +400,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         whenReady(buildClient(
           s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 503
             result.body mustBe
@@ -418,7 +418,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         whenReady(buildClient(
           s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
-          .get) {
+          .get()) {
           result =>
             result.status mustBe 404
             result.body mustBe

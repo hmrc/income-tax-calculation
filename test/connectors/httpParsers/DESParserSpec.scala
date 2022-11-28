@@ -56,7 +56,7 @@ class DESParserSpec extends TestSuite {
       val result = FakeParser.badSuccessJsonFromDES(Seq(((__ \ "some" \ "path"), Seq(JsonValidationError(
         messages = Seq("err msg1", "err msg2"))))))
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR,
-        DesErrorBodyModel("PARSING_ERROR","Error parsing response from DES - List((/some/path,List(JsonValidationError(List(err msg1, err msg2),WrappedArray()))))")))
+        DesErrorBodyModel("PARSING_ERROR","Error parsing response from DES - List((/some/path,List(JsonValidationError(List(err msg1, err msg2),List()))))")))
     }
     "handle multiple errors" in {
       val result = FakeParser.handleDESError(httpResponse())
