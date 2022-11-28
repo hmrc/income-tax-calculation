@@ -18,6 +18,7 @@ package testUtils
 
 import akka.actor.ActorSystem
 import com.codahale.metrics.SharedMetricRegistries
+import com.typesafe.config.ConfigFactory
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.{AppConfig, MockAppConfig}
 import controllers.predicates.AuthorisedAction
@@ -36,12 +37,18 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach with Matchers {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     SharedMetricRegistries.clear()
+  }
+
+   val confidenceLevel: ConfidenceLevel = ConfidenceLevel.fromInt(ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")) match {
+    case Success(value) => value
+    case Failure(ex) => throw ex
   }
 
   implicit val actorSystem: ActorSystem = ActorSystem()
@@ -57,7 +64,7 @@ trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach wit
   implicit val mockExecutionContext: ExecutionContext = ExecutionContext.Implicits.global
   implicit val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val defaultActionBuilder: DefaultActionBuilder = DefaultActionBuilder(mockControllerComponents.parsers.default)
-  val authorisedAction = new AuthorisedAction()(mockAuthConnector, defaultActionBuilder, mockControllerComponents)
+  val authorisedAction = new AuthorisedAction()(mockAuthConnector, defaultActionBuilder, mockControllerComponents, mockAppConfig)
 
 
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
@@ -73,14 +80,13 @@ trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach wit
 
   //noinspection ScalaStyle
   def mockAuth(enrolments: Enrolments = individualEnrolments) = {
-
     (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.affinityGroup, *, *)
       .returning(Future.successful(Some(AffinityGroup.Individual)))
 
     (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-      .returning(Future.successful(enrolments and ConfidenceLevel.L200))
+      .returning(Future.successful(enrolments and confidenceLevel))
   }
 
   val agentEnrolments: Enrolments = Enrolments(Set(
