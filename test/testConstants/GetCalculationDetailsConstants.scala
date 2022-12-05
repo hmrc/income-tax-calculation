@@ -75,7 +75,15 @@ object GetCalculationDetailsConstants {
         totalEeaFhlProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
-      studentLoans = Some(Seq(StudentLoanRepayment(Some("01"), Some(5000.99)))),
+      studentLoans = Some(Seq(StudentLoanRepayment(
+        Some("01"),
+        Some(5000.99),
+        Some(5000.99),
+        Some(5000.99),
+        Some(5000.99),
+        Some(12500),
+        Some(20)
+      ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),

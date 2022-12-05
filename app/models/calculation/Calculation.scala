@@ -44,11 +44,13 @@ object Calculation {
 }
 
 case class ChargeableEventGainsIncome(totalOfAllGains: Int)
+
 object ChargeableEventGainsIncome {
   implicit val format: OFormat[ChargeableEventGainsIncome] = Json.format[ChargeableEventGainsIncome]
 }
 
 case class DividendsIncome(chargeableForeignDividends: Option[Int] = None)
+
 object DividendsIncome {
   implicit val format: OFormat[DividendsIncome] = Json.format[DividendsIncome]
 }
@@ -58,11 +60,13 @@ case class EmploymentAndPensionsIncome(
                                         totalOccupationalPensionIncome: Option[BigDecimal] = None,
                                         totalBenefitsInKind: Option[BigDecimal] = None
                                       )
+
 object EmploymentAndPensionsIncome {
   implicit val format: OFormat[EmploymentAndPensionsIncome] = Json.format[EmploymentAndPensionsIncome]
 }
 
 case class EmploymentExpenses(totalEmploymentExpenses: Option[BigDecimal] = None)
+
 object EmploymentExpenses {
   implicit val format: OFormat[EmploymentExpenses] = Json.format[EmploymentExpenses]
 }
@@ -73,11 +77,13 @@ case class ForeignIncome(
                           overseasIncomeAndGains: Option[OverseasIncomeAndGains],
                           totalForeignBenefitsAndGifts: Option[BigDecimal] = None
                         )
+
 object ForeignIncome {
   implicit val format: OFormat[ForeignIncome] = Json.format[ForeignIncome]
 }
 
 case class OverseasIncomeAndGains(gainAmount: BigDecimal)
+
 object OverseasIncomeAndGains {
   implicit val format: OFormat[OverseasIncomeAndGains] = Json.format[OverseasIncomeAndGains]
 }
@@ -86,6 +92,7 @@ case class GiftAid(
                     grossGiftAidPayments: Int,
                     giftAidTax: BigDecimal
                   )
+
 object GiftAid {
   implicit val format: OFormat[GiftAid] = Json.format[GiftAid]
 }
@@ -97,6 +104,7 @@ case class IncomeSummaryTotals(
                                 totalForeignPropertyProfit: Option[Int] = None,
                                 totalEeaFhlProfit: Option[Int] = None
                               )
+
 object IncomeSummaryTotals {
   implicit val writes: OFormat[IncomeSummaryTotals] = Json.format[IncomeSummaryTotals]
 }
@@ -104,27 +112,38 @@ object IncomeSummaryTotals {
 case class MarriageAllowanceTransferredIn(
                                            amount: Option[BigDecimal] = None
                                          )
+
 object MarriageAllowanceTransferredIn {
   implicit val format: OFormat[MarriageAllowanceTransferredIn] = Json.format[MarriageAllowanceTransferredIn]
 }
 
 case class SavingsAndGainsIncome(chargeableForeignSavingsAndGains: Option[Int] = None)
+
 object SavingsAndGainsIncome {
   implicit val format: OFormat[SavingsAndGainsIncome] = Json.format[SavingsAndGainsIncome]
 }
 
 case class ShareSchemesIncome(totalIncome: BigDecimal)
+
 object ShareSchemesIncome {
   implicit val format: OFormat[ShareSchemesIncome] = Json.format[ShareSchemesIncome]
 }
 
 case class StateBenefitsIncome(totalStateBenefitsIncome: Option[BigDecimal] = None,
                                totalStateBenefitsIncomeExcStatePensionLumpSum: Option[BigDecimal] = None)
+
 object StateBenefitsIncome {
   implicit val format: OFormat[StateBenefitsIncome] = Json.format[StateBenefitsIncome]
 }
 
-case class StudentLoanRepayment(planType: Option[String] = None, studentLoanRepaymentAmount: Option[BigDecimal] = None)
+case class StudentLoanRepayment(planType: Option[String] = None,
+                                studentLoanTotalIncomeAmount: Option[BigDecimal] = None,
+                                studentLoanChargeableIncomeAmount: Option[BigDecimal] = None,
+                                studentLoanRepaymentAmount: Option[BigDecimal] = None,
+                                studentLoanRepaymentAmountNetOfDeductions: Option[BigDecimal] = None,
+                                studentLoanApportionedIncomeThreshold: Option[BigDecimal] = None,
+                                studentLoanRate: Option[BigDecimal] = None
+                               )
 
 object StudentLoanRepayment {
   implicit val format: OFormat[StudentLoanRepayment] = Json.format[StudentLoanRepayment]
