@@ -25,6 +25,7 @@ case class Calculation(
                         taxDeductedAtSource: Option[TaxDeductedAtSource],
                         giftAid: Option[GiftAid],
                         marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn],
+                        studentLoans: Option[Seq[StudentLoanRepayment]],
                         employmentAndPensionsIncome: Option[EmploymentAndPensionsIncome],
                         employmentExpenses: Option[EmploymentExpenses],
                         stateBenefitsIncome: Option[StateBenefitsIncome],
@@ -122,3 +123,10 @@ case class StateBenefitsIncome(totalStateBenefitsIncome: Option[BigDecimal] = No
 object StateBenefitsIncome {
   implicit val format: OFormat[StateBenefitsIncome] = Json.format[StateBenefitsIncome]
 }
+
+case class StudentLoanRepayment(planType: Option[String] = None, studentLoanRepaymentAmount: Option[BigDecimal] = None)
+
+object StudentLoanRepayment {
+  implicit val format: OFormat[StudentLoanRepayment] = Json.format[StudentLoanRepayment]
+}
+

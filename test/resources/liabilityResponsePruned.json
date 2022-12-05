@@ -84,6 +84,12 @@
     "marriageAllowanceTransferredIn" : {
       "amount" : 5000.99
     },
+    "studentLoans": [
+      {
+        "planType": "01",
+        "studentLoanRepaymentAmount": 5000.99
+      }
+    ],
     "employmentAndPensionsIncome" : {
       "totalPayeEmploymentAndLumpSumIncome" : 5000.99,
       "totalOccupationalPensionIncome" : 5000.99,
