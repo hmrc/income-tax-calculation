@@ -74,6 +74,15 @@ object GetCalculationDetailsConstants {
         totalEeaFhlProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
+      studentLoans = Some(Seq(StudentLoan(
+        Some("01"),
+        Some(5000.99),
+        Some(5000.99),
+        Some(5000.99),
+        Some(5000.99),
+        Some(12500),
+        Some(20)
+      ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),
@@ -346,6 +355,17 @@ object GetCalculationDetailsConstants {
        |    "marriageAllowanceTransferredIn" : {
        |      "amount" : 5000.99
        |    },
+       |    "studentLoans": [
+       |      {
+       |        "planType": "01",
+       |        "studentLoanTotalIncomeAmount": 5000.99,
+       |        "studentLoanChargeableIncomeAmount": 5000.99,
+       |        "studentLoanRepaymentAmount": 5000.99,
+       |        "studentLoanRepaymentAmountNetOfDeductions": 5000.99,
+       |        "studentLoanApportionedIncomeThreshold": 12500,
+       |        "studentLoanRate": 20
+       |      }
+       |    ],
        |    "employmentAndPensionsIncome" : {
        |      "totalPayeEmploymentAndLumpSumIncome" : 5000.99,
        |      "totalOccupationalPensionIncome" : 5000.99,

@@ -26,8 +26,9 @@ case class TaxCalculation(
                            saUnderpaymentsCodedOut: Option[BigDecimal] = None,
                            totalIncomeTaxAndNicsDue: BigDecimal,
                            totalTaxDeducted: Option[BigDecimal] = None,
-                           totalIncomeTaxAndNicsAndCgt:Option[BigDecimal] = None
+                           totalIncomeTaxAndNicsAndCgt: Option[BigDecimal] = None
                          )
+
 object TaxCalculation {
   implicit val format: OFormat[TaxCalculation] = Json.format[TaxCalculation]
 }
