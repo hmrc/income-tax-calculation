@@ -17,7 +17,7 @@
 package services
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
+import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
 import models.{DesErrorBodyModel, DesErrorModel}
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,15 +28,26 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
                                              calculationDetailsConnector: CalculationDetailsConnector,
-                                             listCalculationDetailsConnector: GetCalculationListConnector) (implicit ec: ExecutionContext) {
+                                             listCalculationDetailsConnector: GetCalculationListConnector,
+                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy) (implicit ec: ExecutionContext) {
 
   def getCalculationDetails(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {
-    listCalculationDetailsConnector.calcList(nino, taxYear).flatMap {
-      case Right(listOfCalculationDetails) if(listOfCalculationDetails.isEmpty) =>
-        Future.successful(Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel.parsingError)))
-      case Right(listOfCalculationDetails) =>
-        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
-      case Left(desError) => Future.successful(Left(desError))
+    if (taxYear.isDefined && taxYear.get == "2024") {
+      listCalculationDetailsConnector.getCalculationList(nino).flatMap {
+        case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
+          Future.successful(Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel.parsingError)))
+        case Right(listOfCalculationDetails) =>
+          getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
+        case Left(desError) => Future.successful(Left(desError))
+      }
+    } else {
+      listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
+        case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
+          Future.successful(Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel.parsingError)))
+        case Right(listOfCalculationDetails) =>
+          getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
+        case Left(desError) => Future.successful(Left(desError))
+      }
     }
   }
 

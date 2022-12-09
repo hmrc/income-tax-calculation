@@ -19,7 +19,7 @@ package api
 import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.WiremockSpec
-import models.{DesErrorBodyModel, GetCalculationListModel}
+import models.{DesErrorBodyModel, GetCalculationListModelLegacy}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Seconds, Span}
@@ -37,7 +37,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
     val desUrlForListCalcWithoutTaxYear = s"/income-tax/list-of-calculation-results/$successNino"
     val desUrlForListCalcWithTaxYear = s"/income-tax/list-of-calculation-results/$successNino\\?taxYear=$taxYear"
     val desUrlForCalculationDetails = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
-    val listCalcResponse = Json.toJson(Seq(GetCalculationListModel(calculationId,"2019-03-17T09:22:59Z"))).toString()
+    val listCalcResponse = Json.toJson(Seq(GetCalculationListModelLegacy(calculationId,"2019-03-17T09:22:59Z"))).toString()
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
     val mtditidHeader = ("mtditid", "555555555")
