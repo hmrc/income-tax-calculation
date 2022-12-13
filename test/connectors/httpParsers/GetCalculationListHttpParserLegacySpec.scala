@@ -16,25 +16,25 @@
 
 package connectors.httpParsers
 
-import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModel}
+import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModelLegacy}
 import play.api.http.Status.{BAD_REQUEST, CONFLICT, FORBIDDEN, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HttpResponse
 
-class GetCalculationListHttpParserSpec extends TestSuite {
+class GetCalculationListHttpParserLegacySpec extends TestSuite {
 
-  val parser: GetCalculationListHttpParser.type = GetCalculationListHttpParser
+  val parser: GetCalculationListHttpParserLegacy.type = GetCalculationListHttpParserLegacy
 
 
   "GetCalculationListHttpReads" should {
     "return a GetCalculationsList model" when {
       "DES returns 200" in {
 
-        val response = Json.toJson(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z"))).toString()
+        val response = Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z"))).toString()
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
-          Right(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")))
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(OK, response)) mustBe
+          Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")))
       }
     }
 
@@ -48,7 +48,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(SERVICE_UNAVAILABLE, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(SERVICE_UNAVAILABLE, response)) mustBe
           Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
       }
 
@@ -61,7 +61,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
           Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")))
       }
 
@@ -74,7 +74,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(BAD_REQUEST, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(BAD_REQUEST, response)) mustBe
           Left(DesErrorModel(BAD_REQUEST, DesErrorBodyModel("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")))
       }
 
@@ -87,7 +87,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(CONFLICT, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(CONFLICT, response)) mustBe
           Left(DesErrorModel(CONFLICT, DesErrorBodyModel("CONFLICT", "The remote endpoint has indicated that final declaration has already been received")))
       }
 
@@ -100,7 +100,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(UNPROCESSABLE_ENTITY, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(UNPROCESSABLE_ENTITY, response)) mustBe
           Left(DesErrorModel(UNPROCESSABLE_ENTITY, DesErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
       }
 
@@ -113,7 +113,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(FORBIDDEN, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(FORBIDDEN, response)) mustBe
           Left(DesErrorModel(FORBIDDEN, DesErrorBodyModel("FORBIDDEN", "The remote endpoint has indicated that no income submissions exist")))
       }
 
@@ -126,7 +126,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(IM_A_TEAPOT, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(IM_A_TEAPOT, response)) mustBe
           Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("IM_A_TEAPOT", "The remote endpoint has indicated that I'm a teapot")))
       }
 
@@ -138,7 +138,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
           Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError))
       }
 
@@ -150,7 +150,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(OK, response)) mustBe
           Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
             "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
       }
@@ -161,7 +161,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             |{
             |""".stripMargin
 
-        parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
+        parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
           Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
       }
     }

@@ -47,9 +47,9 @@ class GetCalculationsListResponseSpec extends TestSuite {
     """.stripMargin
   )
 
-  val response: CalculationsListResponse = CalculationsListResponse(
+  val response: CalculationsListResponseLegacy = CalculationsListResponseLegacy(
     Seq(
-      GetCalculationListModel(
+      GetCalculationListModelLegacy(
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
         calculationTimestamp = "2019-03-17T09:22:59Z"
       )
@@ -64,7 +64,7 @@ class GetCalculationsListResponseSpec extends TestSuite {
 
   "Json reads" must {
     "align with the API 1404 des spec" in {
-      desJson.as[CalculationsListResponse] shouldBe response
+      desJson.as[CalculationsListResponseLegacy] shouldBe response
 
     }
   }

@@ -33,16 +33,14 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
   lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
 
-  def appConfig(desHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
-    override val desBaseUrl: String = s"http://$desHost:$wireMockPort"
+  def appConfig(ifHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
+    override val ifBaseUrl: String = s"http://$ifHost:$wireMockPort"
   }
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  val taxYear = Some("2021")
-  val url = s"/income-tax/list-of-calculation-results/$nino"
-  val taxYearUrl = s"/income-tax/list-of-calculation-results/$nino\\?taxYear=${taxYear.get}"
+  val url = s"/income-tax/view/calculations/liability/23-24/$nino"
 
   "GetCalculationListConnector" should {
 
@@ -50,25 +48,38 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
     val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
 
     "return a success result" when {
-      "DES returns a success with expected JSON" in {
+      "IF returns a success with expected JSON" in {
         val response =
-          Json.toJson(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
+          Json.toJson(Seq(GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "inYear",
+            requestedBy = Some("customer"),
+            year = Some(2016),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            totalIncomeTaxAndNicsDue = 500.00,
+            intentToCrystallise = None,
+            crystallised = None,
+            crystallisationTimestamp = None
+          ))).toString
 
         stubGetWithResponseBody(url, OK, response)
-        val result = await(connector.calcList(nino, None))
+        val result = await(connector.getCalculationList(nino))
 
-        result mustBe Right(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
-      }
-
-
-      "DES returns a success with expected JSON with OptionalTaxYear" in {
-        val response =
-          Json.toJson(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
-
-        stubGetWithResponseBody(taxYearUrl, OK, response)
-        val result = await(connector.calcList(nino, taxYear))
-
-        result mustBe Right(Seq(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+        result mustBe Right(Seq(GetCalculationListModel(
+          calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+          calculationTimestamp = "2019-03-17T09:22:59Z",
+          calculationType = "inYear",
+          requestedBy = Some("customer"),
+          year = Some(2016),
+          fromDate = Some("2013-05-d1"),
+          toDate = Some("2016-05-d1"),
+          totalIncomeTaxAndNicsDue = 500.00,
+          intentToCrystallise = None,
+          crystallised = None,
+          crystallisationTimestamp = None
+        )))
       }
     }
   }
@@ -77,7 +88,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
     val appConfigWithInternalHost = appConfig("localhost")
     val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
 
-    "DES returns an 503 error" in {
+    "IF returns an 503 error" in {
       val response =
         """
           |{
@@ -87,57 +98,36 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
           |""".stripMargin
       stubGetWithResponseBody(url, SERVICE_UNAVAILABLE, response)
 
-      val result = await(connector.calcList(nino, None))
+      val result = await(connector.getCalculationList(nino))
 
       result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
 
 
-    "DES returns an 500 when parsing error occurs" in {
+    "IF returns an 500 when parsing error occurs" in {
       val appConfigWithInternalHost = appConfig("localhost")
       val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
 
-      val response = Json.toJson(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")).toString()
+      val response = Json.toJson(GetCalculationListModel(
+        calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+        calculationTimestamp = "2019-03-17T09:22:59Z",
+        calculationType = "inYear",
+        requestedBy = Some("customer"),
+        year = Some(2016),
+        fromDate = Some("2013-05-d1"),
+        toDate = Some("2016-05-d1"),
+        totalIncomeTaxAndNicsDue = 500.00,
+        intentToCrystallise = None,
+        crystallised = None,
+        crystallisationTimestamp = None
+      )).toString()
 
       stubGetWithResponseBody(url, OK, response)
 
-      val result = await(connector.calcList(nino, None))
+      val result = await(connector.getCalculationList(nino))
 
       result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
         "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
-    }
-
-    "DES returns an 503 error with OptionalTaxYear" in {
-      val appConfigWithInternalHost = appConfig("localhost")
-      val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
-
-      val response =
-        """
-          |{
-          |  "code": "SERVICE_UNAVAILABLE",
-          |  "reason": "Dependent systems are currently not responding."
-          |}
-          |""".stripMargin
-      stubGetWithResponseBody(taxYearUrl, SERVICE_UNAVAILABLE, response)
-
-      val result = await(connector.calcList(nino, taxYear))
-
-      result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
-    }
-
-
-    "DES returns an 500 when parsing error occurs with OptionalTaxYear" in {
-      val appConfigWithInternalHost = appConfig("localhost")
-      val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
-
-      val response = Json.toJson(GetCalculationListModel("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")).toString()
-
-      stubGetWithResponseBody(taxYearUrl, OK, response)
-
-      val result = await(connector.calcList(nino, taxYear))
-
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR,
-        DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
     }
   }
 

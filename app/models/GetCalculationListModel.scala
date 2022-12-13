@@ -16,18 +16,36 @@
 
 package models
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class GetCalculationListModel(calculationId: String,
-                                   calculationTimestamp: String)
+                                   calculationTimestamp: String,
+                                   calculationType: String,
+                                   requestedBy: Option[String],
+                                   year: Option[Int],
+                                   fromDate: Option[String],
+                                   toDate: Option[String],
+                                   totalIncomeTaxAndNicsDue: BigDecimal,
+                                   intentToCrystallise: Option[Boolean],
+                                   crystallised: Option[Boolean],
+                                   crystallisationTimestamp: Option[String])
 
 
 object GetCalculationListModel{
   implicit val writes: Writes[GetCalculationListModel] = Json.writes[GetCalculationListModel]
   implicit val reads: Reads[GetCalculationListModel] =
     ((JsPath \ "calculationId").read[String] and
-      (JsPath \ "calculationTimestamp").read[String]
+      (JsPath \ "calculationTimestamp").read[String] and
+      (JsPath \ "calculationType").read[String] and
+      (JsPath \ "requestedBy").readNullable[String] and
+      (JsPath \ "year").readNullable[Int] and
+      (JsPath \ "fromDate").readNullable[String] and
+      (JsPath \ "toDate").readNullable[String] and
+      (JsPath \ "totalIncomeTaxAndNicsDue").read[BigDecimal] and
+      (JsPath \ "intentToCrystallise").readNullable[Boolean] and
+      (JsPath \ "crystallised").readNullable[Boolean] and
+      (JsPath \ "crystallisationTimestamp").readNullable[String]
       ) (GetCalculationListModel.apply _)
 
 }
