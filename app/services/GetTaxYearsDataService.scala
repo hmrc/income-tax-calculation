@@ -16,7 +16,7 @@
 
 package services
 
-import models.DesErrorModel
+import models.ErrorModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.mongo.{DatabaseError, TaxYearsData}
 import org.joda.time.DateTimeZone
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetTaxYearsDataService @Inject()(getBusinessDetailsService: GetBusinessDetailsService,
                                        taxYearsDataRepository: TaxYearsDataRepository,
                                        clock: Clock) (implicit ec: ExecutionContext) extends Logging {
-  def getTaxYearsData(nino: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Either[DesErrorModel, TaxYearsData]] = {
+  def getTaxYearsData(nino: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Either[ErrorModel, TaxYearsData]] = {
     taxYearsDataRepository.find(nino).flatMap {
       case Right(Some(taxYearsData: TaxYearsData)) =>
         Future.successful(Right(taxYearsData))
@@ -45,7 +45,7 @@ class GetTaxYearsDataService @Inject()(getBusinessDetailsService: GetBusinessDet
               case Right(_) =>
                 Right(taxYearsData)
             }
-          case Left(error: DesErrorModel) =>
+          case Left(error: ErrorModel) =>
             Future.successful(Left(error))
         }
     }

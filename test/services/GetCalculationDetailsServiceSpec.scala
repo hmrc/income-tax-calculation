@@ -20,7 +20,7 @@ import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResp
 import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
-import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
 import org.scalamock.handlers.{CallHandler2, CallHandler3, CallHandler4}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 import testConstants.GetCalculationDetailsConstants.successModelFull
@@ -87,12 +87,12 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   def getCalculationDetailsFailureLegacy: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
     (mockSingleCalculationConnectorLegacy.getCalculationDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
+      .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
   def listCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
     (mockListCalculationConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
+      .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
   def emptyListCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
     (mockListCalculationConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
@@ -127,7 +127,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       val result = await(service.getCalculationDetails(nino, taxYear))
 
-      result mustBe Left(DesErrorModel(NO_CONTENT, DesErrorBodyModel("PARSING_ERROR","Error parsing response from DES")))
+      result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("PARSING_ERROR","Error parsing response from API")))
     }
 
     "return a Left(DesError) when calling list calculations and not call get calculations" in {
@@ -136,7 +136,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       val result = await(service.getCalculationDetails(nino, taxYear))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
 
     "return a Left(DesError) when calling list calculations succeeds however calling get calculations returns a DES error" in {
@@ -146,7 +146,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       val result = await(service.getCalculationDetails(nino, taxYear))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
   }
 
@@ -181,7 +181,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, taxYear))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
   }
 }

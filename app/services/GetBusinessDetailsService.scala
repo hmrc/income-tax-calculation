@@ -19,13 +19,13 @@ package services
 import connectors.GetBusinessDetailsConnector
 import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
-import models.DesErrorModel
+import models.ErrorModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class GetBusinessDetailsService @Inject()(getBusinessDetailsConnector: GetBusinessDetailsConnector) (implicit ec: ExecutionContext) {
-  def getBusinessDetails(nino: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Either[DesErrorModel, IncomeSourceDetailsModel]] = {
+  def getBusinessDetails(nino: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Either[ErrorModel, IncomeSourceDetailsModel]] = {
     getBusinessDetailsConnector.getBusinessDetails(nino).map {
       case Left(error) => Left(error)
       case Right(model: IncomeSourceDetailsModel) => Right(model)

@@ -22,11 +22,11 @@ import uk.gov.hmrc.http.HttpResponse
 object PagerDutyHelper extends Logging {
 
   object PagerDutyKeys extends Enumeration {
-    val BAD_SUCCESS_JSON_FROM_DES: PagerDutyKeys.Value = Value
-    val SERVICE_UNAVAILABLE_FROM_DES: PagerDutyKeys.Value = Value
-    val INTERNAL_SERVER_ERROR_FROM_DES: PagerDutyKeys.Value = Value
-    val UNEXPECTED_RESPONSE_FROM_DES: PagerDutyKeys.Value = Value
-    val FOURXX_RESPONSE_FROM_DES: PagerDutyKeys.Value = Value
+    val BAD_SUCCESS_JSON_FROM_API: PagerDutyKeys.Value = Value
+    val SERVICE_UNAVAILABLE_FROM_API: PagerDutyKeys.Value = Value
+    val INTERNAL_SERVER_ERROR_FROM_API: PagerDutyKeys.Value = Value
+    val UNEXPECTED_RESPONSE_FROM_API: PagerDutyKeys.Value = Value
+    val FOURXX_RESPONSE_FROM_API: PagerDutyKeys.Value = Value
     val ENCRYPTION_DECRYPTION_ERROR: PagerDutyKeys.Value = Value
     val FAILED_TO_FIND_TAX_YEARS_DATA: PagerDutyKeys.Value = Value
     val FAILED_TO_CREATE_UPDATE_TAX_YEARS_DATA: PagerDutyKeys.Value = Value

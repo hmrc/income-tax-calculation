@@ -22,8 +22,8 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper._
 import PagerDutyKeys._
 
-object LiabilityCalculationHttpParser extends DESParser {
-  type LiabilityCalculationResponse = Either[DesErrorModel, LiabilityCalculationIdModel]
+object LiabilityCalculationHttpParser extends APIParser {
+  type LiabilityCalculationResponse = Either[ErrorModel, LiabilityCalculationIdModel]
 
   override val parserName: String = "LiabilityCalculationHttpParser"
 
@@ -31,21 +31,21 @@ object LiabilityCalculationHttpParser extends DESParser {
     override def read(method: String, url: String, response: HttpResponse): LiabilityCalculationResponse = {
       response.status match {
         case OK => response.json.validate[LiabilityCalculationIdModel].fold[LiabilityCalculationResponse](
-          validationErrors => badSuccessJsonFromDES(validationErrors),
+          validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
-          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
+          handleIFError(response)
         case SERVICE_UNAVAILABLE =>
-          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
+          handleIFError(response)
         case BAD_REQUEST | NOT_FOUND | CONFLICT | UNPROCESSABLE_ENTITY | FORBIDDEN =>
-          pagerDutyLog(FOURXX_RESPONSE_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
+          handleIFError(response)
         case _ =>
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_DES, logMessage(response))
-          handleDESError(response, Some(INTERNAL_SERVER_ERROR))
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
+          handleIFError(response, Some(INTERNAL_SERVER_ERROR))
       }
     }
   }

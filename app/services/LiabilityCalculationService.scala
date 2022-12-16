@@ -16,17 +16,24 @@
 
 package services
 
-import connectors.LiabilityCalculationConnector
 import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
-import javax.inject.Inject
+import connectors.{LiabilityCalculationConnector, PostCalculateIncomeTaxLiabilityConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
-class LiabilityCalculationService @Inject()(liabilityCalculationConnector: LiabilityCalculationConnector) {
+class LiabilityCalculationService @Inject()(liabilityCalculationConnector: LiabilityCalculationConnector,
+                                            postCalculateIncomeTaxLiabilityConnector: PostCalculateIncomeTaxLiabilityConnector) {
 
-  def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
-    liabilityCalculationConnector.calculateLiability(nino, taxYear, crystallise)
+  def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)
+                        (implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
+    if (taxYear.equals("2024")) {
+      postCalculateIncomeTaxLiabilityConnector.calculateLiability(nino, taxYear, crystallise)
+    }
+    else {
+      liabilityCalculationConnector.calculateLiability(nino, taxYear, crystallise)
+    }
   }
 
 }

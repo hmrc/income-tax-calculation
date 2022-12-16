@@ -16,30 +16,44 @@
 
 package services
 
-import connectors.LiabilityCalculationConnector
 import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
-import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
+import connectors.httpParsers.PostCalculateIncomeTaxLiabilityHttpParser.PostCalculateIncomeTaxLiabilityResponse
+import connectors.{LiabilityCalculationConnector, PostCalculateIncomeTaxLiabilityConnector}
+import models.{ErrorBodyModel, ErrorModel, LiabilityCalculationIdModel}
 import org.scalamock.handlers.CallHandler4
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 
 class LiabilityCalculationServiceSpec extends TestSuite {
 
   val mockConnector: LiabilityCalculationConnector = mock[LiabilityCalculationConnector]
-  val service = new LiabilityCalculationService(mockConnector)
+  val mockIfConnector: PostCalculateIncomeTaxLiabilityConnector = mock[PostCalculateIncomeTaxLiabilityConnector]
+  val service = new LiabilityCalculationService(mockConnector, mockIfConnector)
 
   def liabilityCalculationConnectorMockSuccess: CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
     (mockConnector.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
-    .expects(*, *, *, *)
-    .returning(Future.successful(Right(LiabilityCalculationIdModel("id"))))
+      .expects(*, *, *, *)
+      .returning(Future.successful(Right(LiabilityCalculationIdModel("id"))))
 
   def liabilityCalculationConnectorMockFailure: CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
     (mockConnector.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
       .expects(*, *, *, *)
-      .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error","error")))))
+      .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
+
+  def postCalculateIncomeTaxLiabilityConnectorMockSuccess: CallHandler4[String, String, Boolean, HeaderCarrier,
+    Future[PostCalculateIncomeTaxLiabilityResponse]] =
+    (mockIfConnector.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+      .expects(*, *, *, *)
+      .returning(Future.successful(Right(LiabilityCalculationIdModel("id"))))
+
+  def postCalculateIncomeTaxLiabilityConnectorMockFailure: CallHandler4[String, String, Boolean, HeaderCarrier,
+    Future[PostCalculateIncomeTaxLiabilityResponse]] =
+    (mockIfConnector.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
+      .expects(*, *, *, *)
+      .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
   ".calculateLiability" should {
 
@@ -67,8 +81,37 @@ class LiabilityCalculationServiceSpec extends TestSuite {
 
       val result = await(service.calculateLiability("nino", "2018", crystallise = false))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error","error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
   }
 
+  ".calculateLiability if connector" should {
+
+    "return a Right(LiabilityIfCalculationIdModel) " in {
+
+      postCalculateIncomeTaxLiabilityConnectorMockSuccess
+
+      val result = await(service.calculateLiability("nino", "2024", crystallise = false))
+
+      result mustBe Right(LiabilityCalculationIdModel("id"))
+    }
+
+    "return a Right(LiabilityIfCalculationIdModel) with a crystallisation flag" in {
+
+      postCalculateIncomeTaxLiabilityConnectorMockSuccess
+
+      val result = await(service.calculateLiability("nino", "2024", crystallise = true))
+
+      result mustBe Right(LiabilityCalculationIdModel("id"))
+    }
+
+    "return a Left(IfError)" in {
+
+      postCalculateIncomeTaxLiabilityConnectorMockFailure
+
+      val result = await(service.calculateLiability("nino", "2024", crystallise = false))
+
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
+    }
+  }
 }

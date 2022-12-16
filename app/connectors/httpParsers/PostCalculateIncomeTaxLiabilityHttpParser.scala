@@ -22,15 +22,15 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
-object GetCalculationListHttpParserLegacy extends APIParser {
-  type GetCalculationListResponseLegacy = Either[ErrorModel, Seq[GetCalculationListModelLegacy]]
+object PostCalculateIncomeTaxLiabilityHttpParser extends APIParser {
+  type PostCalculateIncomeTaxLiabilityResponse = Either[ErrorModel, LiabilityCalculationIdModel]
 
-  override val parserName: String = "GetCalculationListHttpParserLegacy"
+  override val parserName: String = "PostCalculateIncomeTaxLiabilityHttpParser"
 
-  implicit object GetCalculationListHttpReadsLegacy extends HttpReads[GetCalculationListResponseLegacy] {
-    override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponseLegacy = {
+  implicit object CreateIncomeSourcesHttpReads extends HttpReads[PostCalculateIncomeTaxLiabilityResponse] {
+    override def read(method: String, url: String, response: HttpResponse): PostCalculateIncomeTaxLiabilityResponse = {
       response.status match {
-        case OK => response.json.validate[Seq[GetCalculationListModelLegacy]].fold[GetCalculationListResponseLegacy](
+        case ACCEPTED => response.json.validate[LiabilityCalculationIdModel].fold[PostCalculateIncomeTaxLiabilityResponse](
           validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )
@@ -40,7 +40,7 @@ object GetCalculationListHttpParserLegacy extends APIParser {
         case SERVICE_UNAVAILABLE =>
           pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
           handleIFError(response)
-        case BAD_REQUEST | NOT_FOUND | CONFLICT | UNPROCESSABLE_ENTITY | FORBIDDEN =>
+        case BAD_REQUEST | UNPROCESSABLE_ENTITY =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
           handleIFError(response)
         case _ =>

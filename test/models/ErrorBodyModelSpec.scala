@@ -20,9 +20,9 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import testUtils.TestSuite
 
-class DesErrorBodyModelSpec extends TestSuite {
+class ErrorBodyModelSpec extends TestSuite {
   SharedMetricRegistries.clear()
-  val model: DesErrorBodyModel = DesErrorBodyModel("SERVER_ERROR", "Service is unavailable")
+  val model: ErrorBodyModel = ErrorBodyModel("SERVER_ERROR", "Service is unavailable")
   val jsonModel: JsObject = Json.obj(
     "code" -> "SERVER_ERROR",
     "reason" -> "Service is unavailable"
@@ -37,12 +37,12 @@ class DesErrorBodyModelSpec extends TestSuite {
     )
   )
 
-  "The DesErrorModel" should {
+  "The ErrorModel" should {
 
-    val model = DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVER_ERROR","Service is unavailable"))
-    val errorsModel = DesErrorModel(SERVICE_UNAVAILABLE, DesErrorsBodyModel(Seq(
-      DesErrorBodyModel("SERVICE_UNAVAILABLE","The service is currently unavailable"),
-      DesErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues.")
+    val model = ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVER_ERROR","Service is unavailable"))
+    val errorsModel = ErrorModel(SERVICE_UNAVAILABLE, ErrorsBodyModel(Seq(
+      ErrorBodyModel("SERVICE_UNAVAILABLE","The service is currently unavailable"),
+      ErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues.")
     )))
 
     "parse to Json" in {

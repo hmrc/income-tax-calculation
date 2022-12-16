@@ -19,7 +19,8 @@ package api
 import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.WiremockSpec
-import models.{DesErrorBodyModel, GetCalculationListModelLegacy}
+
+import models.{ErrorBodyModel, GetCalculationListModelLegacy}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Seconds, Span}
@@ -85,7 +86,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -102,7 +103,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -120,7 +121,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from list calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -137,7 +138,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -155,7 +156,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a 4XX when des returns an 4XX" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
 
@@ -192,7 +193,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -209,7 +210,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -227,7 +228,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from list calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -244,7 +245,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -262,7 +263,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a 4XX when des returns an 4XX" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
 
@@ -302,7 +303,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -319,7 +320,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -336,7 +337,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a 4XX when IF returns an 4XX" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
 
@@ -373,7 +374,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -391,7 +392,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -409,7 +410,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a 4XX when des returns an 4XX" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
 

@@ -38,4 +38,12 @@ class TaxYearSpec extends TestSuite {
       TaxYear.updatedFormat("2021") mustBe "2020-21"
     }
   }
+
+  ".convertSpecificTaxYear" should {
+
+    "return a tax year in yy-yy format" in {
+      TaxYear.convertSpecificTaxYear("2024") mustBe "23-24"
+    }
+  }
+
 }

@@ -16,14 +16,14 @@
 
 package connectors.httpParsers
 
-import models.DesErrorModel
+import models.ErrorModel
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import play.api.http.Status._
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
-object DeclareCrystallisationHttpParser extends DESParser {
-  type DeclareCrystallisationResponse = Either[DesErrorModel, Unit]
+object DeclareCrystallisationHttpParser extends APIParser {
+  type DeclareCrystallisationResponse = Either[ErrorModel, Unit]
 
   override val parserName: String = "DeclareCrystallisationHttpParser"
 
@@ -32,17 +32,17 @@ object DeclareCrystallisationHttpParser extends DESParser {
       response.status match {
         case NO_CONTENT => Right(())
         case INTERNAL_SERVER_ERROR =>
-          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
+          handleIFError(response)
         case SERVICE_UNAVAILABLE =>
-          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
+          handleIFError(response)
         case BAD_REQUEST | NOT_FOUND | CONFLICT | UNPROCESSABLE_ENTITY =>
-          pagerDutyLog(FOURXX_RESPONSE_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
+          handleIFError(response)
         case _ =>
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
+          handleIFError(response)
       }
     }
   }

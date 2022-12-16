@@ -22,8 +22,8 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
-object GetCalculationListHttpParser extends DESParser {
-  type GetCalculationListResponse = Either[DesErrorModel, Seq[GetCalculationListModel]]
+object GetCalculationListHttpParser extends APIParser {
+  type GetCalculationListResponse = Either[ErrorModel, Seq[GetCalculationListModel]]
 
   override val parserName: String = "GetCalculationListHttpParser"
 
@@ -31,21 +31,21 @@ object GetCalculationListHttpParser extends DESParser {
     override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponse = {
       response.status match {
         case OK => response.json.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](
-          validationErrors => badSuccessJsonFromDES(validationErrors),
+          validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
-          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
+          handleIFError(response)
         case SERVICE_UNAVAILABLE =>
-          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
+          handleIFError(response)
         case BAD_REQUEST | NOT_FOUND | CONFLICT | UNPROCESSABLE_ENTITY | FORBIDDEN =>
-          pagerDutyLog(FOURXX_RESPONSE_FROM_DES, logMessage(response))
-          handleDESError(response)
+          pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
+          handleIFError(response)
         case _ =>
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_DES, logMessage(response))
-          handleDESError(response, Some(INTERNAL_SERVER_ERROR))
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
+          handleIFError(response, Some(INTERNAL_SERVER_ERROR))
       }
     }
   }
