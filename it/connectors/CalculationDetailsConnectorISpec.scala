@@ -20,7 +20,7 @@ import assets.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import config.BackendAppConfig
 import helpers.WiremockSpec
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
@@ -66,11 +66,11 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
     }
 
     "handle errors" when {
-      val desErrorBodyModel = DesErrorBodyModel("DES_CODE", "DES_REASON")
+      val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
 
       Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
         s"DES returns $status" in {
-          val desError = DesErrorModel(status, desErrorBodyModel)
+          val desError = ErrorModel(status, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
 
           stubGetWithResponseBody(url, status, desError.toJson.toString)
@@ -81,7 +81,7 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
         }
       }
         "DES returns an unexpected error - 502 BadGateway" in {
-          val desError = DesErrorModel(BAD_GATEWAY, desErrorBodyModel)
+          val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
 
           stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())

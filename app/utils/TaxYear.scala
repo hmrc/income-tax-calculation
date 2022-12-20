@@ -33,4 +33,7 @@ object TaxYear {
     val startYear: Int = endYear - 1
     s"$startYear-${endYear.toString.substring(year.length - 2)}"
   }
+
+  def convertSpecificTaxYear(taxYear: String): String =
+    s"${(taxYear.toInt - 1).toString takeRight 2}-${taxYear takeRight 2}"
 }

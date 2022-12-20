@@ -20,7 +20,7 @@ import connectors.httpParsers.GetBusinessDetailsHttpParser.GetBusinessDetailsRes
 import connectors.GetBusinessDetailsConnector
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel}
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import org.scalamock.handlers.CallHandler2
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import testUtils.TestSuite
@@ -77,7 +77,7 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
   def getBusinessDetailsFailure: CallHandler2[String, HeaderCarrier, Future[GetBusinessDetailsResponse]] =
     (mockGetBusinessDetailsConnector.getBusinessDetails(_: String)(_: HeaderCarrier))
       .expects(*, *)
-      .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
+      .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
   ".getBusinessDetails" should {
 
@@ -102,7 +102,7 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
 
       val result = await(service.getBusinessDetails("BB123456A","12345"))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
   }
 }

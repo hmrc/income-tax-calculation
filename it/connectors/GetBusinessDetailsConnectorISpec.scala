@@ -21,7 +21,7 @@ import config.BackendAppConfig
 import helpers.WiremockSpec
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel}
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
@@ -148,11 +148,11 @@ class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
     }
 
     "handle errors" when {
-      val desErrorBodyModel = DesErrorBodyModel("DES_CODE", "DES_REASON")
+      val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
 
       Seq(NOT_FOUND).foreach { status =>
         s"DES returns $status" in {
-          val desError = DesErrorModel(status, desErrorBodyModel)
+          val desError = ErrorModel(status, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
 
           stubGetWithResponseBody(url, status, desError.toJson.toString)
@@ -165,7 +165,7 @@ class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
       Seq(BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
         s"DES returns $status" in {
-          val desError = DesErrorModel(status, desErrorBodyModel)
+          val desError = ErrorModel(status, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
 
           stubGetWithResponseBody(url, status, desError.toJson.toString)
@@ -176,7 +176,7 @@ class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
         }
       }
       "DES returns an unexpected error - 502 BadGateway" in {
-        val desError = DesErrorModel(BAD_GATEWAY, desErrorBodyModel)
+        val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
         implicit val hc: HeaderCarrier = HeaderCarrier()
 
         stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())

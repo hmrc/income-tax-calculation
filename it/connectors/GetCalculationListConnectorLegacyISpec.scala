@@ -18,7 +18,7 @@ package connectors
 
 import config.BackendAppConfig
 import helpers.WiremockSpec
-import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModelLegacy}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
@@ -89,7 +89,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
       val result = await(connector.calcList(nino, None))
 
-      result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
+      result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
 
 
@@ -103,8 +103,8 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
       val result = await(connector.calcList(nino, None))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
-        "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
+        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
     }
 
     "DES returns an 503 error with OptionalTaxYear" in {
@@ -122,7 +122,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
       val result = await(connector.calcList(nino, taxYear))
 
-      result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
+      result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
 
 
@@ -136,8 +136,8 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
       val result = await(connector.calcList(nino, taxYear))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR,
-        DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR,
+        ErrorBodyModel("PARSING_ERROR", "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
     }
   }
 

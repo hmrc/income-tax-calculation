@@ -58,6 +58,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val environment: String = config.get[String]("microservice.services.des.environment")
   val authorisationToken: String = config.get[String]("microservice.services.des.authorisation-token")
   def iFAuthorisationToken(api:String): String = config.get[String](s"microservice.services.if.authorisation-token.$api")
+  val ifEnvironment: String = servicesConfig.getString(key = "microservice.services.if.environment")
 
   // mongo config
   lazy val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")

@@ -17,17 +17,17 @@
 package connectors.httpParsers
 
 import models.{ErrorBodyModel, ErrorModel, LiabilityCalculationIdModel}
+import play.api.http.Status._
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HttpResponse
-import play.api.http.Status._
 
-class LiabilityCalculationHttpParserSpec extends TestSuite {
+class PostCalculateIncomeTaxLiabilityHttpParserSpec extends TestSuite {
 
-  val parser = LiabilityCalculationHttpParser
+  val parser = PostCalculateIncomeTaxLiabilityHttpParser
 
   "CreateIncomeSourcesHttpReads" should {
-    "return a calculation id model" when {
-      "DES returns 200" in {
+    "return a IF calculation id model" when {
+      "IF returns 202" in {
         val response =
           """
             |{
@@ -35,13 +35,13 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
+        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(ACCEPTED, response)) mustBe
           Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
       }
     }
 
     "return an error model" when {
-      "DES returns service unavailable" in {
+      "IF returns service unavailable" in {
         val response =
           """
             |{
@@ -54,20 +54,20 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
           Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
       }
 
-      "DES returns server error" in {
+      "IF returns server error" in {
         val response =
           """
             |{
             |  "code": "SERVER_ERROR",
-            |  "reason": "DES is currently experiencing problems that require live service intervention."
+            |  "reason": "IF is currently experiencing problems that require live service intervention."
             |}
             |""".stripMargin
 
         parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("SERVER_ERROR", "IF is currently experiencing problems that require live service intervention.")))
       }
 
-      "DES returns bad request" in {
+      "IF returns bad request" in {
         val response =
           """
             |{
@@ -80,20 +80,7 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
           Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")))
       }
 
-      "DES returns conflict" in {
-        val response =
-          """
-            |{
-            |  "code": "CONFLICT",
-            |  "reason": "The remote endpoint has indicated that final declaration has already been received"
-            |}
-            |""".stripMargin
-
-        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(CONFLICT, response)) mustBe
-          Left(ErrorModel(CONFLICT, ErrorBodyModel("CONFLICT", "The remote endpoint has indicated that final declaration has already been received")))
-      }
-
-      "DES returns UNPROCESSABLE_ENTITY" in {
+      "IF returns UNPROCESSABLE_ENTITY" in {
         val response =
           """
             |{
@@ -106,20 +93,7 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
           Left(ErrorModel(UNPROCESSABLE_ENTITY, ErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
       }
 
-      "DES returns FORBIDDEN" in {
-        val response =
-          """
-            |{
-            |  "code": "FORBIDDEN",
-            |  "reason": "The remote endpoint has indicated that no income submissions exist"
-            |}
-            |""".stripMargin
-
-        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(FORBIDDEN, response)) mustBe
-          Left(ErrorModel(FORBIDDEN, ErrorBodyModel("FORBIDDEN", "The remote endpoint has indicated that no income submissions exist")))
-      }
-
-      "DES returns an unexpected error response" in {
+      "IF returns an unexpected error response" in {
         val response =
           """
             |{
@@ -132,7 +106,7 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
           Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("IM_A_TEAPOT", "The remote endpoint has indicated that I'm a teapot")))
       }
 
-      "DES returns an unexpected error body" in {
+      "IF returns an unexpected error body" in {
         val response =
           """
             |{
@@ -144,7 +118,7 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
           Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError))
       }
 
-      "DES returns invalid Json for 200" in {
+      "IF returns invalid Json for 202" in {
         val response =
           """
             |{
@@ -152,12 +126,12 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
             |}
             |""".stripMargin
 
-        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
+        parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(ACCEPTED, response)) mustBe
           Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
             "Error parsing response from API - List((/id,List(JsonValidationError(List(error.path.missing),List()))))")))
       }
 
-      "DES returns a bad json body" in {
+      "IF returns a bad json body" in {
         val response =
           """
             |{

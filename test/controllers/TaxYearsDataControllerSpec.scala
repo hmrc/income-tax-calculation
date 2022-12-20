@@ -19,7 +19,7 @@ package controllers
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.mongo.TaxYearsData
-import models.{DesErrorBodyModel, DesErrorModel, TaxYearsResponseData}
+import models.{ErrorBodyModel, ErrorModel, TaxYearsResponseData}
 import org.scalamock.handlers.CallHandler3
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
@@ -70,15 +70,15 @@ class TaxYearsDataControllerSpec extends TestSuite {
   val taxYearsData = TaxYearsData(nino, successModel.taxYears)
   val taxYearsResponseData = TaxYearsResponseData(taxYearsData.taxYears)
 
-  def taxYearsSuccessResponse: CallHandler3[String, String, HeaderCarrier, Future[Either[DesErrorModel, TaxYearsData]]] =
+  def taxYearsSuccessResponse: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, TaxYearsData]]] =
     (service.getTaxYearsData(_: String, _: String)(_: HeaderCarrier))
       .expects(nino, *, *)
       .returning(Future.successful(Right(taxYearsData)))
 
-  def taxYearsErrorResponse(status: Int): CallHandler3[String, String, HeaderCarrier, Future[Either[DesErrorModel, TaxYearsData]]] =
+  def taxYearsErrorResponse(status: Int): CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, TaxYearsData]]] =
     (service.getTaxYearsData(_: String, _:String)(_: HeaderCarrier))
       .expects(nino, *, *)
-      .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
+      .returning(Future.successful(Left(ErrorModel(status, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   "TaxYearsController.getTaxYearsData" should {
 

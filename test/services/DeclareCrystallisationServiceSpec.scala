@@ -18,7 +18,7 @@ package services
 
 import connectors.DeclareCrystallisationConnector
 import connectors.httpParsers.DeclareCrystallisationHttpParser.DeclareCrystallisationResponse
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import org.scalamock.handlers.CallHandler4
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testUtils.TestSuite
@@ -43,7 +43,7 @@ class DeclareCrystallisationServiceSpec extends TestSuite {
   def declareCrystallisationConnectorFailure: CallHandler4[String, Int, String, HeaderCarrier, Future[DeclareCrystallisationResponse]] =
     (mockConnector.declareCrystallisation(_: String, _: Int, _: String)(_: HeaderCarrier))
       .expects(*, *, *, *)
-      .returning(Future.successful(Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))))
+      .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
   ".declareCrystallisation" should {
 
@@ -62,7 +62,7 @@ class DeclareCrystallisationServiceSpec extends TestSuite {
 
       val result = await(service.declareCrystallisation(nino, taxYear, calculationId))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
   }
 

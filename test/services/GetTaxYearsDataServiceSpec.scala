@@ -19,7 +19,7 @@ package services
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.mongo.{DataNotFoundError, DatabaseError, MongoError, TaxYearsData}
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import org.scalamock.handlers.{CallHandler1, CallHandler3}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import repositories.TaxYearsDataRepository
@@ -69,23 +69,23 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
     Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023),
     TestingClock.now())
 
-  val desErrorModel = DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error"))
+  val errorModel = ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error"))
 
-  def getBusinessDetailsSuccess: CallHandler3[String, String, HeaderCarrier, Future[Either[DesErrorModel, IncomeSourceDetailsModel]]] =
+  def getBusinessDetailsSuccess: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(Future.successful(Right((successModel))))
 
   def getBusinessDetails404(nino: String, mtditid: String): CallHandler3[String, String, HeaderCarrier,
-    Future[Either[DesErrorModel, IncomeSourceDetailsModel]]] =
+    Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(Future.successful(Right(IncomeSourceDetailsModel(nino,mtditid,None,List.empty,None))))
 
-  def getBusinessDetailsFailure: CallHandler3[String, String, HeaderCarrier, Future[Either[DesErrorModel, IncomeSourceDetailsModel]]] =
+  def getBusinessDetailsFailure: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Left((desErrorModel))))
+      .returning(Future.successful(Left((errorModel))))
 
   def findSuccess: CallHandler1[String, Future[Either[DatabaseError, Option[TaxYearsData]]]] =
     (mockTaxYearsDataRepository.find(_: String))
@@ -191,7 +191,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       val result = await(service.getTaxYearsData("BB123456A","12345"))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
 
     "return a Left when a database error occurs when retrieving tax years data and getting business details fails due to error with DES" in {
@@ -201,7 +201,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       val result = await(service.getTaxYearsData("BB123456A","12345"))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("error", "error")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
   }
 }

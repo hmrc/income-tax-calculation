@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
@@ -48,7 +48,7 @@ class CalculationDetailControllerSpec extends TestSuite {
   def calculationErrorResponse(status: Int): CallHandler3[String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
     (service.getCalculationDetails(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(nino, Some(taxYear), *)
-      .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
+      .returning(Future.successful(Left(ErrorModel(status, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   def calculationSuccessResponseByCalcId: CallHandler4[String, String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
     (service.getCalculationDetailsByCalcId(_: String, _: String, _: Option[String])(_: HeaderCarrier))
@@ -58,7 +58,7 @@ class CalculationDetailControllerSpec extends TestSuite {
   def calculationErrorResponseByCalcId(status: Int): CallHandler4[String, String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
     (service.getCalculationDetailsByCalcId(_: String, _: String, _: Option[String])(_: HeaderCarrier))
       .expects(nino, calculationId, Some(taxYear), *)
-      .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
+      .returning(Future.successful(Left(ErrorModel(status, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   "CalculationDetailController.calculationDetail" should {
 

@@ -18,7 +18,7 @@ package connectors
 
 import config.BackendAppConfig
 import helpers.WiremockSpec
-import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModel}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
@@ -100,7 +100,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
       val result = await(connector.getCalculationList(nino))
 
-      result mustBe Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
+      result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
 
 
@@ -126,8 +126,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
 
       val result = await(connector.getCalculationList(nino))
 
-      result mustBe Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
-        "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
+        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
     }
   }
 

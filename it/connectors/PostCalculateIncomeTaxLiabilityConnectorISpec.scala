@@ -23,47 +23,49 @@ import models._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
-import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
+import play.api.http.Status.{ACCEPTED, SERVICE_UNAVAILABLE}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.TaxYear.convertSpecificTaxYear
 
-class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers{
+class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers {
 
-  lazy val connector: LiabilityCalculationConnector = app.injector.instanceOf[LiabilityCalculationConnector]
+  lazy val connector: PostCalculateIncomeTaxLiabilityConnector = app.injector.instanceOf[PostCalculateIncomeTaxLiabilityConnector]
 
   lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
 
-  def appConfig(desHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
-    override val desBaseUrl: String = s"http://$desHost:$wireMockPort"
+  def appConfig(ifHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
+    override val ifBaseUrl: String = s"http://$ifHost:$wireMockPort"
   }
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  val taxYear = "2021"
-  val url = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
-  val crystalliseUrl = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation?crystallise=true"
+  val taxYear = "2024"
+  val taxYearParameter: String = convertSpecificTaxYear(taxYear)
+  val url = s"/income-tax/calculation/$taxYearParameter/$nino"
+  val crystalliseUrl = s"/income-tax/calculation/$taxYearParameter/$nino?crystallise=true"
 
 
-  "LiabilityCalculationConnector" should {
+  "PostCalculateIncomeTaxLiabilityConnector" should {
 
     "return a success result" when {
 
-      "DES returns a success result with expected JSON" in {
+      "IF returns a success result with expected JSON" in {
         val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
 
-        stubPostWithoutRequestBody(url, OK, response)
+        stubPostWithoutRequestBody(url, ACCEPTED, response)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = false))
 
         result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
       }
 
-      "DES returns a success result with expected JSON and crystallise flag" in {
+      "IF returns a success result with expected JSON and crystallise flag" in {
         val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
 
-        stubPostWithoutRequestBody(crystalliseUrl, OK, response)
+        stubPostWithoutRequestBody(crystalliseUrl, ACCEPTED, response)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = true))
 
@@ -75,30 +77,30 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
 
       val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
 
-      val headersSentToDes = Seq(
+      val headersSentToIF = Seq(
         new HttpHeader(HeaderNames.authorisation, "Bearer secret"),
         new HttpHeader(HeaderNames.xSessionId, "sessionIdValue")
       )
 
       val externalHost = "127.0.0.1"
 
-      "the host for DES is 'Internal'" in {
+      "the host for IF is 'Internal'" in {
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
         val expectedResult = LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")
 
-        stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
+        stubPostWithoutRequestBody(url, ACCEPTED, response, headersSentToIF)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
 
         result mustBe Right(expectedResult)
       }
 
-      "the host for DES is 'External'" in {
+      "the host for IF is 'External'" in {
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
-        val connector = new LiabilityCalculationConnector(httpClient, appConfig(externalHost))
+        val connector = new PostCalculateIncomeTaxLiabilityConnector(httpClient, appConfig(externalHost))
         val expectedResult = LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")
 
-        stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
+        stubPostWithoutRequestBody(url, ACCEPTED, response, headersSentToIF)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
 
@@ -110,7 +112,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
 
     "return a failure result" when {
 
-      "DES returns an error" in {
+      "IF returns an error" in {
         val response =
           """
             |{
@@ -126,7 +128,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
 
       }
 
-      "DES returns an error with crystallise flag" in {
+      "IF returns an error with crystallise flag" in {
         val response =
           """
             |{

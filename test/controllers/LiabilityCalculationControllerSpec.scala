@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
-import models.{DesErrorBodyModel, DesErrorModel, LiabilityCalculationIdModel}
+import models.{ErrorBodyModel, ErrorModel, LiabilityCalculationIdModel}
 import org.scalamock.handlers.CallHandler4
 import play.api.http.Status
 import play.api.http.Status._
@@ -43,7 +43,7 @@ class LiabilityCalculationControllerSpec extends TestSuite {
   def mockServiceFailCall(status: Int): CallHandler4[String, String, Boolean, HeaderCarrier, Future[LiabilityCalculationResponse]] =
     (service.calculateLiability(_: String, _: String, _: Boolean)(_: HeaderCarrier))
       .expects(nino, taxYear, *, *)
-      .returning(Future.successful(Left(DesErrorModel(status, DesErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
+      .returning(Future.successful(Left(ErrorModel(status, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
   "liabilityCalculation" should {
 

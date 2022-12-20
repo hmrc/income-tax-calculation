@@ -18,7 +18,7 @@ package api
 
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.WiremockSpec
-import models.{DesErrorBodyModel, LiabilityCalculationIdModel}
+import models.{ErrorBodyModel, LiabilityCalculationIdModel}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
@@ -63,7 +63,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -80,7 +80,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
@@ -97,7 +97,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
       }
 
       "return a 4XX when des returns an 4XX" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
 
@@ -135,7 +135,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         agentAuthorised()
 
@@ -152,7 +152,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         agentAuthorised()
 
@@ -169,7 +169,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
       }
 
       "return a 4XX when des returns an 4XX" in new Setup {
-        val response = Json.toJson(DesErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         agentAuthorised()
 

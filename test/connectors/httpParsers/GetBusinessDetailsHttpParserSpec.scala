@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import play.api.http.Status._
 import testConstants.IncomeSourceDetailsTestConstants.{successResponse, testIncomeSourceDetailsModel}
 import testUtils.TestSuite
@@ -45,7 +45,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(SERVICE_UNAVAILABLE, response)) mustBe
-          Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
+          Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
       }
 
       "DES returns server error" in {
@@ -58,7 +58,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")))
       }
 
       "DES returns bad request" in {
@@ -71,7 +71,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(BAD_REQUEST, response)) mustBe
-          Left(DesErrorModel(BAD_REQUEST, DesErrorBodyModel("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")))
+          Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")))
       }
 
       "DES returns conflict" in {
@@ -84,7 +84,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(CONFLICT, response)) mustBe
-          Left(DesErrorModel(CONFLICT, DesErrorBodyModel("CONFLICT", "The remote endpoint has indicated that final declaration has already been received")))
+          Left(ErrorModel(CONFLICT, ErrorBodyModel("CONFLICT", "The remote endpoint has indicated that final declaration has already been received")))
       }
 
       "DES returns UNPROCESSABLE_ENTITY" in {
@@ -97,7 +97,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(UNPROCESSABLE_ENTITY, response)) mustBe
-          Left(DesErrorModel(UNPROCESSABLE_ENTITY, DesErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
+          Left(ErrorModel(UNPROCESSABLE_ENTITY, ErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
       }
 
       "DES returns FORBIDDEN" in {
@@ -110,7 +110,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(FORBIDDEN, response)) mustBe
-          Left(DesErrorModel(FORBIDDEN, DesErrorBodyModel("FORBIDDEN", "The remote endpoint has indicated that no income submissions exist")))
+          Left(ErrorModel(FORBIDDEN, ErrorBodyModel("FORBIDDEN", "The remote endpoint has indicated that no income submissions exist")))
       }
 
       "DES returns an unexpected error response" in {
@@ -123,7 +123,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(IM_A_TEAPOT, response)) mustBe
-          Left(DesErrorModel(IM_A_TEAPOT, DesErrorBodyModel("IM_A_TEAPOT", "The remote endpoint has indicated that I'm a teapot")))
+          Left(ErrorModel(IM_A_TEAPOT, ErrorBodyModel("IM_A_TEAPOT", "The remote endpoint has indicated that I'm a teapot")))
       }
 
       "DES returns an unexpected error body" in {
@@ -135,7 +135,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError))
       }
 
       "DES returns invalid Json for 200" in {
@@ -147,8 +147,8 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(OK, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
-            "Error parsing response from DES - List((/mtdbsa,List(JsonValidationError(List(error.path.missing),List()))), (/nino,List(JsonValidationError(List(error.path.missing),List()))))")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
+            "Error parsing response from API - List((/mtdbsa,List(JsonValidationError(List(error.path.missing),List()))), (/nino,List(JsonValidationError(List(error.path.missing),List()))))")))
       }
 
       "DES returns a bad json body" in {
@@ -158,7 +158,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
       }
     }
   }

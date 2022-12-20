@@ -29,6 +29,7 @@ trait IFConnector {
   val appConfig: AppConfig
 
   val headerCarrierConfig: Config = HeaderCarrier.Config.fromConfig(ConfigFactory.load())
+  val PostCalculateIncomeTaxLiability = "1897"
 
   private[connectors] def iFHeaderCarrier(url: String, apiNumber: String)(implicit hc: HeaderCarrier): HeaderCarrier = {
 
@@ -36,7 +37,7 @@ trait IFConnector {
 
     val hcWithAuth = hc.copy(authorization = Some(Authorization(s"Bearer ${appConfig.iFAuthorisationToken(apiNumber)}")))
 
-    if(internalHost) {
+    if (internalHost) {
       hcWithAuth.withExtraHeaders("Environment" -> appConfig.environment)
     } else {
       hcWithAuth.withExtraHeaders("Environment" -> appConfig.environment).withExtraHeaders(hcWithAuth.toSeq: _*)

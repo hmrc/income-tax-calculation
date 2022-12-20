@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{DesErrorBodyModel, DesErrorModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModelLegacy}
 import play.api.http.Status.{BAD_REQUEST, CONFLICT, FORBIDDEN, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
 import testUtils.TestSuite
@@ -49,7 +49,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(SERVICE_UNAVAILABLE, response)) mustBe
-          Left(DesErrorModel(SERVICE_UNAVAILABLE, DesErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
+          Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
       }
 
       "DES returns server error" in {
@@ -62,7 +62,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")))
       }
 
       "DES returns bad request" in {
@@ -75,7 +75,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(BAD_REQUEST, response)) mustBe
-          Left(DesErrorModel(BAD_REQUEST, DesErrorBodyModel("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")))
+          Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")))
       }
 
       "DES returns conflict" in {
@@ -88,7 +88,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(CONFLICT, response)) mustBe
-          Left(DesErrorModel(CONFLICT, DesErrorBodyModel("CONFLICT", "The remote endpoint has indicated that final declaration has already been received")))
+          Left(ErrorModel(CONFLICT, ErrorBodyModel("CONFLICT", "The remote endpoint has indicated that final declaration has already been received")))
       }
 
       "DES returns UNPROCESSABLE_ENTITY" in {
@@ -101,7 +101,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(UNPROCESSABLE_ENTITY, response)) mustBe
-          Left(DesErrorModel(UNPROCESSABLE_ENTITY, DesErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
+          Left(ErrorModel(UNPROCESSABLE_ENTITY, ErrorBodyModel("UNPROCESSABLE_ENTITY", "The remote endpoint has indicated that crystallisation can not occur until after the end of tax year.")))
       }
 
       "DES returns FORBIDDEN" in {
@@ -114,7 +114,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(FORBIDDEN, response)) mustBe
-          Left(DesErrorModel(FORBIDDEN, DesErrorBodyModel("FORBIDDEN", "The remote endpoint has indicated that no income submissions exist")))
+          Left(ErrorModel(FORBIDDEN, ErrorBodyModel("FORBIDDEN", "The remote endpoint has indicated that no income submissions exist")))
       }
 
       "DES returns an unexpected error response" in {
@@ -127,7 +127,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(IM_A_TEAPOT, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("IM_A_TEAPOT", "The remote endpoint has indicated that I'm a teapot")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("IM_A_TEAPOT", "The remote endpoint has indicated that I'm a teapot")))
       }
 
       "DES returns an unexpected error body" in {
@@ -139,7 +139,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel.parsingError))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError))
       }
 
       "DES returns invalid Json for 200" in {
@@ -151,8 +151,8 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(OK, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR",
-            "Error parsing response from DES - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
+            "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
       }
 
       "DES returns a bad json body" in {
@@ -162,7 +162,7 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
             |""".stripMargin
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(DesErrorModel(INTERNAL_SERVER_ERROR, DesErrorBodyModel("PARSING_ERROR", "Error parsing response from DES")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
       }
     }
   }

@@ -18,7 +18,7 @@ package api
 
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.WiremockSpec
-import models.DesErrorBodyModel
+import models.ErrorBodyModel
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Seconds, Span}
@@ -62,7 +62,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return an InternalServerError(500) when DES returns an InternalServerError" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
         stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
@@ -77,7 +77,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a ServiceUnavailable(503) when DES returns ServiceUnavailable" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
         stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
@@ -92,7 +92,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 404 NotFound" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
         stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
@@ -107,7 +107,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 409 Conflict" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
         stubPostWithoutRequestBody(desUrl, CONFLICT, response)
@@ -122,7 +122,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 400 BadRequest" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
         stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
@@ -137,7 +137,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 422 UnprocessableEntity" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
         stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)
@@ -170,7 +170,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return an InternalServerError(500) when DES returns an InternalServerError" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
@@ -185,7 +185,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a ServiceUnavailable(503) when DES returns ServiceUnavailable" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
@@ -200,7 +200,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 409 Conflict" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, CONFLICT, response)
@@ -215,7 +215,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 404 NotFound" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
@@ -230,7 +230,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 400 BadRequest" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
@@ -245,7 +245,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
       }
 
       "return a 4XX response when DES returns a 422 UnprocessableEntity" in new Setup {
-        val response: String = Json.toJson(DesErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
         stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)

@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.httpParsers.DeclareCrystallisationHttpParser.DeclareCrystallisationResponse
-import models.{DesErrorBodyModel, DesErrorModel}
+import models.{ErrorBodyModel, ErrorModel}
 import org.scalamock.handlers.CallHandler4
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -45,7 +45,7 @@ class DeclareCrystallisationControllerSpec extends TestSuite {
   def declareCrystallisationFailure(httpStatus: Int): CallHandler4[String, Int, String, HeaderCarrier, Future[DeclareCrystallisationResponse]] =
     (service.declareCrystallisation(_: String, _: Int, _: String)(_: HeaderCarrier))
       .expects(*, *, *, *)
-      .returning(Future.successful(Left(DesErrorModel(httpStatus, DesErrorBodyModel("DES_CODE", "DES_REASON")))))
+      .returning(Future.successful(Left(ErrorModel(httpStatus, ErrorBodyModel("DES_CODE", "DES_REASON")))))
 
 
   "Request from an individual" should {
