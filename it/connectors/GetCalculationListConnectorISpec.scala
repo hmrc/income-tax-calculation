@@ -40,7 +40,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  val url = s"/income-tax/view/calculations/liability/23-24/$nino"
+  val url = s"/income-tax/view/calculations/liability/2023-24/$nino"
 
   "GetCalculationListConnector" should {
 
