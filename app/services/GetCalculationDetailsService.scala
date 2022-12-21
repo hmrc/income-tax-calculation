@@ -35,7 +35,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     if (taxYear.isDefined && taxYear.get == "2024") {
       listCalculationDetailsConnector.getCalculationList(nino).flatMap {
         case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError)))
+          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError(""))))
         case Right(listOfCalculationDetails) =>
           getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
         case Left(desError) => Future.successful(Left(desError))
@@ -43,7 +43,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     } else {
       listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
         case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError)))
+          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError(""))))
         case Right(listOfCalculationDetails) =>
           getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
         case Left(desError) => Future.successful(Left(desError))

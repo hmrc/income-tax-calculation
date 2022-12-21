@@ -141,7 +141,7 @@ class LiabilityCalculationHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError("")))
       }
 
       "DES returns invalid Json for 200" in {

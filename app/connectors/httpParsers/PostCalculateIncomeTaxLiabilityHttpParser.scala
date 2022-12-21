@@ -26,6 +26,7 @@ object PostCalculateIncomeTaxLiabilityHttpParser extends APIParser {
   type PostCalculateIncomeTaxLiabilityResponse = Either[ErrorModel, LiabilityCalculationIdModel]
 
   override val parserName: String = "PostCalculateIncomeTaxLiabilityHttpParser"
+  val PostCalculateIncomeTaxLiability = "1897"
 
   implicit object CreateIncomeSourcesHttpReads extends HttpReads[PostCalculateIncomeTaxLiabilityResponse] {
     override def read(method: String, url: String, response: HttpResponse): PostCalculateIncomeTaxLiabilityResponse = {
@@ -36,16 +37,16 @@ object PostCalculateIncomeTaxLiabilityHttpParser extends APIParser {
         )
         case INTERNAL_SERVER_ERROR =>
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
-          handleIFError(response)
+          handleIFError(response, apiNumber = PostCalculateIncomeTaxLiability)
         case SERVICE_UNAVAILABLE =>
           pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
-          handleIFError(response)
+          handleIFError(response, apiNumber = PostCalculateIncomeTaxLiability)
         case BAD_REQUEST | UNPROCESSABLE_ENTITY =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
-          handleIFError(response)
+          handleIFError(response, apiNumber = PostCalculateIncomeTaxLiability)
         case _ =>
           pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
-          handleIFError(response, Some(INTERNAL_SERVER_ERROR))
+          handleIFError(response, Some(INTERNAL_SERVER_ERROR), apiNumber = PostCalculateIncomeTaxLiability)
       }
     }
   }

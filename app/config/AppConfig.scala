@@ -33,7 +33,8 @@ trait AppConfig {
   val auditingEnabled: Boolean
   val graphiteHost: String
 
-  val environment: String
+  val desEnvironment: String
+  val ifEnvironment: String
   val authorisationToken: String
   val ifBaseUrl: String
 
@@ -55,10 +56,11 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
 
-  val environment: String = config.get[String]("microservice.services.des.environment")
+  val desEnvironment: String = config.get[String]("microservice.services.des.environment")
+  val ifEnvironment: String = config.get[String]( "microservice.services.if.environment")
+
   val authorisationToken: String = config.get[String]("microservice.services.des.authorisation-token")
   def iFAuthorisationToken(api:String): String = config.get[String](s"microservice.services.if.authorisation-token.$api")
-  val ifEnvironment: String = servicesConfig.getString(key = "microservice.services.if.environment")
 
   // mongo config
   lazy val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")

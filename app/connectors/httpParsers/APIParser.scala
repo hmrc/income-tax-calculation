@@ -36,7 +36,7 @@ trait APIParser {
     Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API - " + validationErrors)))
   }
 
-  def handleIFError[Response](response: HttpResponse, statusOverride: Option[Int] = None): Either[ErrorModel, Response] = {
+  def handleIFError[Response](response: HttpResponse, statusOverride: Option[Int] = None, apiNumber: String = ""): Either[ErrorModel, Response] = {
 
     val status = statusOverride.getOrElse(response.status)
 
@@ -51,10 +51,13 @@ trait APIParser {
         case (_, Some(apiErrors)) => Left(ErrorModel(status, apiErrors))
         case _ =>
           pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, Some(s"[$parserName][read] Unexpected Json response."))
-          Left(ErrorModel(status, ErrorBodyModel.parsingError))
+          Left(ErrorModel(status, ErrorBodyModel.parsingError(apiNumber)))
       }
     } catch {
-      case _: Exception => Left(ErrorModel(status, ErrorBodyModel.parsingError))
+      case _:
+        Exception =>
+        pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, Some(s"[$parserName][read] Unexpected Json response."))
+        Left(ErrorModel(status, ErrorBodyModel.parsingError(apiNumber)))
     }
   }
 }
