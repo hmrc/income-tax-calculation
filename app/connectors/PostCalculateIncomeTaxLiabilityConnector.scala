@@ -26,6 +26,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PostCalculateIncomeTaxLiabilityConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends IFConnector {
+  val PostCalculateIncomeTaxLiability = "1897"
 
   def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)(implicit hc: HeaderCarrier): Future[PostCalculateIncomeTaxLiabilityResponse] = {
     val taxYearParameter = convertSpecificTaxYear(taxYear)

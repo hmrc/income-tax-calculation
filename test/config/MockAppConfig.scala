@@ -30,7 +30,9 @@ class MockAppConfig extends AppConfig {
 
   override val graphiteHost: String = "/graphite"
 
-  override val environment: String = "dev"
+  override val desEnvironment: String = "dev"
+
+  override val ifEnvironment: String = "dev"
 
   override val authorisationToken: String = "someToken"
 
@@ -55,7 +57,9 @@ class MockAppConfig extends AppConfig {
 
     override val graphiteHost: String = "/graphite"
 
-    override val environment: String = "dev"
+    override val desEnvironment: String = "dev"
+
+    override val ifEnvironment: String = "dev"
 
     override val authorisationToken: String = "someToken"
 

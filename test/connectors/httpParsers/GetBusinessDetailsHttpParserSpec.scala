@@ -135,7 +135,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError("")))
       }
 
       "DES returns invalid Json for 200" in {

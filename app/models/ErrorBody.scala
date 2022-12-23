@@ -34,7 +34,7 @@ case class ErrorBodyModel(code: String, reason: String) extends ErrorBody
 
 object ErrorBodyModel {
   implicit val formats: OFormat[ErrorBodyModel] = Json.format[ErrorBodyModel]
-  val parsingError: ErrorBodyModel = ErrorBodyModel("PARSING_ERROR", "Error parsing response from API")
+  def parsingError(apiNumber: String = ""): ErrorBodyModel = ErrorBodyModel("PARSING_ERROR", s"Error parsing response from API${apiNumber.trim}")
 }
 
 /** Multiple Errors **/

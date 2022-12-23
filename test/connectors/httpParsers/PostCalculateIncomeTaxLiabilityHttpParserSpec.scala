@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HttpResponse
 class PostCalculateIncomeTaxLiabilityHttpParserSpec extends TestSuite {
 
   val parser = PostCalculateIncomeTaxLiabilityHttpParser
+  val PostCalculateIncomeTaxLiability = "1897"
 
   "CreateIncomeSourcesHttpReads" should {
     "return a IF calculation id model" when {
@@ -115,7 +116,7 @@ class PostCalculateIncomeTaxLiabilityHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel.parsingError(PostCalculateIncomeTaxLiability)))
       }
 
       "IF returns invalid Json for 202" in {
@@ -138,7 +139,7 @@ class PostCalculateIncomeTaxLiabilityHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(INTERNAL_SERVER_ERROR, response)) mustBe
-          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", s"Error parsing response from API$PostCalculateIncomeTaxLiability")))
       }
     }
   }
