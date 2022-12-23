@@ -35,7 +35,7 @@ class TaxYearSpec extends TestSuite {
   ".updatedFormat" should {
 
     "return a tax year of the format" in {
-      TaxYear.updatedFormat("2021") mustBe "2020-21"
+      TaxYear.updatedFormat("2021") mustBe "20-21"
     }
   }
 
