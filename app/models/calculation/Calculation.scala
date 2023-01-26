@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,8 @@ case class Calculation(
                         dividendsIncome: Option[DividendsIncome],
                         incomeSummaryTotals: Option[IncomeSummaryTotals],
                         taxCalculation: Option[TaxCalculation],
-                        endOfYearEstimate: Option[EndOfYearEstimate]
+                        endOfYearEstimate: Option[EndOfYearEstimate],
+                        pensionSavingsTaxCharges:Option[PensionSavingsTaxCharges]
                       )
 
 object Calculation {
@@ -149,3 +150,10 @@ object StudentLoan {
   implicit val format: OFormat[StudentLoan] = Json.format[StudentLoan]
 }
 
+case class PensionSavingsTaxCharges(totalPensionCharges: Option[BigDecimal] = None,
+                                    totalTaxPaid: Option[BigDecimal] = None,
+                                    totalPensionChargesDue: Option[BigDecimal] = None)
+
+object PensionSavingsTaxCharges {
+  implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
+}
