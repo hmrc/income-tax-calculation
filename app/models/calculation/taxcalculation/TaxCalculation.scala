@@ -24,6 +24,8 @@ case class TaxCalculation(
                            capitalGainsTax: Option[CapitalGainsTax] = None,
                            totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
                            saUnderpaymentsCodedOut: Option[BigDecimal] = None,
+                           totalAnnuityPaymentsTaxCharged: Option[Int] = None,
+                           totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                            totalIncomeTaxAndNicsDue: BigDecimal,
                            totalTaxDeducted: Option[BigDecimal] = None,
                            totalIncomeTaxAndNicsAndCgt: Option[BigDecimal] = None
