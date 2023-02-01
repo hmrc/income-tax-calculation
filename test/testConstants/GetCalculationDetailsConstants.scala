@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -259,6 +259,11 @@ object GetCalculationDetailsConstants {
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+      )),
+      pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
+        totalPensionCharges = Some(5000.99),
+        totalTaxPaid = Some(5000.99),
+        totalPensionChargesDue = Some(5000.99)
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
@@ -413,6 +418,11 @@ object GetCalculationDetailsConstants {
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+      )),
+      pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
+        totalPensionCharges = Some(5000.99),
+        totalTaxPaid = Some(5000.99),
+        totalPensionChargesDue = Some(5000.99)
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
