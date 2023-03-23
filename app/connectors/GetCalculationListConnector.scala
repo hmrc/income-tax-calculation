@@ -27,8 +27,8 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
                                             val appConfig: AppConfig)
                                            (implicit ec: ExecutionContext) extends IFConnector {
 
-  def getCalculationList(nino: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-    val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/23-24/$nino"
+  def getCalculationList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+    val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
     def iFCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
       httpClient.GET(url = getCalculationListUrl)(GetCalculationListHttpReads, hc, ec)

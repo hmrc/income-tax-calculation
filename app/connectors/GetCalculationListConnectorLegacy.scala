@@ -17,33 +17,23 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.GetCalculationListHttpParser.{GetCalculationListHttpReads, GetCalculationListResponse}
 import connectors.httpParsers.GetCalculationListHttpParserLegacy._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetCalculationListConnectorLegacy @Inject()(httpClient: HttpClient, val appConfig: AppConfig)
-                                                 (implicit ec: ExecutionContext) extends IFConnector {
+class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
 
-  def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-//
-//    val getCalcListUrl: String =
-//      s"${appConfig.desBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
+  def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
-    val getCalcListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/legacy/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
+    val getCalcListUrl: String =
+      s"${appConfig.desBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
-    def iFCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-      httpClient.GET(url = getCalcListUrl)(GetCalculationListHttpReads, hc, ec)
+    def desCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+      http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
     }
 
-    iFCall(iFHeaderCarrier(getCalcListUrl, "1896"))
-
-//    def desCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-//      http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
-//    }
-//
-//    desCall(desHeaderCarrier(getCalcListUrl))
+    desCall(desHeaderCarrier(getCalcListUrl))
   }
 }
