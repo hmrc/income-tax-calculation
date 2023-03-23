@@ -28,26 +28,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
                                              calculationDetailsConnector: CalculationDetailsConnector,
-                                             listCalculationDetailsConnector: GetCalculationListConnector,
-                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy) (implicit ec: ExecutionContext) {
+                                             listCalculationDetailsConnector: GetCalculationListConnector) (implicit ec: ExecutionContext) {
 
   def getCalculationDetails(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {
-    if (taxYear.isDefined && taxYear.get == "2024") {
-      listCalculationDetailsConnector.getCalculationList(nino).flatMap {
-        case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError(""))))
-        case Right(listOfCalculationDetails) =>
-          getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
-        case Left(desError) => Future.successful(Left(desError))
-      }
-    } else {
-      listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
-        case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError(""))))
-        case Right(listOfCalculationDetails) =>
-          getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
-        case Left(desError) => Future.successful(Left(desError))
-      }
+    listCalculationDetailsConnector.getCalculationList(nino, taxYear).flatMap {
+      case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
+        Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError(""))))
+      case Right(listOfCalculationDetails) =>
+        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
+      case Left(desError) => Future.successful(Left(desError))
     }
   }
 
