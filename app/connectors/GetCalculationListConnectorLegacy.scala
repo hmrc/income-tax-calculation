@@ -27,8 +27,16 @@ class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfi
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
+    val localEnv = "http://localhost:9081"
+
+    val stagingEnv = "https://www.staging.tax.service.gov.uk"
+
+    val baseUrl: String = hc.headers(Seq("env")).headOption.collect {
+      case (_, env) if env == localEnv || env == stagingEnv => appConfig.ifBaseUrl
+    }.getOrElse(appConfig.desBaseUrl)
+
     val getCalcListUrl: String =
-      s"${appConfig.desBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
+      s"$baseUrl/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
     def desCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
       http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
