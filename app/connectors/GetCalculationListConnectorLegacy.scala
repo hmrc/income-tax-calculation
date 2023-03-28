@@ -27,9 +27,9 @@ class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfi
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
-    val localEnv = "http://localhost:9081"
+    val localEnv = "http://localhost:9081"  // ideally in the actual implementation, we shouldn't use entire url and instead use "localhost"
 
-    val stagingEnv = "https://www.staging.tax.service.gov.uk"
+    val stagingEnv = "https://www.staging.tax.service.gov.uk" // ideally in the actual implementation, we shouldn't use entire url and instead use "staging"
 
     val baseUrl: String = hc.headers(Seq("env")).headOption.collect {
       case (_, env) if env == localEnv || env == stagingEnv => appConfig.ifBaseUrl
