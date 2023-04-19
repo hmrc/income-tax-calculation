@@ -29,12 +29,16 @@ import play.api.libs.json.{JsString, Json}
 
 class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers {
 
+  def toTaxYearParam(taxYear: Int): String = {
+    s"${(taxYear - 1).toString takeRight 2}-${taxYear.toString takeRight 2}"
+  }
+
   trait Setup {
     implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
     val nino: String = "AA123123A"
     val taxYear = "2022"
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
-    val desUrl = s"/income-tax/calculation/nino/$nino/$taxYear/$calculationId/crystallise"
+    val ifUrl = s"/income-tax/${toTaxYearParam(2022)}/calculation/$nino/$calculationId/crystallise"
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val mtditidHeader: (String, String) = ("mtditid", "555555555")
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
@@ -51,7 +55,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         val response: String = JsString("").toString()
 
         authorised()
-        stubPostWithoutRequestBody(desUrl, NO_CONTENT, response)
+        stubPostWithoutRequestBody(ifUrl, NO_CONTENT, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -65,7 +69,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
-        stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
+        stubPostWithoutRequestBody(ifUrl, INTERNAL_SERVER_ERROR, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -80,7 +84,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
-        stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
+        stubPostWithoutRequestBody(ifUrl, SERVICE_UNAVAILABLE, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -95,7 +99,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
-        stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
+        stubPostWithoutRequestBody(ifUrl, NOT_FOUND, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -110,7 +114,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
-        stubPostWithoutRequestBody(desUrl, CONFLICT, response)
+        stubPostWithoutRequestBody(ifUrl, CONFLICT, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -125,7 +129,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
-        stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
+        stubPostWithoutRequestBody(ifUrl, BAD_REQUEST, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -136,11 +140,11 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a 4XX response when DES returns a 422 UnprocessableEntity" in new Setup {
+      "return a 4XX response when IF returns a 422 UnprocessableEntity" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         authorised()
-        stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)
+        stubPostWithoutRequestBody(ifUrl, UNPROCESSABLE_ENTITY, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -160,7 +164,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
 
         agentAuthorised()
 
-        stubPostWithoutRequestBody(desUrl, NO_CONTENT, response)
+        stubPostWithoutRequestBody(ifUrl, NO_CONTENT, response)
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
           .post("""{}""")) {
@@ -169,11 +173,11 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return an InternalServerError(500) when DES returns an InternalServerError" in new Setup {
+      "return an InternalServerError(500) when IF returns an InternalServerError" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
-        stubPostWithoutRequestBody(desUrl, INTERNAL_SERVER_ERROR, response)
+        stubPostWithoutRequestBody(ifUrl, INTERNAL_SERVER_ERROR, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -184,11 +188,11 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a ServiceUnavailable(503) when DES returns ServiceUnavailable" in new Setup {
+      "return a ServiceUnavailable(503) when IF returns ServiceUnavailable" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
-        stubPostWithoutRequestBody(desUrl, SERVICE_UNAVAILABLE, response)
+        stubPostWithoutRequestBody(ifUrl, SERVICE_UNAVAILABLE, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -199,11 +203,11 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a 4XX response when DES returns a 409 Conflict" in new Setup {
+      "return a 4XX response when IF returns a 409 Conflict" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
-        stubPostWithoutRequestBody(desUrl, CONFLICT, response)
+        stubPostWithoutRequestBody(ifUrl, CONFLICT, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -214,11 +218,11 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a 4XX response when DES returns a 404 NotFound" in new Setup {
+      "return a 4XX response when IF returns a 404 NotFound" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
-        stubPostWithoutRequestBody(desUrl, NOT_FOUND, response)
+        stubPostWithoutRequestBody(ifUrl, NOT_FOUND, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -229,11 +233,11 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a 4XX response when DES returns a 400 BadRequest" in new Setup {
+      "return a 4XX response when IF returns a 400 BadRequest" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
-        stubPostWithoutRequestBody(desUrl, BAD_REQUEST, response)
+        stubPostWithoutRequestBody(ifUrl, BAD_REQUEST, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -244,11 +248,11 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
         }
       }
 
-      "return a 4XX response when DES returns a 422 UnprocessableEntity" in new Setup {
+      "return a 4XX response when IF returns a 422 UnprocessableEntity" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("DES_ERROR", "DES_ERROR")).toString()
 
         agentAuthorised()
-        stubPostWithoutRequestBody(desUrl, UNPROCESSABLE_ENTITY, response)
+        stubPostWithoutRequestBody(ifUrl, UNPROCESSABLE_ENTITY, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$nino/taxYear/$taxYear/$calculationId/declare-crystallisation")
           .withHttpHeaders(mtditidHeader, authorization)
