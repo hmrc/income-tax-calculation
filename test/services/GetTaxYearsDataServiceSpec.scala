@@ -66,7 +66,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
   )
 
   val successTaxYearsData = TaxYearsData("BB123456A",
-    Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023),
+    Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024),
     TestingClock.now())
 
   val errorModel = ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error"))

@@ -26,17 +26,22 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeclareCrystallisationConnector @Inject()(httpClient: HttpClient,
                                                 val appConfig: AppConfig)
-                                               (implicit ec: ExecutionContext) extends DesConnector {
+                                               (implicit ec: ExecutionContext) extends IFConnector {
+
+  private def toTaxYearParam(taxYear: Int): String = {
+    s"${(taxYear - 1).toString takeRight 2}-${taxYear.toString takeRight 2}"
+  }
 
   def declareCrystallisation(nino: String, taxYear: Int, calculationId: String)(implicit hc: HeaderCarrier): Future[DeclareCrystallisationResponse] ={
-    val declareCrystallisationUrl: String = appConfig.desBaseUrl +
-      s"/income-tax/calculation/nino/$nino/$taxYear/$calculationId/crystallise"
+    val declareCrystallisationUrl: String = appConfig.ifBaseUrl +
+      s"/income-tax/${toTaxYearParam(taxYear)}/calculation/$nino/$calculationId/crystallise"
 
-    def desCall(implicit hc: HeaderCarrier): Future[DeclareCrystallisationResponse] = {
+    def iFCall(implicit hc: HeaderCarrier): Future[DeclareCrystallisationResponse] = {
       httpClient.POST[JsValue, DeclareCrystallisationResponse](declareCrystallisationUrl, Json.parse("""{}"""))
     }
 
-    desCall(desHeaderCarrier(declareCrystallisationUrl))
+    iFCall(iFHeaderCarrier(declareCrystallisationUrl, "1780"))
   }
+
 
 }

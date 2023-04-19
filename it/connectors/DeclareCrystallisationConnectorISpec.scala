@@ -45,9 +45,14 @@ class DeclareCrystallisationConnectorISpec extends AnyWordSpec with WiremockSpec
     val appConfigWithInternalHost = appConfig("localhost")
     val appConfigWithExternalHost = appConfig("127.0.0.1")
 
+    def toTaxYearParam(taxYear: Int): String = {
+      s"${(taxYear - 1).toString takeRight 2}-${taxYear.toString takeRight 2}"
+    }
+
     val nino = "taxable_entity_id"
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
-    val url = s"/income-tax/calculation/nino/$nino/$taxYear/$calculationId/crystallise"
+    val url = s"/income-tax/${toTaxYearParam(taxYear)}/calculation/$nino/$calculationId/crystallise"
+
 
     "include internal headers" when {
       val headersSentToBenefits = Seq(
