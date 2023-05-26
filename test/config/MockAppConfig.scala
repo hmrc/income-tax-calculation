@@ -20,6 +20,8 @@ import com.typesafe.config.ConfigFactory
 
 class MockAppConfig extends AppConfig {
 
+  override val stubBaseUrl: String = "/stub"
+
   override val authBaseUrl: String = "/auth"
 
   override val desBaseUrl: String = "/des"
@@ -44,9 +46,14 @@ class MockAppConfig extends AppConfig {
 
   override lazy val useEncryption: Boolean = true
 
+  override val useBusinessDetailsStub: Boolean = false
+
   override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
   def config(encrypt: Boolean = true): AppConfig = new AppConfig() {
+
+    override val stubBaseUrl: String = "/stub"
+
     override val authBaseUrl: String = "/auth"
 
     override val desBaseUrl: String = "/des"
@@ -70,6 +77,8 @@ class MockAppConfig extends AppConfig {
     override lazy val mongoTTL: Int = 60
 
     override lazy val useEncryption: Boolean = encrypt
+
+    override val useBusinessDetailsStub: Boolean = false
 
     override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
