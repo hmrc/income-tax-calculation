@@ -34,6 +34,7 @@ trait AppConfig {
   val graphiteHost: String
 
   val desEnvironment: String
+  val stubBaseUrl: String
   val ifEnvironment: String
   val authorisationToken: String
   val ifBaseUrl: String
@@ -43,6 +44,7 @@ trait AppConfig {
   val mongoTTL: Int
   val encryptionKey: String
   val useEncryption: Boolean
+  val useBusinessDetailsStub: Boolean
   val confidenceLevel: Int
 }
 
@@ -51,6 +53,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
   val desBaseUrl: String = servicesConfig.baseUrl("des")
+  val stubBaseUrl: String = servicesConfig.baseUrl("stub")
   val ifBaseUrl: String = servicesConfig.baseUrl("if")
 
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
@@ -67,6 +70,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   lazy val mongoTTL: Int = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
 
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("useEncryption")
+  lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("useBusinessDetailsStub")
 
   override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
 }

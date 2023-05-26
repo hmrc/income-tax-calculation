@@ -27,8 +27,14 @@ class GetBusinessDetailsConnector @Inject()(http: HttpClient, val appConfig: App
 
   def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
 
-    val getBusinessDetailsUrl: String => String =
-      nino => s"${appConfig.desBaseUrl}/registration/business-details/nino/$nino"
+    val getBusinessDetailsUrl: String => String = {
+      if (appConfig.useBusinessDetailsStub) {
+        nino => s"${appConfig.stubBaseUrl}/registration/business-details/nino/$nino"
+      }
+      else {
+        nino => s"${appConfig.desBaseUrl}/registration/business-details/nino/$nino"
+      }
+    }
 
     def desCall(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
       http.GET(url = getBusinessDetailsUrl(nino))(GetBusinessDetailsHttpReads, hc, ec)
