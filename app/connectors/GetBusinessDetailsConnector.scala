@@ -29,7 +29,7 @@ class GetBusinessDetailsConnector @Inject()(http: HttpClient, val appConfig: App
 
     val getBusinessDetailsUrl: String => String = {
       if (appConfig.useBusinessDetailsStub) {
-        nino => s"${appConfig.stubBaseUrl}/registration/business-details/nino/$nino"
+        nino => s"${appConfig.incomeTaxSubmissionStubUrl}/registration/business-details/nino/$nino"
       }
       else {
         nino => s"${appConfig.desBaseUrl}/registration/business-details/nino/$nino"

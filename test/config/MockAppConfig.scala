@@ -20,7 +20,7 @@ import com.typesafe.config.ConfigFactory
 
 class MockAppConfig extends AppConfig {
 
-  override val stubBaseUrl: String = "/stub"
+  override val incomeTaxSubmissionStubUrl: String = "/stub"
 
   override val authBaseUrl: String = "/auth"
 
@@ -52,7 +52,7 @@ class MockAppConfig extends AppConfig {
 
   def config(encrypt: Boolean = true): AppConfig = new AppConfig() {
 
-    override val stubBaseUrl: String = "/stub"
+    override val incomeTaxSubmissionStubUrl: String = "/stub"
 
     override val authBaseUrl: String = "/auth"
 

@@ -34,7 +34,7 @@ trait AppConfig {
   val graphiteHost: String
 
   val desEnvironment: String
-  val stubBaseUrl: String
+  val incomeTaxSubmissionStubUrl: String
   val ifEnvironment: String
   val authorisationToken: String
   val ifBaseUrl: String
@@ -53,7 +53,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
 
   val desBaseUrl: String = servicesConfig.baseUrl("des")
-  val stubBaseUrl: String = servicesConfig.baseUrl("stub")
+  val incomeTaxSubmissionStubUrl: String = config.get[String]("income-tax-submission-stub-url")
   val ifBaseUrl: String = servicesConfig.baseUrl("if")
 
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
