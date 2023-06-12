@@ -19,6 +19,7 @@ package services
 import connectors.httpParsers.LiabilityCalculationHttpParser.LiabilityCalculationResponse
 import connectors.{LiabilityCalculationConnector, PostCalculateIncomeTaxLiabilityConnector}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.TaxYear
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -28,7 +29,7 @@ class LiabilityCalculationService @Inject()(liabilityCalculationConnector: Liabi
 
   def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)
                         (implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
-    if (taxYear.equals("2024")) {
+    if (taxYear.toInt >= TaxYear.specificTaxYear) {
       postCalculateIncomeTaxLiabilityConnector.calculateLiability(nino, taxYear, crystallise)
     }
     else {

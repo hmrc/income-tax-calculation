@@ -31,19 +31,20 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              listCalculationDetailsConnector: GetCalculationListConnector,
                                              listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy) (implicit ec: ExecutionContext) {
 
+  private val specificTaxYear: Int = TaxYear.specificTaxYear
   def getCalculationDetails(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {
-    if (taxYear.isDefined && taxYear.get == "2024") {
+    if (taxYear.isDefined && taxYear.get.toInt >= specificTaxYear) {
       listCalculationDetailsConnector.getCalculationList(nino).flatMap {
-        case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError(""))))
+        case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
+          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
         case Right(listOfCalculationDetails) =>
           getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
         case Left(desError) => Future.successful(Left(desError))
       }
     } else {
       listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
-        case Right(listOfCalculationDetails) if (listOfCalculationDetails.isEmpty) =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError(""))))
+        case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
+          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
         case Right(listOfCalculationDetails) =>
           getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
         case Left(desError) => Future.successful(Left(desError))
@@ -55,7 +56,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
     TaxYear.convert(taxYear) match {
       case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
-      case Right(year) if year >= 2024 =>
+      case Right(year) if year >= specificTaxYear =>
         calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId)
       case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
       case Left(error) => throw new RuntimeException(error)

@@ -18,6 +18,8 @@ package utils
 
 object TaxYear {
 
+  val specificTaxYear: Int = 2024
+
   def convert(taxYear: Option[String]): Either[String, Int] = {
 
     def isValidFormat(year: String): Boolean = year.length == 4 && year.forall(_.isDigit)
@@ -36,4 +38,7 @@ object TaxYear {
 
   def convertSpecificTaxYear(taxYear: String): String =
     s"${(taxYear.toInt - 1).toString takeRight 2}-${taxYear takeRight 2}"
+
+  def convertSpecificTaxYear(taxYear: Int): String =
+    s"${(taxYear - 1).toString takeRight 2}-${taxYear.toString takeRight 2}"
 }
