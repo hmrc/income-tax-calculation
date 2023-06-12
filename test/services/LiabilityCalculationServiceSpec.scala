@@ -24,11 +24,14 @@ import org.scalamock.handlers.CallHandler4
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.TaxYear
 
 import scala.concurrent.Future
 
 class LiabilityCalculationServiceSpec extends TestSuite {
 
+  val specificTaxYear: String = TaxYear.specificTaxYear.toString
+  val specificTaxYearPlusOne: String = (TaxYear.specificTaxYear + 1).toString
   val mockConnector: LiabilityCalculationConnector = mock[LiabilityCalculationConnector]
   val mockIfConnector: PostCalculateIncomeTaxLiabilityConnector = mock[PostCalculateIncomeTaxLiabilityConnector]
   val service = new LiabilityCalculationService(mockConnector, mockIfConnector)
@@ -85,13 +88,13 @@ class LiabilityCalculationServiceSpec extends TestSuite {
     }
   }
 
-  ".calculateLiability if connector" should {
+  ".calculateLiability if connector for specific tax year" should {
 
     "return a Right(LiabilityIfCalculationIdModel) " in {
 
       postCalculateIncomeTaxLiabilityConnectorMockSuccess
 
-      val result = await(service.calculateLiability("nino", "2024", crystallise = false))
+      val result = await(service.calculateLiability("nino", specificTaxYear, crystallise = false))
 
       result mustBe Right(LiabilityCalculationIdModel("id"))
     }
@@ -100,7 +103,7 @@ class LiabilityCalculationServiceSpec extends TestSuite {
 
       postCalculateIncomeTaxLiabilityConnectorMockSuccess
 
-      val result = await(service.calculateLiability("nino", "2024", crystallise = true))
+      val result = await(service.calculateLiability("nino", specificTaxYear, crystallise = true))
 
       result mustBe Right(LiabilityCalculationIdModel("id"))
     }
@@ -109,7 +112,37 @@ class LiabilityCalculationServiceSpec extends TestSuite {
 
       postCalculateIncomeTaxLiabilityConnectorMockFailure
 
-      val result = await(service.calculateLiability("nino", "2024", crystallise = false))
+      val result = await(service.calculateLiability("nino", specificTaxYear, crystallise = false))
+
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
+    }
+  }
+
+  ".calculateLiability if connector for specific tax year plus one" should {
+
+    "return a Right(LiabilityIfCalculationIdModel)" in {
+
+      postCalculateIncomeTaxLiabilityConnectorMockSuccess
+
+      val result = await(service.calculateLiability("nino", specificTaxYearPlusOne, crystallise = false))
+
+      result mustBe Right(LiabilityCalculationIdModel("id"))
+    }
+
+    "return a Right(LiabilityIfCalculationIdModel) with a crystallisation flag" in {
+
+      postCalculateIncomeTaxLiabilityConnectorMockSuccess
+
+      val result = await(service.calculateLiability("nino", specificTaxYearPlusOne, crystallise = true))
+
+      result mustBe Right(LiabilityCalculationIdModel("id"))
+    }
+
+    "return a Left(IfError)" in {
+
+      postCalculateIncomeTaxLiabilityConnectorMockFailure
+
+      val result = await(service.calculateLiability("nino", specificTaxYearPlusOne, crystallise = false))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }

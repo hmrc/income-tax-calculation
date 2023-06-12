@@ -26,6 +26,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 import testConstants.GetCalculationDetailsConstants.successModelFull
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.TaxYear
 
 import scala.concurrent.Future
 
@@ -35,11 +36,14 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val mockSingleCalculationConnector: CalculationDetailsConnector = mock[CalculationDetailsConnector]
   val mockListCalculationConnector: GetCalculationListConnector = mock[GetCalculationListConnector]
   val mockListCalculationConnectorLegacy: GetCalculationListConnectorLegacy = mock[GetCalculationListConnectorLegacy]
-  val service = new GetCalculationDetailsService(mockSingleCalculationConnectorLegacy, mockSingleCalculationConnector, mockListCalculationConnector, mockListCalculationConnectorLegacy)
+  val service = new GetCalculationDetailsService(mockSingleCalculationConnectorLegacy, mockSingleCalculationConnector,
+    mockListCalculationConnector, mockListCalculationConnectorLegacy)
 
   val nino = "AA123456A"
-  val taxYear = Some("2022")
-  val taxYear23To24 = Some("2024")
+  val taxYear: Option[String] = Some("2022")
+  val taxYear2016: Int = 2016
+  val specificTaxYear: Option[String] = Some(TaxYear.specificTaxYear.toString)
+  val specificTaxYearPlusOne: Option[String] = Some((TaxYear.specificTaxYear + 1).toString)
   val optionalTaxYear = false
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
@@ -47,12 +51,12 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   def getCalculationDetailsSuccessLegacy: CallHandler3[String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
     (mockSingleCalculationConnectorLegacy.getCalculationDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Right((successModelFull))))
+      .returning(Future.successful(Right(successModelFull)))
 
   def getCalculationDetailsSuccess: CallHandler4[String, String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
     (mockSingleCalculationConnector.getCalculationDetails(_: String, _: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *, *)
-      .returning(Future.successful(Right((successModelFull))))
+      .returning(Future.successful(Right(successModelFull)))
 
   def listCalculationDetailsSuccess: CallHandler2[String, HeaderCarrier, Future[GetCalculationListResponse]] =
     (mockListCalculationConnector.getCalculationList(_: String)(_: HeaderCarrier))
@@ -64,7 +68,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "inYear",
             requestedBy = Some("customer"),
-            year = Some(2016),
+            year = Some(taxYear2016),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
             totalIncomeTaxAndNicsDue = 500.00,
@@ -111,12 +115,22 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Right(successModelFull)
     }
 
-    "return a Right when successful if tax year is 2024" in {
+    "return a Right when successful for specific tax year" in {
       getCalculationDetailsSuccess
 
       listCalculationDetailsSuccess
 
-      val result = await(service.getCalculationDetails(nino, taxYear23To24))
+      val result = await(service.getCalculationDetails(nino, specificTaxYear))
+
+      result mustBe Right(successModelFull)
+    }
+
+    "return a Right when successful for specific tax year plus one" in {
+      getCalculationDetailsSuccess
+
+      listCalculationDetailsSuccess
+
+      val result = await(service.getCalculationDetails(nino, specificTaxYearPlusOne))
 
       result mustBe Right(successModelFull)
     }
@@ -160,10 +174,18 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Right(successModelFull)
     }
 
-    "return a Right when successful and tax year is 23-24 or later" in {
+    "return a Right when successful for specific tax year" in {
       getCalculationDetailsSuccess
 
-      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, Some("2024")))
+      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, specificTaxYear))
+
+      result mustBe Right(successModelFull)
+    }
+
+    "return a Right when successful for specific tax year plus one" in {
+      getCalculationDetailsSuccess
+
+      val result = await(service.getCalculationDetailsByCalcId(nino, calculationId, specificTaxYearPlusOne))
 
       result mustBe Right(successModelFull)
     }

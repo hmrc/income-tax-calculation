@@ -27,6 +27,7 @@ import play.api.http.Status.{ACCEPTED, SERVICE_UNAVAILABLE}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.TaxYear
 import utils.TaxYear.convertSpecificTaxYear
 
 class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers {
@@ -42,22 +43,26 @@ class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with Wir
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  val taxYear = "2024"
-  val taxYearParameter: String = convertSpecificTaxYear(taxYear)
+  private val specificTaxYear: String = TaxYear.specificTaxYear.toString
+  private val specificTaxYearPlusOne: String = (TaxYear.specificTaxYear + 1).toString
+  val taxYearParameter: String = convertSpecificTaxYear(specificTaxYear)
+  val taxYearParameterPlusOne: String = convertSpecificTaxYear(specificTaxYearPlusOne)
   val url = s"/income-tax/calculation/$taxYearParameter/$nino"
+  val urlTaxYearPlusOne = s"/income-tax/calculation/$taxYearParameterPlusOne/$nino"
   val crystalliseUrl = s"/income-tax/calculation/$taxYearParameter/$nino?crystallise=true"
+  val crystalliseUrlPlusOne = s"/income-tax/calculation/$taxYearParameterPlusOne/$nino?crystallise=true"
 
 
   "PostCalculateIncomeTaxLiabilityConnector" should {
 
-    "return a success result" when {
+    "return a success result for specific tax year" when {
 
       "IF returns a success result with expected JSON" in {
         val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
 
         stubPostWithoutRequestBody(url, ACCEPTED, response)
 
-        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false))
+        val result = await(connector.calculateLiability(nino, specificTaxYear, crystallise = false))
 
         result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
       }
@@ -67,7 +72,31 @@ class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with Wir
 
         stubPostWithoutRequestBody(crystalliseUrl, ACCEPTED, response)
 
-        val result = await(connector.calculateLiability(nino, taxYear, crystallise = true))
+        val result = await(connector.calculateLiability(nino, specificTaxYear, crystallise = true))
+
+        result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
+      }
+    }
+
+    "return a success result for specific tax year plus one" when {
+
+      "IF returns a success result with expected JSON" in {
+        val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
+
+        stubPostWithoutRequestBody(urlTaxYearPlusOne, ACCEPTED, response)
+
+        val result = await(connector.calculateLiability(nino, specificTaxYearPlusOne
+          , crystallise = false))
+
+        result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
+      }
+
+      "IF returns a success result with expected JSON and crystallise flag" in {
+        val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
+
+        stubPostWithoutRequestBody(crystalliseUrlPlusOne, ACCEPTED, response)
+
+        val result = await(connector.calculateLiability(nino, specificTaxYearPlusOne, crystallise = true))
 
         result mustBe Right(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000"))
       }
@@ -90,7 +119,7 @@ class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with Wir
 
         stubPostWithoutRequestBody(url, ACCEPTED, response, headersSentToIF)
 
-        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
+        val result = await(connector.calculateLiability(nino, specificTaxYear, crystallise = false)(hc))
 
         result mustBe Right(expectedResult)
       }
@@ -102,7 +131,7 @@ class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with Wir
 
         stubPostWithoutRequestBody(url, ACCEPTED, response, headersSentToIF)
 
-        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
+        val result = await(connector.calculateLiability(nino, specificTaxYear, crystallise = false)(hc))
 
         result mustBe Right(expectedResult)
       }
@@ -122,7 +151,7 @@ class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with Wir
             |""".stripMargin
         stubPostWithoutRequestBody(url, SERVICE_UNAVAILABLE, response)
 
-        val result = await(connector.calculateLiability(nino, taxYear, crystallise = false))
+        val result = await(connector.calculateLiability(nino, specificTaxYear, crystallise = false))
 
         result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
 
@@ -138,7 +167,7 @@ class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with Wir
             |""".stripMargin
         stubPostWithoutRequestBody(crystalliseUrl, SERVICE_UNAVAILABLE, response)
 
-        val result = await(connector.calculateLiability(nino, taxYear, crystallise = true))
+        val result = await(connector.calculateLiability(nino, specificTaxYear, crystallise = true))
 
         result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
 
