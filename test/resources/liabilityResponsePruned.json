@@ -107,6 +107,9 @@
       "totalStateBenefitsIncome" : 5000.99,
       "totalStateBenefitsIncomeExcStatePensionLumpSum" : 5000.99
     },
+    "otherIncome" : {
+      "totalOtherIncome" : 500.00
+    },
     "shareSchemesIncome" : {
       "totalIncome" : 5000.99
     },

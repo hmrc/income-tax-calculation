@@ -96,6 +96,7 @@ object GetCalculationDetailsConstants {
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
+      otherIncome = Some(OtherIncome(totalOtherIncome = 500.00)),
       shareSchemesIncome = Some(ShareSchemesIncome(
         totalIncome = 5000.99
       )),
@@ -268,8 +269,8 @@ object GetCalculationDetailsConstants {
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
       calculationReason = Some("customerRequest"),
-      periodFrom = Some(LocalDate.of(2019,1,1)),
-      periodTo = Some(LocalDate.of(2020,1,1)))
+      periodFrom = Some(LocalDate.of(2019, 1, 1)),
+      periodTo = Some(LocalDate.of(2020, 1, 1)))
   )
 
   val successCalcDetailsExpectedJsonFull =
@@ -382,6 +383,9 @@ object GetCalculationDetailsConstants {
        |    "stateBenefitsIncome" : {
        |      "totalStateBenefitsIncome" : 5000.99,
        |      "totalStateBenefitsIncomeExcStatePensionLumpSum" : 5000.99
+       |    },
+       |    "otherIncome" : {
+       |      "totalOtherIncome" : 500.00
        |    },
        |    "shareSchemesIncome" : {
        |      "totalIncome" : 5000.99

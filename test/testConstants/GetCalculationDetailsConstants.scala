@@ -97,6 +97,7 @@ object GetCalculationDetailsConstants {
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
+      otherIncome = Some(OtherIncome(totalOtherIncome = 500.00)),
       shareSchemesIncome = Some(ShareSchemesIncome(
         totalIncome = 5000.99
       )),
@@ -328,6 +329,7 @@ object GetCalculationDetailsConstants {
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
+      otherIncome = Some(OtherIncome(totalOtherIncome = 500.00)),
       shareSchemesIncome = Some(ShareSchemesIncome(
         totalIncome = 5000.99
       )),
