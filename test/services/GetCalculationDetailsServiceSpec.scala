@@ -58,9 +58,9 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *, *)
       .returning(Future.successful(Right(successModelFull)))
 
-  def listCalculationDetailsSuccess: CallHandler2[String, HeaderCarrier, Future[GetCalculationListResponse]] =
-    (mockListCalculationConnector.getCalculationList(_: String)(_: HeaderCarrier))
-      .expects(*, *)
+  def listCalculationDetailsSuccess: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+    (mockListCalculationConnector.getCalculationList(_: String, _: String)(_: HeaderCarrier))
+      .expects(*, *, *)
       .returning(
         Future.successful(
           Right(Seq(GetCalculationListModel(
@@ -84,7 +84,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(
         Future.successful(
-          Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")))
+          Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
         )
       )
 
@@ -141,7 +141,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       val result = await(service.getCalculationDetails(nino, taxYear))
 
-      result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("PARSING_ERROR","Error parsing response from API")))
+      result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
     }
 
     "return a Left(DesError) when calling list calculations and not call get calculations" in {
