@@ -29,26 +29,31 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
                                              calculationDetailsConnector: CalculationDetailsConnector,
                                              listCalculationDetailsConnector: GetCalculationListConnector,
-                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy) (implicit ec: ExecutionContext) {
+                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy)(implicit ec: ExecutionContext) {
 
   private val specificTaxYear: Int = TaxYear.specificTaxYear
-  def getCalculationDetails(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier):Future[CalculationDetailResponse] = {
-    if (taxYear.isDefined && taxYear.get.toInt >= specificTaxYear) {
-      listCalculationDetailsConnector.getCalculationList(nino).flatMap {
-        case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
-        case Right(listOfCalculationDetails) =>
-          getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
-        case Left(desError) => Future.successful(Left(desError))
-      }
-    } else {
-      listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
-        case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
-          Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
-        case Right(listOfCalculationDetails) =>
-          getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
-        case Left(desError) => Future.successful(Left(desError))
-      }
+
+  def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    taxYearOption match {
+      case Some(taxYear) if taxYear.toInt >= specificTaxYear =>
+        listCalculationDetailsConnector.getCalculationList(nino, taxYear).flatMap {
+          case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
+            Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
+          case Right(listOfCalculationDetails) =>
+            getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYearOption)
+          case Left(desError) => Future.successful(Left(desError))
+        }
+      case _ => handleLegacy(nino, taxYearOption)
+    }
+  }
+
+  private def handleLegacy(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
+      case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
+        Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
+      case Right(listOfCalculationDetails) =>
+        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
+      case Left(desError) => Future.successful(Left(desError))
     }
   }
 

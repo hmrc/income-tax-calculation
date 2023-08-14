@@ -19,8 +19,7 @@ package api
 import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.WiremockSpec
-
-import models.{ErrorBodyModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, GetCalculationListModel, GetCalculationListModelLegacy}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Seconds, Span}
@@ -28,7 +27,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 
-class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers{
+class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers {
 
   trait Setup {
     implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
@@ -38,7 +37,22 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
     val desUrlForListCalcWithoutTaxYear = s"/income-tax/list-of-calculation-results/$successNino"
     val desUrlForListCalcWithTaxYear = s"/income-tax/list-of-calculation-results/$successNino\\?taxYear=$taxYear"
     val desUrlForCalculationDetails = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
-    val listCalcResponse = Json.toJson(Seq(GetCalculationListModelLegacy(calculationId,"2019-03-17T09:22:59Z"))).toString()
+    val ifUrlforTYS24 = s"/income-tax/view/calculations/liability/23-24/$successNino/$calculationId"
+    val ifUrlforTYS25 = s"/income-tax/view/calculations/liability/24-25/$successNino/$calculationId"
+    val listCalcResponseLegacy = Json.toJson(Seq(GetCalculationListModelLegacy(calculationId, "2019-03-17T09:22:59Z"))).toString()
+    val listCalcResponse = Json.toJson(Seq(GetCalculationListModel(
+      calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2",
+      calculationTimestamp = "2019-03-17T09:22:59Z",
+      calculationType = "inYear",
+      requestedBy = Some("customer"),
+      year = Some(2024),
+      fromDate = Some("2013-05-d1"),
+      toDate = Some("2016-05-d1"),
+      totalIncomeTaxAndNicsDue = 500.00,
+      intentToCrystallise = None,
+      crystallised = None,
+      crystallisationTimestamp = None
+    ))).toString
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
     val mtditidHeader = ("mtditid", "555555555")
@@ -54,7 +68,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       "return the calculation details when called without tax year" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
@@ -71,7 +85,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       "return the calculation details when called with tax year" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 200, listCalcResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
@@ -83,6 +97,42 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
               Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
         }
 
+      }
+
+      "return the calculation details when called with TYS tax year 23/24" in new Setup {
+        authorised()
+
+        def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
+
+        stubGetWithResponseBody(getCalcListURL("23-24"), 200, listCalcResponse)
+        stubGetWithResponseBody(ifUrlforTYS24, 200, successCalcDetailsExpectedJsonFull)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
+          .withHttpHeaders(mtditidHeader, authorization)
+          .get()) {
+          result =>
+            result.status mustBe 200
+            Json.parse(result.body) mustBe
+              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+        }
+      }
+
+      "return the calculation details when called with TYS tax year 24/25" in new Setup {
+        authorised()
+
+        def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
+
+        stubGetWithResponseBody(getCalcListURL("24-25"), 200, listCalcResponse)
+        stubGetWithResponseBody(ifUrlforTYS25, 200, successCalcDetailsExpectedJsonFull)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")
+          .withHttpHeaders(mtditidHeader, authorization)
+          .get()) {
+          result =>
+            result.status mustBe 200
+            Json.parse(result.body) mustBe
+              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+        }
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
@@ -107,7 +157,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
@@ -142,7 +192,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
@@ -178,7 +228,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       "return the calc details" in new Setup {
         agentAuthorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
@@ -214,7 +264,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
@@ -249,7 +299,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
 
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
@@ -362,7 +412,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(
-          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details",additionalCookies = agentClientCookie)
+          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>

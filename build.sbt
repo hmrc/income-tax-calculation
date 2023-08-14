@@ -47,7 +47,6 @@ lazy val microservice = Project(appName, file("."))
     )
     // ***************
   )
-  .settings(publishingSettings: _*)
   .configs(IntegrationTest extend Test)
   .settings(PlayKeys.playDefaultPort := 9314)
   .settings(integrationTestSettings(): _*)
