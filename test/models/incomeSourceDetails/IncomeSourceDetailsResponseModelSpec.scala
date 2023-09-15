@@ -18,7 +18,8 @@ package models.incomeSourceDetails
 
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.IncomeSourceDetailsTestConstants.{testIncomeSourceDetailsError, testIncomeSourceDetailsJson, testIncomeSourceDetailsModel, testIncomeSourceDetailsToJson, testMinimumIncomeSourceDetailsJson, testMinimumIncomeSourceDetailsModel}
+import testConstants.IncomeSourceDetailsTestConstants.{testIncomeSourceDetailsError, testIncomeSourceDetailsJson, testIncomeSourceDetailsModel,
+  testIncomeSourceDetailsToJson, testMinimumIncomeSourceDetailsJson, testMinimumIncomeSourceDetailsModel}
 import testUtils.TestSuite
 
 class IncomeSourceDetailsResponseModelSpec extends TestSuite {

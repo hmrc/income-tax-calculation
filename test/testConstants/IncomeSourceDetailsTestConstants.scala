@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, TaxPayerDisplayResponse}
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
 import testConstants.BaseIntegrationTestConstants.testNino
@@ -27,32 +27,36 @@ import uk.gov.hmrc.http.HttpResponse
 
 object IncomeSourceDetailsTestConstants {
 
-  val testIncomeSourceDetailsModel = IncomeSourceDetailsModel(
+  val testIncomeSourceDetailsModel = IncomeSourceDetailsModel("",TaxPayerDisplayResponse(
     nino = testNino,
     mtdbsa = testMtdId,
     yearOfMigration = Some("2019"),
     businesses = List(testBusinessDetailsModel, testMinimumBusinessDetailsModel),
     property = Some(testPropertyDetailsModel)
-  )
+  ))
 
-  val testMinimumIncomeSourceDetailsModel = IncomeSourceDetailsModel(
+  val testMinimumIncomeSourceDetailsModel = IncomeSourceDetailsModel("",TaxPayerDisplayResponse(
     nino = testNino,
     mtdbsa = testMtdId,
     yearOfMigration = None,
     businesses = List(),
     property = None
-  )
+  ))
 
   val testIncomeSourceDetailsJson: JsValue = Json.obj(
+    "processingDate" -> "",
+    "taxPayerDisplayResponse" -> Json.obj(
     "safeId" -> "XAIT12345678908",
     "nino" -> testNino,
-    "mtdbsa" -> testMtdId,
+    "mtdId" -> testMtdId,
     "yearOfMigration" -> "2019",
     "businessData" -> Json.arr(testBusinessDetailsJson, testMinimumBusinessDetailsJson),
     "propertyData" -> Json.arr(testPropertyDetailsJson)
-  )
+  ))
 
   val testIncomeSourceDetailsToJson = Json.obj(
+    "processingDate" -> "",
+    "taxPayerDisplayResponse" -> Json.obj(
     "nino" -> testNino,
     "mtdbsa" -> testMtdId,
     "yearOfMigration" -> "2019",
@@ -60,12 +64,14 @@ object IncomeSourceDetailsTestConstants {
       testBusinessDetailsToJson,
       testMinimumBusinessDetailsToJson),
     "property" -> testPropertyDetailsToJson
-  )
+  ))
 
   val testMinimumIncomeSourceDetailsJson = Json.obj(
+    "processingDate" -> "",
+    "taxPayerDisplayResponse" -> Json.obj(
     "nino" -> testNino,
-    "mtdbsa" -> testMtdId
-  )
+    "mtdId" -> testMtdId
+  ))
 
 
   val testIncomeSourceDetailsError = IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Dummy error message")

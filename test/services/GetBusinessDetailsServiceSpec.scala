@@ -19,14 +19,14 @@ package services
 import connectors.httpParsers.GetBusinessDetailsHttpParser.GetBusinessDetailsResponse
 import connectors.GetBusinessDetailsConnector
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel, TaxPayerDisplayResponse}
 import models.{ErrorBodyModel, ErrorModel}
 import org.scalamock.handlers.CallHandler2
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
-import java.time.LocalDate
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class GetBusinessDetailsServiceSpec extends TestSuite {
@@ -35,7 +35,7 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
 
   val service = new GetBusinessDetailsService(mockGetBusinessDetailsConnector)
 
-  val successModel = IncomeSourceDetailsModel(
+  val successModel = IncomeSourceDetailsModel("", TaxPayerDisplayResponse(
     nino = "BB123456A",
     mtdbsa = "XIAT0000000000A",
     yearOfMigration = Some("2019"),
@@ -61,7 +61,7 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
         end = LocalDate.parse("2018-05-31")
       ),
       firstAccountingPeriodEndDate = Some(LocalDate.of(2016, 1, 1))
-    ))
+    )))
   )
 
   def getBusinessDetailsSuccess: CallHandler2[String, HeaderCarrier, Future[GetBusinessDetailsResponse]] =
@@ -93,7 +93,7 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
 
       val result = await(service.getBusinessDetails("BB123456A","12345"))
 
-      result mustBe Right(IncomeSourceDetailsModel("BB123456A","12345",None,List.empty,None))
+      result mustBe Right(IncomeSourceDetailsModel("",TaxPayerDisplayResponse("BB123456A","12345",None,List.empty,None)))
     }
 
     "return a Left(DesError) when calling get business details returns a DES error" in {

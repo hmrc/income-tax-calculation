@@ -23,11 +23,24 @@ import java.time.LocalDate
 
 sealed trait IncomeSourceDetailsResponseModel
 
-case class IncomeSourceDetailsModel(nino: String,
-                                    mtdbsa: String,
-                                    yearOfMigration: Option[String],
-                                    businesses: List[BusinessDetailsModel],
-                                    property: Option[PropertyDetailsModel]) extends IncomeSourceDetailsResponseModel {
+case class IncomeSourceDetailsModel(processingDate: String,
+                                   taxPayerDisplayResponse: TaxPayerDisplayResponse) extends IncomeSourceDetailsResponseModel {
+
+}
+
+object IncomeSourceDetailsModel {
+  implicit val formats: OFormat[IncomeSourceDetailsModel] = Json.format[IncomeSourceDetailsModel]
+
+  implicit val desReads: Reads[IncomeSourceDetailsModel] = (
+    (JsPath \ "processingDate").read[String] and
+      (JsPath \ "taxPayerDisplayResponse").read(TaxPayerDisplayResponse.desReads)
+    ) (IncomeSourceDetailsModel.apply _)
+}
+case class TaxPayerDisplayResponse(nino: String,
+                                   mtdbsa: String,
+                                   yearOfMigration: Option[String],
+                                   businesses: List[BusinessDetailsModel],
+                                   property: Option[PropertyDetailsModel]){
 
   def taxYears: Seq[Int] = Option(orderedTaxYearsByAccountingPeriods).filter(_.nonEmpty).getOrElse(Seq(getCurrentTaxEndYear))
 
@@ -50,18 +63,18 @@ case class IncomeSourceDetailsModel(nino: String,
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponseModel
 
-object IncomeSourceDetailsModel {
+object TaxPayerDisplayResponse {
 
   def applyWithFields(nino: String,
                       mtdbsa: String,
                       yearOfMigration: Option[String],
                       businessData: Option[List[BusinessDetailsModel]],
-                      propertyData: Option[PropertyDetailsModel]): IncomeSourceDetailsModel = {
+                      propertyData: Option[PropertyDetailsModel]): TaxPayerDisplayResponse = {
     val businessDetails = businessData match {
       case Some(data) => data
       case None => List()
     }
-    IncomeSourceDetailsModel(
+    TaxPayerDisplayResponse(
       nino,
       mtdbsa,
       yearOfMigration,
@@ -70,15 +83,15 @@ object IncomeSourceDetailsModel {
     )
   }
 
-  val desReads: Reads[IncomeSourceDetailsModel] = (
+  val desReads: Reads[TaxPayerDisplayResponse] = (
     (__ \ "nino").read[String] and
-      (__ \ "mtdbsa").read[String] and
+      (__ \ "mtdId").read[String] and
       (__ \ "yearOfMigration").readNullable[String] and
       (__ \ "businessData").readNullable(Reads.list(BusinessDetailsModel.desReads)) and
       (__ \ "propertyData").readNullable[List[PropertyDetailsModel]].map(_.map(_.head))
-    ) (IncomeSourceDetailsModel.applyWithFields _)
+    ) (TaxPayerDisplayResponse.applyWithFields _)
 
-  implicit val format: Format[IncomeSourceDetailsModel] = Json.format[IncomeSourceDetailsModel]
+  implicit val format: Format[TaxPayerDisplayResponse] = Json.format[TaxPayerDisplayResponse]
 
 }
 

@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import config.BackendAppConfig
 import helpers.WiremockSpec
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, PropertyDetailsModel, TaxPayerDisplayResponse}
 import models.{ErrorBodyModel, ErrorModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -29,6 +29,7 @@ import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
 import java.time.LocalDate
 
 class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers {
@@ -41,7 +42,7 @@ class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
     override val ifBaseUrl: String = s"http://$ifHost:$wireMockPort"
   }
 
-  val successModel = IncomeSourceDetailsModel(
+  val successModel = IncomeSourceDetailsModel("",TaxPayerDisplayResponse(
     nino = "BB123456A",
     mtdbsa = "XIAT0000000000A",
     yearOfMigration = Some("2019"),
@@ -67,13 +68,15 @@ class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
         end = LocalDate.parse("2018-05-31")
       ),
       firstAccountingPeriodEndDate = Some(LocalDate.of(2016, 1, 1))
-    ))
+    )))
   )
 
   val successJson: JsValue = Json.obj(
+    "processingDate" -> "",
+    "taxPayerDisplayResponse" -> Json.obj(
     "safeId" -> "XAIT12345678908",
     "nino" -> "BB123456A",
-    "mtdbsa" -> "XIAT0000000000A",
+    "mtdId" -> "XIAT0000000000A",
     "yearOfMigration" -> "2019",
     "businessData" -> Json.arr(Json.obj(
       "incomeSourceId" -> "111111111111111",
@@ -120,7 +123,7 @@ class GetBusinessDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
       "paperLess" -> true,
       "firstAccountingPeriodEndDate" -> "2016-01-01"
     ))
-  )
+  ))
 
   "GetBusinessDetailsConnector" should {
 

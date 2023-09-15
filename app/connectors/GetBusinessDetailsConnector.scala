@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetBusinessDetailsConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
+class GetBusinessDetailsConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends IFConnector {
 
   def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
 
@@ -32,14 +32,14 @@ class GetBusinessDetailsConnector @Inject()(http: HttpClient, val appConfig: App
         nino => s"${appConfig.incomeTaxSubmissionStubUrl}/registration/business-details/nino/$nino"
       }
       else {
-        nino => s"${appConfig.desBaseUrl}/registration/business-details/nino/$nino"
+        nino => s"${appConfig.ifBaseUrl}/registration/business-details/nino/$nino"
       }
     }
 
-    def desCall(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
+    def ifCall(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
       http.GET(url = getBusinessDetailsUrl(nino))(GetBusinessDetailsHttpReads, hc, ec)
     }
 
-    desCall(desHeaderCarrier(getBusinessDetailsUrl(nino)))
+    ifCall(iFHeaderCarrier(getBusinessDetailsUrl(nino), "1171"))
   }
 }
