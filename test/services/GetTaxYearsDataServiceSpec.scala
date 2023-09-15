@@ -17,7 +17,7 @@
 package services
 
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxPayerDisplayResponse}
 import models.mongo.{DataNotFoundError, DatabaseError, MongoError, TaxYearsData}
 import models.{ErrorBodyModel, ErrorModel}
 import org.scalamock.handlers.{CallHandler1, CallHandler3}
@@ -36,33 +36,35 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
   val service = new GetTaxYearsDataService(mockGetBusinessDetailsService, mockTaxYearsDataRepository, TestingClock)
 
-  val successModel = IncomeSourceDetailsModel(
-    nino = "BB123456A",
-    mtdbsa = "XIAT0000000000A",
-    yearOfMigration = Some("2019"),
-    businesses = List(BusinessDetailsModel(
-      incomeSourceId = "111111111111111",
-      accountingPeriod = AccountingPeriodModel(
-        start = LocalDate.parse("2017-06-01"),
-        end = LocalDate.parse("2018-05-31")
-      ),
-      firstAccountingPeriodEndDate = Some(LocalDate.of(2016, 1, 1))
-    ), BusinessDetailsModel(
-      incomeSourceId = "111111111111111",
-      accountingPeriod = AccountingPeriodModel(
-        start = LocalDate.parse("2017-06-01"),
-        end = LocalDate.parse("2018-05-31")
-      ),
-      firstAccountingPeriodEndDate = None
-    )),
-    property = Some(PropertyDetailsModel(
-      incomeSourceId = "111111111111111",
-      accountingPeriod = AccountingPeriodModel(
-        start = LocalDate.parse("2017-06-01"),
-        end = LocalDate.parse("2018-05-31")
-      ),
-      firstAccountingPeriodEndDate = Some(LocalDate.of(2016, 1, 1))
-    ))
+  val successModel = IncomeSourceDetailsModel("",
+    TaxPayerDisplayResponse(
+      nino = "BB123456A",
+      mtdbsa = "XIAT0000000000A",
+      yearOfMigration = Some("2019"),
+      businesses = List(BusinessDetailsModel(
+        incomeSourceId = "111111111111111",
+        accountingPeriod = AccountingPeriodModel(
+          start = LocalDate.parse("2017-06-01"),
+          end = LocalDate.parse("2018-05-31")
+        ),
+        firstAccountingPeriodEndDate = Some(LocalDate.of(2016, 1, 1))
+      ), BusinessDetailsModel(
+        incomeSourceId = "111111111111111",
+        accountingPeriod = AccountingPeriodModel(
+          start = LocalDate.parse("2017-06-01"),
+          end = LocalDate.parse("2018-05-31")
+        ),
+        firstAccountingPeriodEndDate = None
+      )),
+      property = Some(PropertyDetailsModel(
+        incomeSourceId = "111111111111111",
+        accountingPeriod = AccountingPeriodModel(
+          start = LocalDate.parse("2017-06-01"),
+          end = LocalDate.parse("2018-05-31")
+        ),
+        firstAccountingPeriodEndDate = Some(LocalDate.of(2016, 1, 1))
+      ))
+    )
   )
 
   val successTaxYearsData = TaxYearsData("BB123456A",
@@ -74,13 +76,13 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
   def getBusinessDetailsSuccess: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Right((successModel))))
+      .returning(Future.successful(Right(successModel)))
 
   def getBusinessDetails404(nino: String, mtditid: String): CallHandler3[String, String, HeaderCarrier,
     Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Right(IncomeSourceDetailsModel(nino,mtditid,None,List.empty,None))))
+      .returning(Future.successful(Right(IncomeSourceDetailsModel("", TaxPayerDisplayResponse(nino, mtditid, None, List.empty, None)))))
 
   def getBusinessDetailsFailure: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))
@@ -117,7 +119,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
     "return a Right when tax years data already exists in database" in {
       findSuccess
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
       result mustBe Right(successTaxYearsData)
     }
@@ -129,7 +131,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       createOrUpdateSuccess
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
       result mustBe Right(successTaxYearsData)
     }
@@ -137,13 +139,14 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
     "return a Right when no tax years data is found, getting business details is not found and then defaults and stores tax year data succeeds" in {
       findFailureNoTaxYearsData
 
-      getBusinessDetails404("BB123456A","12345")
+      getBusinessDetails404("BB123456A", "12345")
 
       createOrUpdateSuccess
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
-      val currentYear = IncomeSourceDetailsModel("BB123456A","12345",None,List.empty,None).getCurrentTaxEndYear
+      val currentYear = IncomeSourceDetailsModel("", TaxPayerDisplayResponse("BB123456A", "12345", None, List.empty, None))
+        .taxPayerDisplayResponse.getCurrentTaxEndYear
 
       result mustBe Right(successTaxYearsData.copy(taxYears = Seq(currentYear)))
     }
@@ -155,7 +158,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       createOrUpdateFailure
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
       result mustBe Right(successTaxYearsData)
     }
@@ -167,7 +170,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       createOrUpdateSuccess
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
       result mustBe Right(successTaxYearsData)
     }
@@ -179,7 +182,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       createOrUpdateFailure
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
       result mustBe Right(successTaxYearsData)
     }
@@ -189,7 +192,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       getBusinessDetailsFailure
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
@@ -199,7 +202,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
       getBusinessDetailsFailure
 
-      val result = await(service.getTaxYearsData("BB123456A","12345"))
+      val result = await(service.getTaxYearsData("BB123456A", "12345"))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }

@@ -37,7 +37,7 @@ class GetTaxYearsDataService @Inject()(getBusinessDetailsService: GetBusinessDet
         Future.successful(Right(taxYearsData))
       case _: Either[DatabaseError, Option[TaxYearsData]] =>
         getBusinessDetailsService.getBusinessDetails(nino, mtditid).flatMap {
-          case Right(success: IncomeSourceDetailsModel) =>
+          case Right(IncomeSourceDetailsModel(_, success)) =>
             val taxYearsData = TaxYearsData(success.nino, success.taxYears, clock.now(DateTimeZone.UTC))
             taxYearsDataRepository.createOrUpdate(taxYearsData).map {
               case Left(_: DatabaseError) =>

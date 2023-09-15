@@ -18,9 +18,10 @@ package services
 
 import connectors.GetBusinessDetailsConnector
 import uk.gov.hmrc.http.HeaderCarrier
+
 import javax.inject.Inject
 import models.ErrorModel
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, TaxPayerDisplayResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -29,7 +30,7 @@ class GetBusinessDetailsService @Inject()(getBusinessDetailsConnector: GetBusine
     getBusinessDetailsConnector.getBusinessDetails(nino).map {
       case Left(error) => Left(error)
       case Right(model: IncomeSourceDetailsModel) => Right(model)
-      case Right(_: IncomeSourceDetailsError) => Right(IncomeSourceDetailsModel(nino,mtditid,None,List.empty,None))
+      case Right(_: IncomeSourceDetailsError) => Right(IncomeSourceDetailsModel("", TaxPayerDisplayResponse(nino,mtditid,None,List.empty,None)))
     }
   }
 }

@@ -17,7 +17,7 @@
 package controllers
 
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxPayerDisplayResponse}
 import models.mongo.TaxYearsData
 import models.{ErrorBodyModel, ErrorModel, TaxYearsResponseData}
 import org.scalamock.handlers.CallHandler3
@@ -38,7 +38,7 @@ class TaxYearsDataControllerSpec extends TestSuite {
 
   val nino = "BB123456A"
 
-  val successModel = IncomeSourceDetailsModel(
+  val successModel = IncomeSourceDetailsModel("",TaxPayerDisplayResponse(
     nino = nino,
     mtdbsa = "XIAT0000000000A",
     yearOfMigration = Some("2019"),
@@ -64,10 +64,10 @@ class TaxYearsDataControllerSpec extends TestSuite {
         end = LocalDate.parse("2018-05-31")
       ),
       firstAccountingPeriodEndDate = Some(LocalDate.of(2016, 1, 1))
-    ))
+    )))
   )
 
-  val taxYearsData = TaxYearsData(nino, successModel.taxYears)
+  val taxYearsData = TaxYearsData(nino, successModel.taxPayerDisplayResponse.taxYears)
   val taxYearsResponseData = TaxYearsResponseData(taxYearsData.taxYears)
 
   def taxYearsSuccessResponse: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, TaxYearsData]]] =
