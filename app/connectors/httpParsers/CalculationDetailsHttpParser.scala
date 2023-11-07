@@ -35,7 +35,7 @@ object CalculationDetailsHttpParser extends APIParser with Logging {
       response.status match {
         case OK => response.json.validate[CalculationResponseModel].fold[CalculationDetailResponse](
           validationErrors => {
-            badSuccessJsonFromAPI(response.body, validationErrors)
+            badSuccessJsonFromAPI(validationErrors, response.body)
           },
           parsedModel => Right(parsedModel)
         )
