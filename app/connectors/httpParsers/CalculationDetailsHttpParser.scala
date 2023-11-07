@@ -19,12 +19,13 @@ package connectors.httpParsers
 
 import models.ErrorModel
 import models.calculation.CalculationResponseModel
+import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
-object CalculationDetailsHttpParser extends APIParser {
+object CalculationDetailsHttpParser extends APIParser with Logging {
   type CalculationDetailResponse = Either[ErrorModel, CalculationResponseModel]
 
   override val parserName: String = "CalculationDetailsHttpParser"
@@ -33,10 +34,14 @@ object CalculationDetailsHttpParser extends APIParser {
     override def read(method: String, url: String, response: HttpResponse): CalculationDetailResponse = {
       response.status match {
         case OK => response.json.validate[CalculationResponseModel].fold[CalculationDetailResponse](
-          validationErrors => badSuccessJsonFromAPI(validationErrors),
+          validationErrors => {
+            logger.error(s"[CalculationDetailsHttpParser] - parsing response error: ${response.body}")
+            badSuccessJsonFromAPI(validationErrors)
+          },
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
+          logger.error(s"[CalculationDetailsHttpParser] - parsing response error: ${response.body}")
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleIFError(response)
         case SERVICE_UNAVAILABLE =>
