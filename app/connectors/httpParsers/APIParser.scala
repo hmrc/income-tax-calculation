@@ -31,7 +31,8 @@ trait APIParser {
     Some(s"[$parserName][read] Received ${response.status} response. Body:${response.body}" + getCorrelationId(response))
   }
 
-  def badSuccessJsonFromAPI[Response](responseAsString: String, validationErrors: collection.Seq[(JsPath, collection.Seq[JsonValidationError])] ): Either[ErrorModel, Response] = {
+  def badSuccessJsonFromAPI[Response](validationErrors: collection.Seq[(JsPath, collection.Seq[JsonValidationError])],
+                                      responseAsString: String = "" ): Either[ErrorModel, Response] = {
     pagerDutyLog(BAD_SUCCESS_JSON_FROM_API, Some(s"[$parserName][read] Invalid Json response. " + validationErrors))
     Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", s"Error parsing response from API - ${responseAsString} - " + validationErrors)))
   }
