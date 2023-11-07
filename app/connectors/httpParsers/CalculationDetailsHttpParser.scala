@@ -34,7 +34,10 @@ object CalculationDetailsHttpParser extends APIParser with Logging {
     override def read(method: String, url: String, response: HttpResponse): CalculationDetailResponse = {
       response.status match {
         case OK => response.json.validate[CalculationResponseModel].fold[CalculationDetailResponse](
-          validationErrors => badSuccessJsonFromAPI(validationErrors),
+          validationErrors => {
+            logger.error(s"[CalculationDetailsHttpParser] - parsing response error: ${response.body}")
+            badSuccessJsonFromAPI(validationErrors)
+          },
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
