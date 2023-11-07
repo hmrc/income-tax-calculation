@@ -35,13 +35,11 @@ object CalculationDetailsHttpParser extends APIParser with Logging {
       response.status match {
         case OK => response.json.validate[CalculationResponseModel].fold[CalculationDetailResponse](
           validationErrors => {
-            logger.info(s"[CalculationDetailsHttpParser] - parsing response error: ${response.body}")
-            badSuccessJsonFromAPI(validationErrors)
+            badSuccessJsonFromAPI(response.body, validationErrors)
           },
           parsedModel => Right(parsedModel)
         )
         case INTERNAL_SERVER_ERROR =>
-          logger.info(s"[CalculationDetailsHttpParser] - parsing response error: ${response.body}")
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleIFError(response)
         case SERVICE_UNAVAILABLE =>
