@@ -80,7 +80,8 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
           result mustBe Left(desError)
         }
       }
-        "DES returns an unexpected error - 502 BadGateway" in {
+
+      "DES returns an unexpected error - 502 BadGateway" in {
           val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -89,7 +90,7 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
           val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
 
           result mustBe Left(desError)
-        }
+      }
     }
   }
 }
