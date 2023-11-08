@@ -18,20 +18,26 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.Logging
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
                                             val appConfig: AppConfig)
-                                           (implicit ec: ExecutionContext) extends IFConnector {
+                                           (implicit ec: ExecutionContext) extends IFConnector with Logging {
 
   def getCalculationDetails(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
 
     def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-      httpClient.GET(url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
+      val url = getCalculationDetailsUrl
+      logger.info(s"[CalculationDetailsConnector] - GET full url: $url")
+      httpClient.GET[HttpResponse](url = url).map { response =>
+        logger.info(s"[CalculationDetailsConnector] - Response: -${response.body}-")
+        CalculationDetailsHttpReads.read("GET", url, response)
+      }
     }
 
     iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1885"))
