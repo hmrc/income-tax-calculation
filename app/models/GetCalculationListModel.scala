@@ -26,7 +26,7 @@ case class GetCalculationListModel(calculationId: String,
                                    year: Option[Int],
                                    fromDate: Option[String],
                                    toDate: Option[String],
-                                   totalIncomeTaxAndNicsDue: BigDecimal,
+                                   totalIncomeTaxAndNicsDue: Option[BigDecimal],
                                    intentToCrystallise: Option[Boolean],
                                    crystallised: Option[Boolean],
                                    crystallisationTimestamp: Option[String])
@@ -42,7 +42,7 @@ object GetCalculationListModel{
       (JsPath \ "year").readNullable[Int] and
       (JsPath \ "fromDate").readNullable[String] and
       (JsPath \ "toDate").readNullable[String] and
-      (JsPath \ "totalIncomeTaxAndNicsDue").read[BigDecimal] and
+      (JsPath \ "totalIncomeTaxAndNicsDue").readNullable[BigDecimal] and
       (JsPath \ "intentToCrystallise").readNullable[Boolean] and
       (JsPath \ "crystallised").readNullable[Boolean] and
       (JsPath \ "crystallisationTimestamp").readNullable[String]

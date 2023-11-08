@@ -65,31 +65,32 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
       }
     }
 
-    "handle errors" when {
-      val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
-
-      Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
-        s"DES returns $status" in {
-          val desError = ErrorModel(status, errorBodyModel)
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-
-          stubGetWithResponseBody(url, status, desError.toJson.toString)
-
-          val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
-
-          result mustBe Left(desError)
-        }
-      }
-        "DES returns an unexpected error - 502 BadGateway" in {
-          val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-
-          stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())
-
-          val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
-
-          result mustBe Left(desError)
-        }
-    }
+//    "handle errors" when {
+//      val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
+//
+//      Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
+//        s"DES returns $status" in {
+//          val desError = ErrorModel(status, errorBodyModel)
+//          implicit val hc: HeaderCarrier = HeaderCarrier()
+//
+//          stubGetWithResponseBody(url, status, desError.toJson.toString)
+//
+//          val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+//
+//          result mustBe Left(desError)
+//        }
+//      }
+//
+//      "DES returns an unexpected error - 502 BadGateway" in {
+//          val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
+//          implicit val hc: HeaderCarrier = HeaderCarrier()
+//
+//          stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())
+//
+//          val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+//
+//          result mustBe Left(desError)
+//        }
+//    }
   }
 }

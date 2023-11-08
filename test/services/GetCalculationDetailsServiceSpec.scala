@@ -71,7 +71,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             year = Some(taxYear2016),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            totalIncomeTaxAndNicsDue = 500.00,
+            totalIncomeTaxAndNicsDue = Some(500.00),
             intentToCrystallise = None,
             crystallised = None,
             crystallisationTimestamp = None
