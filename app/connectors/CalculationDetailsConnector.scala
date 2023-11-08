@@ -29,14 +29,15 @@ class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
                                            (implicit ec: ExecutionContext) extends IFConnector with Logging {
 
   def getCalculationDetails(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
-    val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
+    lazy val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
 
     def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-      val url = getCalculationDetailsUrl
-      logger.info(s"[CalculationDetailsConnector] - GET full url: $url")
-      httpClient.GET[HttpResponse](url = url).map { response =>
-        logger.info(s"[CalculationDetailsConnector] - Response: -${response.body}-")
-        CalculationDetailsHttpReads.read("GET", url, response)
+      val urlString = getCalculationDetailsUrl
+      logger.info(s"[CalculationDetailsConnector][getCalculationDetails] - GET URL: -${urlString}-")
+      httpClient.GET[HttpResponse](url = urlString).map {
+        response =>
+          logger.info(s"[CalculationDetailsConnector][getCalculationDetails] - Response: -${response.body}-")
+          CalculationDetailsHttpReads.read("GET", urlString, response)
       }
     }
 

@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
-object CalculationDetailsHttpParser extends APIParser with Logging {
+object CalculationDetailsHttpParser extends APIParser {
   type CalculationDetailResponse = Either[ErrorModel, CalculationResponseModel]
 
   override val parserName: String = "CalculationDetailsHttpParser"
