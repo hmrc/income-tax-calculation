@@ -30,7 +30,7 @@ class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
   import uk.gov.hmrc.http.HttpReads.Implicits._
 
   def getCalculationDetails(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
-    lazy val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
+    val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
 
     def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
       val urlString = getCalculationDetailsUrl
