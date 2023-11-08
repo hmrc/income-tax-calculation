@@ -51,21 +51,21 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
     val url = s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
 
-//    "include internal headers" when {
-//      val headersSentToBenefits = Seq(
-//        new HttpHeader(HeaderNames.xSessionId, "sessionIdValue")
-//      )
-//
-//      "the host for DES is 'internal'" in {
-//        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
-//
-//        stubGetWithResponseBody(url, OK, successCalcDetailsExpectedJsonFull, headersSentToBenefits)
-//
-//        val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
-//
-//        result mustBe Right(successModelFull)
-//      }
-//    }
+    "include internal headers" when {
+      val headersSentToBenefits = Seq(
+        new HttpHeader(HeaderNames.xSessionId, "sessionIdValue")
+      )
+
+      "the host for DES is 'internal'" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
+
+        stubGetWithResponseBody(url, OK, successCalcDetailsExpectedJsonFull, headersSentToBenefits)
+
+        val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+
+        result mustBe Right(successModelFull)
+      }
+    }
 
     "handle errors" when {
       val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
@@ -82,7 +82,6 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
           result mustBe Left(desError)
         }
       }
-//
       "DES returns an unexpected error - 502 BadGateway" in {
           val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
