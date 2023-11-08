@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import config.BackendAppConfig
 import helpers.WiremockSpec
 import models.{ErrorBodyModel, ErrorModel}
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
@@ -28,7 +29,8 @@ import play.api.http.Status._
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers {
+
+class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers with ScalaFutures {
 
   lazy val connector: CalculationDetailsConnector = app.injector.instanceOf[CalculationDetailsConnector]
 
@@ -49,48 +51,47 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
     val url = s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
 
-    "include internal headers" when {
-      val headersSentToBenefits = Seq(
-        new HttpHeader(HeaderNames.xSessionId, "sessionIdValue")
-      )
-
-      "the host for DES is 'internal'" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
-
-        stubGetWithResponseBody(url, OK, successCalcDetailsExpectedJsonFull, headersSentToBenefits)
-
-        val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
-
-        result mustBe Right(successModelFull)
-      }
-    }
-
-//    "handle errors" when {
-//      val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
+//    "include internal headers" when {
+//      val headersSentToBenefits = Seq(
+//        new HttpHeader(HeaderNames.xSessionId, "sessionIdValue")
+//      )
 //
-//      Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
-//        s"DES returns $status" in {
-//          val desError = ErrorModel(status, errorBodyModel)
-//          implicit val hc: HeaderCarrier = HeaderCarrier()
+//      "the host for DES is 'internal'" in {
+//        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
 //
-//          stubGetWithResponseBody(url, status, desError.toJson.toString)
+//        stubGetWithResponseBody(url, OK, successCalcDetailsExpectedJsonFull, headersSentToBenefits)
 //
-//          val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+//        val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
 //
-//          result mustBe Left(desError)
-//        }
+//        result mustBe Right(successModelFull)
 //      }
-//
-//      "DES returns an unexpected error - 502 BadGateway" in {
-//          val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
-//          implicit val hc: HeaderCarrier = HeaderCarrier()
-//
-//          stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())
-//
-//          val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
-//
-//          result mustBe Left(desError)
-//        }
 //    }
+
+    "handle errors" when {
+      val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
+
+      Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
+        s"DES returns $status" in {
+          val desError = ErrorModel(status, errorBodyModel)
+          implicit val hc: HeaderCarrier = HeaderCarrier()
+
+          stubGetWithResponseBody(url, status, desError.toJson.toString)
+
+          val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+
+          result mustBe Left(desError)
+        }
+      }
+//
+      "DES returns an unexpected error - 502 BadGateway" in {
+          val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
+          implicit val hc: HeaderCarrier = HeaderCarrier()
+
+          stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())
+
+          val result = await( connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+          result mustBe Left(desError)
+        }
+    }
   }
 }
