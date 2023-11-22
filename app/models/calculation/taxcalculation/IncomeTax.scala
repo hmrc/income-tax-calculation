@@ -32,8 +32,10 @@ case class IncomeTax(
                       incomeTaxDueAfterTaxReductions: Option[BigDecimal] = None,
                       totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                       statePensionLumpSumCharges: Option[BigDecimal] = None,
-                      payeUnderpaymentsCodedOut: Option[BigDecimal] = None
+                      payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
+                      giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None
                     )
+
 object IncomeTax {
   implicit val format: OFormat[IncomeTax] = Json.format[IncomeTax]
 }
@@ -46,31 +48,37 @@ case class TaxBands(
                      income: Int,
                      taxAmount: BigDecimal
                    )
+
 object TaxBands {
   implicit val format: OFormat[TaxBands] = Json.format[TaxBands]
 }
 
 case class PayPensionsProfit(taxBands: Option[Seq[TaxBands]])
+
 object PayPensionsProfit {
   implicit val format: OFormat[PayPensionsProfit] = Json.format[PayPensionsProfit]
 }
 
 case class SavingsAndGains(taxableIncome: Int, taxBands: Option[Seq[TaxBands]])
+
 object SavingsAndGains {
   implicit val format: OFormat[SavingsAndGains] = Json.format[SavingsAndGains]
 }
 
 case class LumpSums(taxBands: Option[Seq[TaxBands]])
+
 object LumpSums {
   implicit val format: OFormat[LumpSums] = Json.format[LumpSums]
 }
 
 case class Dividends(taxableIncome: Int, taxBands: Option[Seq[TaxBands]])
+
 object Dividends {
   implicit val format: OFormat[Dividends] = Json.format[Dividends]
 }
 
 case class GainsOnLifePolicies(taxBands: Option[Seq[TaxBands]])
+
 object GainsOnLifePolicies {
   implicit val format: OFormat[GainsOnLifePolicies] = Json.format[GainsOnLifePolicies]
 }

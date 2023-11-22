@@ -88,11 +88,12 @@ object GetCalculationDetailsConstants {
         amountUsed = Some(5000.99)),
         ReliefsClaimed(
           `type` = "vctSubscriptions2",
-          amountUsed = Some(5000.99)),
+          amountUsed = Some(5000.99))
       )),
         residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
         foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
-        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
+        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))),
+        giftAidTaxReductionWhereBasicRateDiffers = Some(GiftAidTaxReductionWhereBasicRateDiffers(amount = 7777.55)))),
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
@@ -164,7 +165,8 @@ object GetCalculationDetailsConstants {
           incomeTaxDueAfterTaxReductions = Some(5000.99),
           totalPensionSavingsTaxCharges = Some(5000.99),
           statePensionLumpSumCharges = Some(5000.99),
-          payeUnderpaymentsCodedOut = Some(5000.99)
+          payeUnderpaymentsCodedOut = Some(5000.99),
+          giftAidTaxChargeWhereBasicRateDiffers = Some(4997.99)
         ),
         nics = Some(Nics(
           class4Nics = Some(Class4Nics(nic4Bands = Seq(Nic4Bands(
@@ -258,7 +260,7 @@ object GetCalculationDetailsConstants {
         occupationalPensions = Some(5000.99),
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
-        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
       )),
       pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
         totalPensionCharges = Some(5000.99),
@@ -341,6 +343,9 @@ object GetCalculationDetailsConstants {
        |      },
        |      "topSlicingRelief" : {
        |        "amount" : 5000.99
+       |      },
+       |      "giftAidTaxReductionWhereBasicRateDiffers" : {
+       |        "amount" : 7777.55
        |      }
        |    },
        |    "taxDeductedAtSource" : {
@@ -486,7 +491,8 @@ object GetCalculationDetailsConstants {
        |        "incomeTaxDueAfterTaxReductions" : 5000.99,
        |        "totalPensionSavingsTaxCharges" : 5000.99,
        |        "statePensionLumpSumCharges" : 5000.99,
-       |        "payeUnderpaymentsCodedOut" : 5000.99
+       |        "payeUnderpaymentsCodedOut" : 5000.99,
+       |        "giftAidTaxChargeWhereBasicRateDiffers" : 4997.99
        |      },
        |      "nics" : {
        |        "class2Nics" : {
