@@ -39,6 +39,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
     val desUrlForCalculationDetails = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
     val ifUrlforTYS24 = s"/income-tax/view/calculations/liability/23-24/$successNino/$calculationId"
     val ifUrlforTYS25 = s"/income-tax/view/calculations/liability/24-25/$successNino/$calculationId"
+    val ifUrlForCalculationList = s"/income-tax/view/calculations/liability/23-24/$successNino"
     val listCalcResponseLegacy = Json.toJson(Seq(GetCalculationListModelLegacy(calculationId, "2019-03-17T09:22:59Z"))).toString()
     val listCalcResponse = Json.toJson(Seq(GetCalculationListModel(
       calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2",
@@ -202,6 +203,34 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
             result.status mustBe 503
             result.body mustBe
               """{"code":"ERROR","reason":"error"}"""
+        }
+      }
+
+      "return a NO_CONTENT when if returns an NOT_FOUND from get calc details" in new Setup {
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+        authorised()
+        stubGetWithResponseBody(ifUrlForCalculationList, 404, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
+          .withHttpHeaders(mtditidHeader, authorization)
+          .withQueryStringParameters(("taxYear","2024"))
+          .get()) {
+          result =>
+            result.status mustBe 204
+        }
+      }
+
+      "return a NO_CONTENT when des returns an NOT_FOUND from get calc details legacy" in new Setup {
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+        authorised()
+        stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 404, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
+          .withHttpHeaders(mtditidHeader, authorization)
+          .withQueryStringParameters(("taxYear", taxYear))
+          .get()) {
+          result =>
+            result.status mustBe 204
         }
       }
 

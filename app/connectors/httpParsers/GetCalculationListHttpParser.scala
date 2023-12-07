@@ -17,12 +17,13 @@
 package connectors.httpParsers
 
 import models._
+import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
-object GetCalculationListHttpParser extends APIParser {
+object GetCalculationListHttpParser extends APIParser with Logging {
   type GetCalculationListResponse = Either[ErrorModel, Seq[GetCalculationListModel]]
 
   override val parserName: String = "GetCalculationListHttpParser"
@@ -34,13 +35,16 @@ object GetCalculationListHttpParser extends APIParser {
           validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )
+        case NOT_FOUND =>
+          logger.info(s"[GetCalculationListHttpReads]: $NOT_FOUND converted to $NO_CONTENT")
+          Left(ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
         case INTERNAL_SERVER_ERROR =>
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleIFError(response)
         case SERVICE_UNAVAILABLE =>
           pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
           handleIFError(response)
-        case BAD_REQUEST | NOT_FOUND | CONFLICT | UNPROCESSABLE_ENTITY | FORBIDDEN =>
+        case BAD_REQUEST | CONFLICT | UNPROCESSABLE_ENTITY | FORBIDDEN =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
           handleIFError(response)
         case _ =>
