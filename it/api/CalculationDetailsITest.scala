@@ -246,8 +246,6 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .get()) {
           result =>
             result.status mustBe 204
-            result.body mustBe
-              """{"code":"NOT_FOUND","reason":"not found"}"""
         }
       }
     }
@@ -353,8 +351,6 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .get()) {
           result =>
             result.status mustBe 204
-            result.body mustBe
-              """{"code":"NOT_FOUND","reason":"not found"}"""
         }
       }
 
@@ -427,8 +423,6 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .get()) {
           result =>
             result.status mustBe 204
-            result.body mustBe
-              """{"code":"NOT_FOUND","reason":"not found"}"""
         }
       }
     }
@@ -501,8 +495,6 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .get()) {
           result =>
             result.status mustBe 204
-            result.body mustBe
-              """{"code":"NOT_FOUND","reason":"not found"}"""
         }
       }
 
