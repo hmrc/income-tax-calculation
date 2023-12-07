@@ -234,7 +234,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         }
       }
 
-      "return a 4XX when des returns an 4XX" in new Setup {
+      "return a 204 when des returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -245,7 +245,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 404
+            result.status mustBe 204
             result.body mustBe
               """{"code":"NOT_FOUND","reason":"not found"}"""
         }
@@ -341,7 +341,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         }
       }
 
-      "return a 4XX when des returns an 4XX" in new Setup {
+      "return a 204 when des returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -352,7 +352,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 404
+            result.status mustBe 204
             result.body mustBe
               """{"code":"NOT_FOUND","reason":"not found"}"""
         }
@@ -415,7 +415,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         }
       }
 
-      "return a 4XX when IF returns an 4XX" in new Setup {
+      "return a 204 when IF returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -426,7 +426,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 404
+            result.status mustBe 204
             result.body mustBe
               """{"code":"NOT_FOUND","reason":"not found"}"""
         }
@@ -488,7 +488,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         }
       }
 
-      "return a 4XX when des returns an 4XX" in new Setup {
+      "return a 204 when des returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -500,7 +500,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 404
+            result.status mustBe 204
             result.body mustBe
               """{"code":"NOT_FOUND","reason":"not found"}"""
         }

@@ -70,7 +70,7 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
     "handle errors" when {
       val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
 
-      Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
+      Seq(BAD_REQUEST, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
         s"DES returns $status" in {
           val desError = ErrorModel(status, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -82,15 +82,27 @@ class CalculationDetailsConnectorISpec extends AnyWordSpec with WiremockSpec wit
           result mustBe Left(desError)
         }
       }
+
+      s"DES returns $NOT_FOUND" in {
+        val desError = ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND"))
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+
+        stubGetWithResponseBody(url, NOT_FOUND, desError.toJson.toString)
+
+        val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+
+        result mustBe Left(desError)
+      }
+
       "DES returns an unexpected error - 502 BadGateway" in {
-          val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
-          implicit val hc: HeaderCarrier = HeaderCarrier()
+        val desError = ErrorModel(BAD_GATEWAY, errorBodyModel)
+        implicit val hc: HeaderCarrier = HeaderCarrier()
 
-          stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())
+        stubGetWithResponseBody(url, BAD_GATEWAY, desError.toJson.toString())
 
-          val result = await( connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
-          result mustBe Left(desError)
-        }
+        val result = await(connector.getCalculationDetails(taxYear, nino, calculationId)(hc))
+        result mustBe Left(desError)
+      }
     }
   }
 }
