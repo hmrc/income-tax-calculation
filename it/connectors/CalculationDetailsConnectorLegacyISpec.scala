@@ -66,7 +66,7 @@ class CalculationDetailsConnectorLegacyISpec extends AnyWordSpec with WiremockSp
     "handle errors" when {
       val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
 
-      Seq(BAD_REQUEST, NOT_FOUND, CONFLICT, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
+      Seq(BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
         s"DES returns $status" in {
           val desError = ErrorModel(status, errorBodyModel)
           implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -77,6 +77,17 @@ class CalculationDetailsConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
           result mustBe Left(desError)
         }
+      }
+
+      s"DES returns $NOT_FOUND" in {
+        val desError = ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND"))
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+
+        stubGetWithResponseBody(url, NOT_FOUND, desError.toJson.toString)
+
+        val result = await(connector.getCalculationDetails(nino, calculationId)(hc))
+
+        result mustBe Left(desError)
       }
 
       "DES returns an unexpected error - 502 BadGateway" in {

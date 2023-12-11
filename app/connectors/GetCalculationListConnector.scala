@@ -17,7 +17,6 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailsHttpReads
 import connectors.httpParsers.GetCalculationListHttpParser.{GetCalculationListHttpReads, GetCalculationListResponse}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
@@ -37,7 +36,7 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
 
     def iFCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
       val urlString = getCalculationListUrl
-      logger.info(s"[getCalculationList][getCalculationList] - GET URL: -${urlString}-")
+      logger.info(s"[getCalculationList][getCalculationList] - GET URL: -$urlString-")
       httpClient.GET[HttpResponse](url = urlString)(HttpReads[HttpResponse], hc, ec).map {
         response =>
           logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
