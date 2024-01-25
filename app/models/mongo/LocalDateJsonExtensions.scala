@@ -20,7 +20,7 @@ import play.api.libs.json.{Reads, Writes, __}
 
 import java.time.LocalDate
 
-object LocalDateExtensions {
+object LocalDateJsonExtensions {
   final val dateTimeReads: Reads[LocalDate] =
     Reads.at[String](__ \ "$date" \ "$numberLong")
       .map(dateTime => LocalDate.ofEpochDay(dateTime.toLong))

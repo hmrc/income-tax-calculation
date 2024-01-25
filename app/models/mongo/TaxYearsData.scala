@@ -16,7 +16,7 @@
 
 package models.mongo
 
-import models.mongo.LocalDateExtensions.{dateTimeReads, dateTimeWrites}
+import models.mongo.LocalDateJsonExtensions.{dateTimeReads, dateTimeWrites}
 import models.mongo.TaxYearsData.dateTimeFormat
 import play.api.libs.json._
 import utils.DecryptableSyntax.DecryptableOps

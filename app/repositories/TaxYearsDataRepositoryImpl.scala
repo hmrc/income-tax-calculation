@@ -19,7 +19,7 @@ package repositories
 import com.mongodb.client.model.ReturnDocument
 import com.mongodb.client.model.Updates.set
 import config.AppConfig
-import models.mongo.LocalDateExtensions.dateTimeWrites
+import models.mongo.LocalDateJsonExtensions.dateTimeWrites
 import models.mongo._
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
 import play.api.Logging
