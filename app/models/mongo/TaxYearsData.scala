@@ -16,6 +16,7 @@
 
 package models.mongo
 
+import models.mongo.LocalDateExtensions.{dateTimeReads, dateTimeWrites}
 import models.mongo.TaxYearsData.dateTimeFormat
 import play.api.libs.json._
 import utils.DecryptableSyntax.DecryptableOps
@@ -38,14 +39,6 @@ case class TaxYearsData(nino: String,
 }
 
 object TaxYearsData {
-  final val dateTimeReads: Reads[LocalDate] =
-    Reads.at[String](__ \ "$date" \ "$numberLong")
-      .map(dateTime => LocalDate.ofEpochDay(dateTime.toLong))
-
-  final val dateTimeWrites: Writes[LocalDate] =
-    Writes.at[String](__ \ "$date" \ "$numberLong")
-      .contramap[LocalDate](x => x.toEpochDay.toString)
-
   val dateTimeFormat: Format[LocalDate] = Format(dateTimeReads, dateTimeWrites)
 
   implicit val mongoJodaDateTimeFormats: Format[LocalDate] = dateTimeFormat

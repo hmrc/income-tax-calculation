@@ -19,6 +19,7 @@ package repositories
 import com.mongodb.client.model.ReturnDocument
 import com.mongodb.client.model.Updates.set
 import config.AppConfig
+import models.mongo.LocalDateExtensions.dateTimeWrites
 import models.mongo._
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
 import play.api.Logging
@@ -59,12 +60,6 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
 
 
   def find(nino: String): Future[Either[DatabaseError, Option[TaxYearsData]]] = {
-
-    import play.api.libs.json._
-    val dateTimeWrites: Writes[LocalDate] =
-        Writes.at[String](__ \ "$date" \ "$numberLong")
-          .contramap[LocalDate](x => x.toEpochDay.toString)
-
     lazy val start = "[TaxYearsDataRepositoryImpl][find]"
 
     val queryFilter = filter(nino)
