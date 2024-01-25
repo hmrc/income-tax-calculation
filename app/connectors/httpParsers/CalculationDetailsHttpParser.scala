@@ -16,10 +16,8 @@
 
 package connectors.httpParsers
 
-
-import connectors.httpParsers.GetCalculationListHttpParser.logger
-import models.{ErrorBodyModel, ErrorModel}
 import models.calculation.CalculationResponseModel
+import models.{ErrorBodyModel, ErrorModel}
 import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
