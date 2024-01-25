@@ -24,11 +24,11 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.intEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
 case class TaxYearsData(nino: String,
                         taxYears: Seq[Int],
-                        lastUpdated: LocalDate = LocalDate.now()){  //DateTimeZone.UTC)) {
+                        lastUpdated: LocalDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate ){
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTaxYearsData = EncryptedTaxYearsData(
     nino = nino,
@@ -40,7 +40,7 @@ case class TaxYearsData(nino: String,
 object TaxYearsData {
   final val dateTimeReads: Reads[LocalDate] =
     Reads.at[String](__ \ "$date" \ "$numberLong")
-      .map(dateTime => LocalDate.ofEpochDay(dateTime.toLong)) //, DateTimeZone.UTC))
+      .map(dateTime => LocalDate.ofEpochDay(dateTime.toLong))
 
   final val dateTimeWrites: Writes[LocalDate] =
     Writes.at[String](__ \ "$date" \ "$numberLong")
