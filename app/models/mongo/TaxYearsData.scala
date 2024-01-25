@@ -16,19 +16,19 @@
 
 package models.mongo
 
-import models.mongo.EncryptedTaxYearsData.dateTimeFormat
-import org.joda.time.{DateTime, DateTimeZone}
-import play.api.libs.json.{Format, Json, OFormat}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
+import models.mongo.TaxYearsData.dateTimeFormat
+import play.api.libs.json._
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.intDecryptor
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.intEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
+import java.time.LocalDate
+
 case class TaxYearsData(nino: String,
                         taxYears: Seq[Int],
-                        lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC)) {
+                        lastUpdated: LocalDate = LocalDate.now()){  //DateTimeZone.UTC)) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTaxYearsData = EncryptedTaxYearsData(
     nino = nino,
@@ -38,14 +38,24 @@ case class TaxYearsData(nino: String,
 }
 
 object TaxYearsData {
-  implicit val mongoJodaDateTimeFormats: Format[DateTime] = dateTimeFormat
+  final val dateTimeReads: Reads[LocalDate] =
+    Reads.at[String](__ \ "$date" \ "$numberLong")
+      .map(dateTime => LocalDate.ofEpochDay(dateTime.toLong)) //, DateTimeZone.UTC))
+
+  final val dateTimeWrites: Writes[LocalDate] =
+    Writes.at[String](__ \ "$date" \ "$numberLong")
+      .contramap[LocalDate](x => x.toEpochDay.toString)
+
+  val dateTimeFormat: Format[LocalDate] = Format(dateTimeReads, dateTimeWrites)
+
+  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = dateTimeFormat
 
   implicit val format: OFormat[TaxYearsData] = Json.format[TaxYearsData]
 }
 
 case class EncryptedTaxYearsData(nino: String,
                                  taxYears: Seq[EncryptedValue],
-                                 lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC)) {
+                                 lastUpdated: LocalDate = LocalDate.now()){ // DateTimeZone.UTC)) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TaxYearsData = TaxYearsData(
     nino = nino,
@@ -54,8 +64,8 @@ case class EncryptedTaxYearsData(nino: String,
   )
 }
 
-object EncryptedTaxYearsData extends MongoJodaFormats {
-  implicit val mongoJodaDateTimeFormats: Format[DateTime] = dateTimeFormat
+object EncryptedTaxYearsData  {
+  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = dateTimeFormat
 
   implicit val formats: Format[EncryptedTaxYearsData] = Json.format[EncryptedTaxYearsData]
 }

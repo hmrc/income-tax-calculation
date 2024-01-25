@@ -25,6 +25,7 @@ object AppDependencies {
   private val scalaTestPlusVersion = "7.0.0"
   private val pegdownVersion = "1.6.0"
   private val jacksonModuleScalaVersion = "2.16.1"
+  private val wiremockVersion = "2.7.1"
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30"  % bootstrapPlay30Version,
@@ -40,7 +41,7 @@ object AppDependencies {
     "org.pegdown"             %  "pegdown"                  % pegdownVersion         % "test, it",
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8"               % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % scalaTestPlusVersion   % "test, it",
-    "com.github.tomakehurst"  %  "wiremock-jre8"            % "2.28.0"               % "test, it",
+    "com.github.tomakehurst"  %  "wiremock" % wiremockVersion % "test, it",
     "org.scalamock"           %% "scalamock"                % "5.2.0"                % "test, it"
   )
 }

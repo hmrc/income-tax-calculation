@@ -20,18 +20,18 @@ import com.mongodb.client.model.ReturnDocument
 import com.mongodb.client.model.Updates.set
 import config.AppConfig
 import models.mongo._
-import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
 import play.api.Logging
+import play.api.libs.json.Writes
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
 import uk.gov.hmrc.play.http.logging.Mdc
 import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_TAX_YEARS_DATA, FAILED_TO_FIND_TAX_YEARS_DATA}
 import utils.PagerDutyHelper.pagerDutyLog
 import utils.SecureGCMCipher
 
+import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -56,12 +56,20 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
       }
   }
 
+
+
   def find(nino: String): Future[Either[DatabaseError, Option[TaxYearsData]]] = {
+
+    import play.api.libs.json._
+    val dateTimeWrites: Writes[LocalDate] =
+        Writes.at[String](__ \ "$date" \ "$numberLong")
+          .contramap[LocalDate](x => x.toEpochDay.toString)
 
     lazy val start = "[TaxYearsDataRepositoryImpl][find]"
 
     val queryFilter = filter(nino)
-    val update = set("lastUpdated", toBson(DateTime.now(DateTimeZone.UTC))(MongoJodaFormats.dateTimeWrites))
+    val now = LocalDateTime.now(ZoneOffset.UTC).toLocalDate
+    val update = set("lastUpdated", toBson(now) (dateTimeWrites))
     val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
 
     val findResult = collection.findOneAndUpdate(queryFilter, update, options).toFutureOption().map(Right(_)).recover {

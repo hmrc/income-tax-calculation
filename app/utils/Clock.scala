@@ -16,10 +16,10 @@
 
 package utils
 
-import org.joda.time.{DateTime, DateTimeZone}
+import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
 trait Clock {
-  def now(zone: DateTimeZone = DateTimeZone.UTC): DateTime = DateTime.now(zone)
+  def now(): LocalDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate
 }
 
 object Clock extends Clock

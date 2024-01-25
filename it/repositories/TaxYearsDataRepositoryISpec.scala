@@ -30,6 +30,7 @@ import uk.gov.hmrc.mongo.MongoUtils
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.SecureGCMCipher
 
+import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 import scala.concurrent.Future
 
 class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Matchers {
@@ -37,7 +38,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
   val taxYearsData: TaxYearsData = TaxYearsData(
     nino = "AA123456A",
     taxYears = Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023),
-    lastUpdated = DateTime.now(DateTimeZone.UTC)
+    lastUpdated = LocalDate.of(2023, 11, 11)
   )
 
   private val repoWithInvalidEncryption = appWithInvalidEncryptionKey.injector.instanceOf[TaxYearsDataRepositoryImpl]
@@ -136,7 +137,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
 
   "find" should {
     "get a document and update the TTL" in new EmptyDatabase {
-      private val now = DateTime.now(DateTimeZone.UTC)
+      private val now: LocalDate  = LocalDate.of(2023, 11, 11)
       private val data = taxYearsData.copy(lastUpdated = now)
 
       await(underTest.createOrUpdate(data)) mustBe Right(())
