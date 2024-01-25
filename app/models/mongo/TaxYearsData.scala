@@ -55,7 +55,7 @@ object TaxYearsData {
 
 case class EncryptedTaxYearsData(nino: String,
                                  taxYears: Seq[EncryptedValue],
-                                 lastUpdated: LocalDate = LocalDate.now()){ // DateTimeZone.UTC)) {
+                                 lastUpdated: LocalDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate ){
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TaxYearsData = TaxYearsData(
     nino = nino,
