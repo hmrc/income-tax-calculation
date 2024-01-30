@@ -19,7 +19,6 @@ package repositories
 import config.BackendAppConfig
 import helpers.WiremockSpec
 import models.mongo._
-import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
@@ -30,7 +29,7 @@ import uk.gov.hmrc.mongo.MongoUtils
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.SecureGCMCipher
 
-import java.time.{LocalDate, LocalDateTime, ZoneOffset}
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Matchers {

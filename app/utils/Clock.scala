@@ -16,7 +16,7 @@
 
 package utils
 
-import java.time.{LocalDate, LocalDateTime, ZoneOffset}
+import java.time.{LocalDateTime, ZoneOffset}
 
 trait Clock {
   def now(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
