@@ -63,7 +63,7 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
     lazy val start = "[TaxYearsDataRepositoryImpl][find]"
 
     val queryFilter = filter(nino)
-    val now = LocalDateTime.now(ZoneOffset.UTC).toLocalDate
+    val now: LocalDateTime  = LocalDateTime.now(ZoneOffset.UTC)
     val update = set("lastUpdated", toBson(now) (dateTimeWrites))
     val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
 

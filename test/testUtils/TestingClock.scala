@@ -16,15 +16,14 @@
 
 package testUtils
 
-import org.joda.time.{DateTime, DateTimeZone}
 import utils.Clock
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 object TestingClock extends Clock {
   private val year = 2021
   private val month = 1
   private val day = 1
 
-  override def now(): LocalDate = LocalDate.of(year, month, day)
+  override def now(): LocalDateTime = LocalDateTime.of(year, month, day, 0, 0, 18)
 }

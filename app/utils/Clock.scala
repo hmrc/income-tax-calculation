@@ -19,7 +19,7 @@ package utils
 import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
 trait Clock {
-  def now(): LocalDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate
+  def now(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
 }
 
 object Clock extends Clock

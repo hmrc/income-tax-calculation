@@ -18,15 +18,16 @@ package models.mongo
 
 import play.api.libs.json.{Reads, Writes, __}
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 
 object LocalDateJsonExtensions {
-  final val dateTimeReads: Reads[LocalDate] =
-    Reads.at[String](__ \ "$date" \ "$numberLong")
-      .map(dateTime => LocalDate.ofEpochDay(dateTime.toLong))
 
-  final val dateTimeWrites: Writes[LocalDate] =
+  final val dateTimeReads: Reads[LocalDateTime] =
+    Reads.at[String](__ \ "$date" \ "$numberLong")
+      .map(instant => LocalDateTime.ofInstant( Instant.ofEpochMilli(instant.toLong), ZoneOffset.UTC ) )
+
+  final val dateTimeWrites: Writes[LocalDateTime] =
     Writes.at[String](__ \ "$date" \ "$numberLong")
-      .contramap[LocalDate](x => x.toEpochDay.toString)
+      .contramap[LocalDateTime](x => x.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
 
 }

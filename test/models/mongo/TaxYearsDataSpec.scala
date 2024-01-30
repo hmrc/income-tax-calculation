@@ -25,7 +25,7 @@ class TaxYearsDataSpec extends TestSuite {
     "nino" -> "AA123456A",
     "taxYears" -> Seq(2016,2017,2018,2019,2020,2021,2022,2023),
     "lastUpdated" -> Json.obj(
-      "$date" -> Json.obj("$numberLong" -> "18628")
+      "$date" -> Json.obj("$numberLong" -> "1609459218000")
     )
   )
 

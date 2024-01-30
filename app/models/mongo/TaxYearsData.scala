@@ -29,7 +29,7 @@ import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
 case class TaxYearsData(nino: String,
                         taxYears: Seq[Int],
-                        lastUpdated: LocalDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate ){
+                        lastUpdated: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC) ){
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTaxYearsData = EncryptedTaxYearsData(
     nino = nino,
@@ -39,16 +39,16 @@ case class TaxYearsData(nino: String,
 }
 
 object TaxYearsData {
-  val dateTimeFormat: Format[LocalDate] = Format(dateTimeReads, dateTimeWrites)
+  val dateTimeFormat: Format[LocalDateTime] = Format(dateTimeReads, dateTimeWrites)
 
-  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = dateTimeFormat
+  implicit val mongoJodaDateTimeFormats: Format[LocalDateTime] = dateTimeFormat
 
   implicit val format: OFormat[TaxYearsData] = Json.format[TaxYearsData]
 }
 
 case class EncryptedTaxYearsData(nino: String,
                                  taxYears: Seq[EncryptedValue],
-                                 lastUpdated: LocalDate = LocalDateTime.now(ZoneOffset.UTC).toLocalDate ){
+                                 lastUpdated: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC) ){
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TaxYearsData = TaxYearsData(
     nino = nino,
@@ -58,7 +58,7 @@ case class EncryptedTaxYearsData(nino: String,
 }
 
 object EncryptedTaxYearsData  {
-  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = dateTimeFormat
+  implicit val mongoJodaDateTimeFormats: Format[LocalDateTime] = dateTimeFormat
 
   implicit val formats: Format[EncryptedTaxYearsData] = Json.format[EncryptedTaxYearsData]
 }

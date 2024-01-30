@@ -38,7 +38,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
   val taxYearsData: TaxYearsData = TaxYearsData(
     nino = "AA123456A",
     taxYears = Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023),
-    lastUpdated = LocalDate.of(2023, 11, 11)
+    lastUpdated = LocalDateTime.of(2023, 11, 11, 0, 0, 0)
   )
 
   private val repoWithInvalidEncryption = appWithInvalidEncryptionKey.injector.instanceOf[TaxYearsDataRepositoryImpl]
@@ -137,7 +137,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
 
   "find" should {
     "get a document and update the TTL" in new EmptyDatabase {
-      private val now: LocalDate  = LocalDate.of(2023, 11, 11)
+      private val now: LocalDateTime  = LocalDateTime.of(2023, 11, 11, 0, 0, 0)
       private val data = taxYearsData.copy(lastUpdated = now)
 
       await(underTest.createOrUpdate(data)) mustBe Right(())
