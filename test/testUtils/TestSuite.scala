@@ -16,12 +16,13 @@
 
 package testUtils
 
-import akka.actor.ActorSystem
+
 import com.codahale.metrics.SharedMetricRegistries
 import com.typesafe.config.ConfigFactory
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.{AppConfig, MockAppConfig}
 import controllers.predicates.AuthorisedAction
+import org.apache.pekko.actor.ActorSystem
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
@@ -50,6 +51,7 @@ trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach wit
     case Success(value) => value
     case Failure(ex) => throw ex
   }
+
 
   implicit val actorSystem: ActorSystem = ActorSystem()
 

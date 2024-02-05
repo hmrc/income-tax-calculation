@@ -19,10 +19,9 @@ package services
 import models.ErrorModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.mongo.{DatabaseError, TaxYearsData}
-import org.joda.time.DateTimeZone
-import uk.gov.hmrc.http.HeaderCarrier
 import play.api.Logging
 import repositories.TaxYearsDataRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
 
 import javax.inject.Inject
@@ -38,7 +37,7 @@ class GetTaxYearsDataService @Inject()(getBusinessDetailsService: GetBusinessDet
       case _: Either[DatabaseError, Option[TaxYearsData]] =>
         getBusinessDetailsService.getBusinessDetails(nino, mtditid).flatMap {
           case Right(IncomeSourceDetailsModel(_, success)) =>
-            val taxYearsData = TaxYearsData(success.nino, success.taxYears, clock.now(DateTimeZone.UTC))
+            val taxYearsData = TaxYearsData(success.nino, success.taxYears, clock.now())
             taxYearsDataRepository.createOrUpdate(taxYearsData).map {
               case Left(_: DatabaseError) =>
                 Right(taxYearsData)

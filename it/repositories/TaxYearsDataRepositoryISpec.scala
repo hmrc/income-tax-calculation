@@ -19,7 +19,6 @@ package repositories
 import config.BackendAppConfig
 import helpers.WiremockSpec
 import models.mongo._
-import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
@@ -30,6 +29,7 @@ import uk.gov.hmrc.mongo.MongoUtils
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.SecureGCMCipher
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Matchers {
@@ -37,7 +37,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
   val taxYearsData: TaxYearsData = TaxYearsData(
     nino = "AA123456A",
     taxYears = Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023),
-    lastUpdated = DateTime.now(DateTimeZone.UTC)
+    lastUpdated = LocalDateTime.of(2023, 11, 11, 0, 0, 0)
   )
 
   private val repoWithInvalidEncryption = appWithInvalidEncryptionKey.injector.instanceOf[TaxYearsDataRepositoryImpl]
@@ -136,7 +136,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
 
   "find" should {
     "get a document and update the TTL" in new EmptyDatabase {
-      private val now = DateTime.now(DateTimeZone.UTC)
+      private val now: LocalDateTime  = LocalDateTime.of(2023, 11, 11, 0, 0, 0)
       private val data = taxYearsData.copy(lastUpdated = now)
 
       await(underTest.createOrUpdate(data)) mustBe Right(())

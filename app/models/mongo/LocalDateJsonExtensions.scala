@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package utils
+package models.mongo
 
-import java.time.{LocalDateTime, ZoneOffset}
+import play.api.libs.json.{Reads, Writes, __}
 
-trait Clock {
-  def now(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
+
+object LocalDateJsonExtensions {
+
+  final val dateTimeReads: Reads[LocalDateTime] =
+    Reads.at[String](__ \ "$date" \ "$numberLong")
+      .map(instant => LocalDateTime.ofInstant( Instant.ofEpochMilli(instant.toLong), ZoneOffset.UTC ) )
+
+  final val dateTimeWrites: Writes[LocalDateTime] =
+    Writes.at[String](__ \ "$date" \ "$numberLong")
+      .contramap[LocalDateTime](x => x.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
+
 }
-
-object Clock extends Clock
