@@ -39,13 +39,9 @@ lazy val microservice = Project(appName, file("."))
     scalaVersion                     := currentScalaVersion,
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test
   )
-  //.configs(IntegrationTest extend Test)
   .settings(PlayKeys.playDefaultPort := 9314)
-  //.settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(coverageSettings: _*)
-
-//lazy val appDependenciesIt: Seq[ModuleID] = it()
 
 lazy val it = project
   .dependsOn(microservice % "test->test")
@@ -56,7 +52,7 @@ lazy val it = project
   )
   .settings(scalaVersion := currentScalaVersion)
   .settings(majorVersion := 1)
-  //.settings(scalacOptions += "-Xfatal-warnings") - re-enable when all warnings addressed
+  //.settings(scalacOptions += "-Xfatal-warnings") -> TODO: fix it:test warnings && re-enable
   .settings(
     testForkedParallel := true
   )
