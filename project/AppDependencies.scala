@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import play.core.PlayVersion.current
 import sbt._
 
 object AppDependencies {
@@ -33,14 +32,14 @@ object AppDependencies {
     "com.fasterxml.jackson.module" %% "jackson-module-scala"       % jacksonModuleScalaVersion
   )
   val test: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapPlay30Version % "test, it",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-30"  % mongoPlay30Version     % "test, it",
-    "org.scalatest"           %% "scalatest"                % scalaTestVersion       % "test, it",
-    "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapPlay30Version % "test, it",
-    "org.pegdown"             %  "pegdown"                  % pegdownVersion         % "test, it",
-    "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8"               % "test, it",
-    "org.scalatestplus.play"  %% "scalatestplus-play"       % scalaTestPlusVersion   % "test, it",
-    "com.github.tomakehurst"  %  "wiremock" % wiremockVersion % "test, it",
-    "org.scalamock"           %% "scalamock"                % "5.2.0"                % "test, it"
+    "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapPlay30Version % "test",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-30"  % mongoPlay30Version     % "test",
+    "org.scalatest"           %% "scalatest"                % scalaTestVersion       % "test",
+    "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapPlay30Version % "test",
+    "org.pegdown"             %  "pegdown"                  % pegdownVersion         % "test",
+    "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8"               % "test",
+    "org.scalatestplus.play"  %% "scalatestplus-play"       % scalaTestPlusVersion   % "test",
+    "com.github.tomakehurst"  %  "wiremock"                 % wiremockVersion        % "test",
+    "org.scalamock"           %% "scalamock"                % "5.2.0"                % "test"
   )
 }
