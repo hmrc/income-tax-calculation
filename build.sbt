@@ -1,6 +1,9 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
+import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-calculation"
+
+val currentScalaVersion = "2.13.12"
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
@@ -33,11 +36,26 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     majorVersion                     := 0,
-    scalaVersion                     := "2.13.12",
+    scalaVersion                     := currentScalaVersion,
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test
   )
-  .configs(IntegrationTest extend Test)
   .settings(PlayKeys.playDefaultPort := 9314)
-  .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(coverageSettings: _*)
+
+lazy val it = project
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings(false))
+  .enablePlugins(play.sbt.PlayScala)
+  .settings(
+    publish / skip := true
+  )
+  .settings(scalaVersion := currentScalaVersion)
+  .settings(majorVersion := 1)
+  //.settings(scalacOptions += "-Xfatal-warnings") -> TODO: fix it:test warnings && re-enable
+  .settings(
+    testForkedParallel := true
+  )
+  .settings(
+    libraryDependencies ++= AppDependencies.test
+  )
