@@ -167,7 +167,8 @@ object GetCalculationDetailsConstants {
           totalPensionSavingsTaxCharges = Some(5000.99),
           statePensionLumpSumCharges = Some(5000.99),
           payeUnderpaymentsCodedOut = Some(5000.99),
-          giftAidTaxChargeWhereBasicRateDiffers = Some(4997.99)
+          giftAidTaxChargeWhereBasicRateDiffers = Some(4997.99),
+          incomeTaxChargedOnTransitionProfits = Some(700.00)
         ),
         nics = Some(Nics(
           class4Nics = Some(Class4Nics(nic4Bands = Seq(Nic4Bands(
@@ -267,7 +268,8 @@ object GetCalculationDetailsConstants {
         totalPensionCharges = Some(5000.99),
         totalTaxPaid = Some(5000.99),
         totalPensionChargesDue = Some(5000.99)
-      )))),
+      )),
+      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
@@ -365,7 +367,8 @@ object GetCalculationDetailsConstants {
           incomeTaxDueAfterTaxReductions = Some(5000.99),
           totalPensionSavingsTaxCharges = Some(5000.99),
           statePensionLumpSumCharges = Some(5000.99),
-          payeUnderpaymentsCodedOut = Some(5000.99)
+          payeUnderpaymentsCodedOut = Some(5000.99),
+          incomeTaxChargedOnTransitionProfits = Some(700.00)
         ),
         nics = Some(Nics(
           class4Nics = Some(Class4Nics(nic4Bands = Seq())),
@@ -428,7 +431,8 @@ object GetCalculationDetailsConstants {
         totalPensionCharges = Some(5000.99),
         totalTaxPaid = Some(5000.99),
         totalPensionChargesDue = Some(5000.99)
-      )))),
+      )),
+      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
