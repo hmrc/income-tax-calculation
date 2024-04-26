@@ -18,7 +18,6 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.PostCalculateIncomeTaxLiabilityHttpParser._
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.TaxYear.convertSpecificTaxYear
 
@@ -34,7 +33,7 @@ class PostCalculateIncomeTaxLiabilityConnector @Inject()(http: HttpClient, val a
       s"/income-tax/calculation/$taxYearParameter/$nino" + (if (crystallise) "?crystallise=true" else "")
 
     def ifCall(implicit hc: HeaderCarrier): Future[PostCalculateIncomeTaxLiabilityResponse] = {
-      http.POST[JsValue, PostCalculateIncomeTaxLiabilityResponse](liabilityIfCalculationUrl, Json.parse("""{}"""))
+      http.POSTEmpty(liabilityIfCalculationUrl)
     }
 
     ifCall(iFHeaderCarrier(liabilityIfCalculationUrl, PostCalculateIncomeTaxLiability))
