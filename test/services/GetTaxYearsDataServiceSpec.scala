@@ -36,7 +36,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
 
   val service = new GetTaxYearsDataService(mockGetBusinessDetailsService, mockTaxYearsDataRepository, TestingClock)
 
-  val successModel = IncomeSourceDetailsModel("",
+  val successModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel("",
     TaxPayerDisplayResponse(
       nino = "BB123456A",
       mtdbsa = "XIAT0000000000A",
@@ -67,11 +67,15 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
     )
   )
 
-  val successTaxYearsData = TaxYearsData("BB123456A",
-    Seq(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024),
-    TestingClock.now())
+  val successTaxYearsData: TaxYearsData = {
+    TaxYearsData(
+      "BB123456A",
+      successModel.taxPayerDisplayResponse.taxYears,
+      TestingClock.now()
+    )
+  }
 
-  val errorModel = ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error"))
+  val errorModel: ErrorModel = ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error"))
 
   def getBusinessDetailsSuccess: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))

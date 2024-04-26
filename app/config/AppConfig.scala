@@ -60,7 +60,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
 
   val desEnvironment: String = config.get[String]("microservice.services.des.environment")
-  val ifEnvironment: String = config.get[String]( "microservice.services.if.environment")
+  val ifEnvironment: String = config.get[String]("microservice.services.if.environment")
 
   val authorisationToken: String = config.get[String]("microservice.services.des.authorisation-token")
   def iFAuthorisationToken(api:String): String = config.get[String](s"microservice.services.if.authorisation-token.$api")
