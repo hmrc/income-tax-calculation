@@ -19,6 +19,7 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.GetCalculationListHttpParser.{GetCalculationListHttpReads, GetCalculationListResponse}
 import play.api.Logging
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
@@ -32,18 +33,33 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
 
   def getCalculationList(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
     val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
-    val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYearRange/$nino"
+    val calculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYearRange/$nino"
 
-    def iFCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-      val urlString = getCalculationListUrl
-      logger.info(s"[getCalculationList][getCalculationList] - GET URL: -$urlString-")
-      httpClient.GET[HttpResponse](url = urlString)(HttpReads[HttpResponse], hc, ec).map {
+    def iFCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+      //    def iFCall(attempt:Int)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+      //      val urlString = getCalculationListUrl
+      logger.info(s"[getCalculationList][getCalculationList] - GET URL: -$calculationListUrl-")
+      httpClient.GET[HttpResponse](url = calculationListUrl)(HttpReads[HttpResponse], hc, ec)
+    }
+
+    val delayInMs = 1000
+
+    def iFCallWithRetry(nino: String, taxYear: String, retries: Int = 0)
+                       (implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+      iFCall.flatMap {
         response =>
-          logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
-          GetCalculationListHttpReads.read("GET", urlString, response)
+          response.status match {
+            case NOT_FOUND if (retries < 3) =>
+              Thread.sleep(delayInMs)
+              iFCallWithRetry(nino, taxYear, retries + 1)
+
+            case _ =>
+              logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
+              Future.successful(GetCalculationListHttpReads.read("GET", calculationListUrl, response))
+          }
       }
     }
 
-    iFCall(iFHeaderCarrier(getCalculationListUrl, "1896"))
+    iFCallWithRetry(nino, taxYear, 0)(iFHeaderCarrier(calculationListUrl, "1896"))
   }
 }

@@ -18,23 +18,45 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
-
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.Logging
+import play.api.http.Status.NOT_FOUND
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
                                                   val appConfig: AppConfig)
-                                                 (implicit ec: ExecutionContext) extends IFConnector {
+                                                 (implicit ec: ExecutionContext) extends IFConnector with Logging {
 
   def getCalculationDetails(nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$nino/$calculationId"
 
-    def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-      httpClient.GET(url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
+//    def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    def iFCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+//      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
+      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)(HttpReads[HttpResponse], hc, ec)
     }
 
-    iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
+    val delayInMs = 1000
+
+//    iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
+
+    def iFCallWithRetry(nino: String, calculationId: String, retries: Int = 0)
+                       (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+      iFCall.flatMap {
+        response =>
+          response.status match {
+            case NOT_FOUND if (retries < 3) =>
+              Thread.sleep(delayInMs)
+              iFCallWithRetry(nino, calculationId, retries + 1)
+
+            case _ =>
+              logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
+              Future.successful(CalculationDetailsHttpReads.read("GET", getCalculationDetailsUrl, response))
+          }
+      }
+    }
+    iFCallWithRetry(nino, calculationId, 0)(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
   }
 }
