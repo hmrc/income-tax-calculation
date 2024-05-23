@@ -36,8 +36,6 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
     val calculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYearRange/$nino"
 
     def iFCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-      //    def iFCall(attempt:Int)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-      //      val urlString = getCalculationListUrl
       logger.info(s"[getCalculationList][getCalculationList] - GET URL: -$calculationListUrl-")
       httpClient.GET[HttpResponse](url = calculationListUrl)(HttpReads[HttpResponse], hc, ec)
     }
@@ -54,12 +52,12 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
               iFCallWithRetry(nino, taxYear, retries + 1)
 
             case _ =>
-              logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
+              logger.info(s"[GetCalculationListConnector][iFCallWithRetry] - Response: -${response.body}-")
               Future.successful(GetCalculationListHttpReads.read("GET", calculationListUrl, response))
           }
       }
     }
 
-    iFCallWithRetry(nino, taxYear, 0)(iFHeaderCarrier(calculationListUrl, "1896"))
+    iFCallWithRetry(nino, taxYear)(iFHeaderCarrier(calculationListUrl, "1896"))
   }
 }

@@ -20,10 +20,11 @@ import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
 import play.api.Logging
 import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient,  HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
                                                   val appConfig: AppConfig)
@@ -32,15 +33,11 @@ class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
   def getCalculationDetails(nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$nino/$calculationId"
 
-//    def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
     def iFCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-//      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
-      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)(HttpReads[HttpResponse], hc, ec)
+      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)
     }
 
-    val delayInMs = 1000
-
-//    iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
+    val delayInMs = 1000// 8s
 
     def iFCallWithRetry(nino: String, calculationId: String, retries: Int = 0)
                        (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
@@ -48,15 +45,16 @@ class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
         response =>
           response.status match {
             case NOT_FOUND if (retries < 3) =>
+              logger.error(s"[CalculationDetailsConnectorLegacy][iFCallWithRetry] - calculation not available - retrying ...: -${response.body}-")
               Thread.sleep(delayInMs)
               iFCallWithRetry(nino, calculationId, retries + 1)
 
             case _ =>
-              logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
+              logger.info(s"[CalculationDetailsConnectorLegacy][iFCallWithRetry] - Response: -${response.body}-")
               Future.successful(CalculationDetailsHttpReads.read("GET", getCalculationDetailsUrl, response))
           }
       }
     }
-    iFCallWithRetry(nino, calculationId, 0)(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
+    iFCallWithRetry(nino, calculationId)(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
   }
 }
