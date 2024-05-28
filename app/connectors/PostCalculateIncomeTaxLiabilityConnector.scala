@@ -30,7 +30,7 @@ class PostCalculateIncomeTaxLiabilityConnector @Inject()(http: HttpClient, val a
   def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)(implicit hc: HeaderCarrier): Future[PostCalculateIncomeTaxLiabilityResponse] = {
     val taxYearParameter = convertSpecificTaxYear(taxYear)
     val liabilityIfCalculationUrl: String = appConfig.ifBaseUrl +
-      s"/income-tax/calculation/$taxYearParameter/$nino" + (if (crystallise) "?crystallise=true" else "")
+      s"/income-tax/calculation/$taxYearParameter/$nino?crystallise=$crystallise"
 
     def ifCall(implicit hc: HeaderCarrier): Future[PostCalculateIncomeTaxLiabilityResponse] = {
       http.POSTEmpty(liabilityIfCalculationUrl)

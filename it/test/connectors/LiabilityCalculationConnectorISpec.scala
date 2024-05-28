@@ -42,8 +42,8 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
 
   val nino = "nino"
   val taxYear = "2021"
-  val url = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation"
   val crystalliseUrl = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation?crystallise=true"
+  val inYearCalcUrl = s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation?crystallise=false"
 
 
   "LiabilityCalculationConnector" should {
@@ -53,7 +53,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
       "DES returns a success result with expected JSON" in {
         val response = Json.toJson(LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")).toString()
 
-        stubPostWithoutRequestBody(url, OK, response)
+        stubPostWithoutRequestBody(inYearCalcUrl, OK, response)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = false))
 
@@ -86,7 +86,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
         val expectedResult = LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")
 
-        stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
+        stubPostWithoutRequestBody(inYearCalcUrl, OK, response, headersSentToDes)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
 
@@ -98,7 +98,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
         val connector = new LiabilityCalculationConnector(httpClient, appConfig(externalHost))
         val expectedResult = LiabilityCalculationIdModel("00000000-0000-1000-8000-000000000000")
 
-        stubPostWithoutRequestBody(url, OK, response, headersSentToDes)
+        stubPostWithoutRequestBody(inYearCalcUrl, OK, response, headersSentToDes)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = false)(hc))
 
@@ -118,7 +118,7 @@ class LiabilityCalculationConnectorISpec extends AnyWordSpec with WiremockSpec w
             |  "reason": "Dependent systems are currently not responding."
             |}
             |""".stripMargin
-        stubPostWithoutRequestBody(url, SERVICE_UNAVAILABLE, response)
+        stubPostWithoutRequestBody(inYearCalcUrl, SERVICE_UNAVAILABLE, response)
 
         val result = await(connector.calculateLiability(nino, taxYear, crystallise = false))
 

@@ -32,7 +32,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
     implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
     val successNino: String = "AA123123A"
     val taxYear = "2021"
-    val desUrl = s"/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation"
+    val desUrl = s"/income-tax/nino/$successNino/taxYear/$taxYear/tax-calculation?crystallise=false"
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val mtditidHeader = ("mtditid", "555555555")
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
