@@ -40,19 +40,19 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
       httpClient.GET[HttpResponse](url = calculationListUrl)(HttpReads[HttpResponse], hc, ec)
     }
 
-    val delayInMs = 1000
+    val delayInMs = 2000
 
     def iFCallWithRetry(nino: String, taxYear: String, retries: Int = 0)
                        (implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
       iFCall.flatMap {
         response =>
           response.status match {
-            case NOT_FOUND if (retries < 3) =>
+            case NOT_FOUND if (retries < 9) =>
               Thread.sleep(delayInMs)
               iFCallWithRetry(nino, taxYear, retries + 1)
 
             case _ =>
-              logger.info(s"[GetCalculationListConnector][iFCallWithRetry] - Response: -${response.body}-")
+              logger.info(s"[GetCalculationListConnector][iFCallWithRetry] - Response: -${response.status}-")
               Future.successful(GetCalculationListHttpReads.read("GET", calculationListUrl, response))
           }
       }

@@ -34,24 +34,23 @@ class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfi
       s"${appConfig.desBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
     def desCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-//      http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
       http.GET[HttpResponse](url = getCalcListUrl)
     }
 
 
-    val delayInMs = 1000
+    val delayInMs = 2000
     def desCallWithRetry(nino: String, taxYear: Option[String], retries: Int = 0)
                        (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
       desCall.flatMap {
         response =>
           response.status match {
-            case NOT_FOUND if (retries < 8) =>
-              logger.error(s"[GetCalculationListConnectorLegacy][calcList] - calculation not available - retrying ...: -${response.body}-")
+            case NOT_FOUND if (retries < 9) =>
+              logger.error(s"[GetCalculationListConnectorLegacy][calcList] - calculation not available - retrying ...: -${response.status}-")
               Thread.sleep(delayInMs)
               desCallWithRetry(nino, taxYear, retries + 1)
 
             case _ =>
-              logger.info(s"[GetCalculationListConnectorLegacy][calcList] - Response: -${response.body}-")
+              logger.info(s"[GetCalculationListConnectorLegacy][calcList] - Response: -${response.status}-")
               Future.successful(GetCalculationListHttpReadsLegacy.read("GET", getCalcListUrl, response))
           }
       }

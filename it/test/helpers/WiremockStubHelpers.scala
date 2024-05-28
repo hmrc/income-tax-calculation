@@ -24,7 +24,39 @@ import play.api.libs.json.JsValue
 
 trait WiremockStubHelpers {
 
-  def stubGetWithResponseBody(url: String, status: Int, response: String, requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
+  import com.github.tomakehurst.wiremock.stubbing.Scenario
+
+  def stubGetWithStateAndChangeResponseBody(url: String,
+                                            errorStatus: Int,
+                                            successStatus: Int,
+                                            errorResponse: String,
+                                            successResponse: String,
+                                            requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
+    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(get(urlMatching(url))) { (result, nxt) =>
+      result.withHeader(nxt.key(), equalTo(nxt.firstValue()))
+    }
+    stubFor(mappingWithHeaders
+      .inScenario("TEST-404")
+      .whenScenarioStateIs(Scenario.STARTED)
+      .willSetStateTo("SUCCESS")
+      .willReturn(
+        aResponse()
+          .withStatus(errorStatus)
+          .withBody(errorResponse)
+          .withHeader("Content-Type", "application/json; charset=utf-8")))
+
+    stubFor(mappingWithHeaders
+      .inScenario("TEST-404")
+      .whenScenarioStateIs("SUCCESS")
+      .willReturn(
+        aResponse()
+          .withStatus(successStatus)
+          .withBody(successResponse)
+          .withHeader("Content-Type", "application/json; charset=utf-8")))
+
+  }
+
+  def stubGetWithResponseBody(url: String, status: Int, response: String,requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
     val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(get(urlMatching(url))) { (result, nxt) =>
       result.withHeader(nxt.key(), equalTo(nxt.firstValue()))
     }
