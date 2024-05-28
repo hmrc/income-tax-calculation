@@ -38,13 +38,12 @@ class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfi
     }
 
 
-    val delayInMs = 2000
     def desCallWithRetry(nino: String, taxYear: Option[String], retries: Int = 0)
                        (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
       desCall.flatMap {
         response =>
           response.status match {
-            case NOT_FOUND if (retries < 9) =>
+            case NOT_FOUND if (retries < maxRetries) =>
               logger.error(s"[GetCalculationListConnectorLegacy][calcList] - calculation not available - retrying ...: -${response.status}-")
               Thread.sleep(delayInMs)
               desCallWithRetry(nino, taxYear, retries + 1)

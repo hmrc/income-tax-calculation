@@ -39,17 +39,17 @@ class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
       httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)(HttpReads[HttpResponse], hc, ec)
     }
 
-    val delayInMs = 2000
 
-    def iFCallWithRetry(taxYear: String,nino: String, retries: Int = 0)
+
+    def iFCallWithRetry(retries: Int = 0)
                         (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
       iFCall.flatMap {
         response =>
           response.status match {
-            case NOT_FOUND if (retries < 9) =>
+            case NOT_FOUND if (retries < maxRetries) =>
               logger.error(s"[CalculationDetailsConnector][iFCallWithRetry] - calculation not available - retrying ...: -${response.status}-")
               Thread.sleep(delayInMs)
-              iFCallWithRetry(taxYear,nino, retries + 1)
+              iFCallWithRetry(retries + 1)
 
             case _ =>
               logger.info(s"[CalculationDetailsConnector][iFCallWithRetry] - Response: -${response.status}-")
@@ -58,7 +58,7 @@ class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
       }
     }
 
-    iFCallWithRetry(nino,taxYear)(iFHeaderCarrier(getCalculationDetailsUrl, "1885"))
+    iFCallWithRetry()(iFHeaderCarrier(getCalculationDetailsUrl, "1885"))
   }
 
 
