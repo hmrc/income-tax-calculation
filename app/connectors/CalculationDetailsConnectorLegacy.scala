@@ -38,6 +38,22 @@ class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
     }
 
 
+    def iFCallWithRetry(retries: Int = 0)
+                       (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+      iFCall.flatMap {
+        response =>
+          response.status match {
+            case NOT_FOUND if (retries < maxRetries) =>
+              logger.error(s"[CalculationDetailsConnectorLegacy][iFCallWithRetry] - calculation not available - retrying ...: -${response.status}-")
+              Thread.sleep(delayInMs)
+              iFCallWithRetry(retries + 1)
+
+            case _ =>
+              logger.info(s"[CalculationDetailsConnectorLegacy][iFCallWithRetry] - Response: -${response.status}-")
+              Future.successful(CalculationDetailsHttpReads.read("GET", getCalculationDetailsUrl, response))
+          }
+      }
+    }
     iFCallWithRetry()(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
   }
 }
