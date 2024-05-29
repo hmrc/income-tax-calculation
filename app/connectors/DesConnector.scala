@@ -29,6 +29,8 @@ import java.net.URL
 trait DesConnector {
 
   val appConfig: AppConfig
+  val delayInMs = 2000
+  val maxRetries = 9
 
   val headerCarrierConfig: Config = HeaderCarrier.Config.fromConfig(ConfigFactory.load())
 

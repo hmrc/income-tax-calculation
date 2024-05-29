@@ -27,8 +27,10 @@ import java.net.URL
 trait IFConnector {
 
   val appConfig: AppConfig
-
+  val delayInMs = 2000
+  val maxRetries = 9
   val headerCarrierConfig: Config = HeaderCarrier.Config.fromConfig(ConfigFactory.load())
+
 
   private[connectors] def iFHeaderCarrier(url: String, apiNumber: String)(implicit hc: HeaderCarrier): HeaderCarrier = {
 
