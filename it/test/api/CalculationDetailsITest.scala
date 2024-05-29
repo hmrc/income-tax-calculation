@@ -225,11 +225,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
         val errorResponse = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
         authorised()
         stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 404, errorResponse)
-//        stubGetWithStateAndChangeResponseBody(desUrlForListCalcWithTaxYear,
-//          errorStatus = NOT_FOUND,
-//          successStatus = OK,
-//          errorResponse =errorResponse,
-//          successResponse = listCalcResponse )
+
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
           .withQueryStringParameters(("taxYear", taxYear))
