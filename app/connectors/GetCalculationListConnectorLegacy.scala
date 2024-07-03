@@ -18,44 +18,22 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.GetCalculationListHttpParserLegacy._
-import play.api.Logging
-import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
-class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector with Logging{
+class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
     val getCalcListUrl: String =
       s"${appConfig.desBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
-    def desCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-      http.GET[HttpResponse](url = getCalcListUrl)
+    def desCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+      http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
     }
 
-
-    def desCallWithRetry(nino: String, taxYear: Option[String], retries: Int = 0)
-                       (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-      desCall.flatMap {
-        response =>
-          response.status match {
-            case NOT_FOUND if (retries < maxRetries) =>
-              logger.error(s"[GetCalculationListConnectorLegacy][calcList] - calculation not available - retrying ...: -${response.status}-")
-              Thread.sleep(delayInMs)
-              desCallWithRetry(nino, taxYear, retries + 1)
-
-            case _ =>
-              logger.info(s"[GetCalculationListConnectorLegacy][calcList] - Response: -${response.status}-")
-              Future.successful(GetCalculationListHttpReadsLegacy.read("GET", getCalcListUrl, response))
-          }
-      }
-    }
-
-    desCallWithRetry(nino,taxYear)(desHeaderCarrier(getCalcListUrl))
+    desCall(desHeaderCarrier(getCalcListUrl))
   }
-
 }

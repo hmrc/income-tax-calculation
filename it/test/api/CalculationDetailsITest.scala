@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers {
 
   trait Setup {
-    implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(20, Seconds))
+    implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
     val successNino: String = "AA123123A"
     val taxYear = "2021"
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
@@ -221,10 +221,9 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       }
 
       "return a NO_CONTENT when des returns an NOT_FOUND from get calc details legacy" in new Setup {
-
-        val errorResponse = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
         authorised()
-        stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 404, errorResponse)
+        stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 404, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
           .withHttpHeaders(mtditidHeader, authorization)
