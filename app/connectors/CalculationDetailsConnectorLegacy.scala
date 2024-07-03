@@ -18,42 +18,23 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
-import play.api.Logging
-import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient,  HttpResponse}
+
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
                                                   val appConfig: AppConfig)
-                                                 (implicit ec: ExecutionContext) extends IFConnector with Logging {
+                                                 (implicit ec: ExecutionContext) extends IFConnector {
 
   def getCalculationDetails(nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$nino/$calculationId"
 
-    def iFCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)
+    def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+      httpClient.GET(url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
     }
 
-
-    def iFCallWithRetry(retries: Int = 0)
-                       (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-      iFCall.flatMap {
-        response =>
-          response.status match {
-            case NOT_FOUND if (retries < maxRetries) =>
-              logger.error(s"[CalculationDetailsConnectorLegacy][iFCallWithRetry] - calculation not available - retrying ...: -${response.status}-")
-              Thread.sleep(delayInMs)
-              iFCallWithRetry(retries + 1)
-
-            case _ =>
-              logger.info(s"[CalculationDetailsConnectorLegacy][iFCallWithRetry] - Response: -${response.status}-")
-              Future.successful(CalculationDetailsHttpReads.read("GET", getCalculationDetailsUrl, response))
-          }
-      }
-    }
-    iFCallWithRetry()(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
+    iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
   }
 }

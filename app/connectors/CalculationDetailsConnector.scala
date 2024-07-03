@@ -19,7 +19,6 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
 import play.api.Logging
-import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.Inject
@@ -33,36 +32,16 @@ class CalculationDetailsConnector @Inject()(httpClient: HttpClient,
   def getCalculationDetails(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
 
-    def iFCall(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
       val urlString = getCalculationDetailsUrl
       logger.info(s"[CalculationDetailsConnector][getCalculationDetails] - GET URL: -${urlString}-")
-      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)(HttpReads[HttpResponse], hc, ec)
-    }
-
-
-
-    def iFCallWithRetry(retries: Int = 0)
-                        (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-      iFCall.flatMap {
+      httpClient.GET[HttpResponse](url = getCalculationDetailsUrl)(HttpReads[HttpResponse], hc, ec).map {
         response =>
-          response.status match {
-            case NOT_FOUND if (retries < maxRetries) =>
-              logger.error(s"[CalculationDetailsConnector][iFCallWithRetry] - calculation not available - retrying ...: -${response.status}-")
-              Thread.sleep(delayInMs)
-              iFCallWithRetry(retries + 1)
-
-            case _ =>
-              logger.info(s"[CalculationDetailsConnector][iFCallWithRetry] - Response: -${response.status}-")
-              Future.successful(CalculationDetailsHttpReads.read("GET", getCalculationDetailsUrl, response))
-          }
+          logger.info(s"[CalculationDetailsConnector][getCalculationDetails] - Response: -${response.body}-")
+          CalculationDetailsHttpReads.read("GET", urlString, response)
       }
     }
 
-    iFCallWithRetry()(iFHeaderCarrier(getCalculationDetailsUrl, "1885"))
+    iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1885"))
   }
-
-
-
-
-
 }
