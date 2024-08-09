@@ -46,6 +46,7 @@ trait AppConfig {
   val useEncryption: Boolean
   val useBusinessDetailsStub: Boolean
   val confidenceLevel: Int
+  val useGetCalcListIFPlatform: Boolean
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -57,13 +58,14 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val ifBaseUrl: String = servicesConfig.baseUrl("if")
 
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
 
   val desEnvironment: String = config.get[String]("microservice.services.des.environment")
   val ifEnvironment: String = config.get[String]("microservice.services.if.environment")
 
   val authorisationToken: String = config.get[String]("microservice.services.des.authorisation-token")
-  def iFAuthorisationToken(api:String): String = config.get[String](s"microservice.services.if.authorisation-token.$api")
+
+  def iFAuthorisationToken(api: String): String = config.get[String](s"microservice.services.if.authorisation-token.$api")
 
   // mongo config
   lazy val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")
@@ -73,4 +75,5 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("useBusinessDetailsStub")
 
   override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
+  lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("useGetCalcListIFPlatform")
 }

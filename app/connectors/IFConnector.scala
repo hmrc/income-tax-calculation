@@ -18,8 +18,8 @@ package connectors
 
 import com.typesafe.config.ConfigFactory
 import config.AppConfig
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.http.HeaderCarrier.Config
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import utils.HeaderCarrierSyntax.HeaderCarrierOps
 
 import java.net.URL
@@ -28,11 +28,11 @@ trait IFConnector {
 
   val appConfig: AppConfig
 
-  val headerCarrierConfig: Config = HeaderCarrier.Config.fromConfig(ConfigFactory.load())
+  val ifHeaderCarrierConfig: Config = HeaderCarrier.Config.fromConfig(ConfigFactory.load())
 
   private[connectors] def iFHeaderCarrier(url: String, apiNumber: String)(implicit hc: HeaderCarrier): HeaderCarrier = {
 
-    val internalHost = headerCarrierConfig.internalHostPatterns.exists(_.pattern.matcher(new URL(url).getHost).matches())
+    val internalHost = ifHeaderCarrierConfig.internalHostPatterns.exists(_.pattern.matcher(new URL(url).getHost).matches())
 
     val hcWithAuth = hc.copy(authorization = Some(Authorization(s"Bearer ${appConfig.iFAuthorisationToken(apiNumber)}")))
 

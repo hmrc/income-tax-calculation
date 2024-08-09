@@ -27,14 +27,15 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSpec with Matchers{
+class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSpec with Matchers {
 
   lazy val connector: GetCalculationListConnectorLegacy = app.injector.instanceOf[GetCalculationListConnectorLegacy]
 
   lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
 
-  def appConfig(desHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
+  def appConfig(desHost: String, isCalcMigratedToIF: Boolean = false): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
     override val desBaseUrl: String = s"http://$desHost:$wireMockPort"
+    override lazy val useGetCalcListIFPlatform: Boolean = isCalcMigratedToIF
   }
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -70,6 +71,32 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
         result mustBe Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
       }
+
+      "IF returns a success with expected JSON" in {
+        val appConfigWithInternalHost = appConfig("localhost", isCalcMigratedToIF = true)
+        val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+
+        val response =
+          Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
+
+        stubGetWithResponseBody(url, OK, response)
+        val result = await(connector.calcList(nino, None))
+
+        result mustBe Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+      }
+
+      "IF returns a success with expected JSON with OptionalTaxYear" in {
+        val appConfigWithInternalHost = appConfig("localhost", isCalcMigratedToIF = true)
+        val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+
+        val response =
+          Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
+
+        stubGetWithResponseBody(taxYearUrl, OK, response)
+        val result = await(connector.calcList(nino, taxYear))
+
+        result mustBe Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+      }
     }
   }
 
@@ -97,7 +124,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
       val appConfigWithInternalHost = appConfig("localhost")
       val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
 
-      val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")).toString()
+      val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")).toString()
 
       stubGetWithResponseBody(url, OK, response)
 
@@ -130,7 +157,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
       val appConfigWithInternalHost = appConfig("localhost")
       val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
 
-      val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")).toString()
+      val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")).toString()
 
       stubGetWithResponseBody(taxYearUrl, OK, response)
 
