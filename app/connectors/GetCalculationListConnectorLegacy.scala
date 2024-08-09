@@ -23,17 +23,24 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetCalculationListConnectorLegacy @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
+class GetCalculationListConnectorLegacy @Inject()
+(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector with IFConnector {
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
-    val getCalcListUrl: String =
-      s"${appConfig.desBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
+    val getCalcListUrl: String = {
+      val platformURL = if (appConfig.useGetCalcListIFPlatform) appConfig.ifBaseUrl else appConfig.desBaseUrl
+      s"$platformURL/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
+    }
 
-    def desCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+    def getCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
       http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
     }
 
-    desCall(desHeaderCarrier(getCalcListUrl))
+    if (appConfig.useGetCalcListIFPlatform) {
+      getCall(desHeaderCarrier(getCalcListUrl))
+    } else {
+      getCall(iFHeaderCarrier(getCalcListUrl, "1404"))
+    }
   }
 }
