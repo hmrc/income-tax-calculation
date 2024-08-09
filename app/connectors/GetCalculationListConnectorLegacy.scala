@@ -38,9 +38,9 @@ class GetCalculationListConnectorLegacy @Inject()
     }
 
     if (appConfig.useGetCalcListIFPlatform) {
-      getCall(desHeaderCarrier(getCalcListUrl))
-    } else {
       getCall(iFHeaderCarrier(getCalcListUrl, "1404"))
+    } else {
+      getCall(desHeaderCarrier(getCalcListUrl))
     }
   }
 }
