@@ -16,6 +16,7 @@
 
 package connectors
 
+import assets.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull, successModelFull}
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import config.BackendAppConfig
 import helpers.WiremockSpec
@@ -24,15 +25,15 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
 import play.api.http.Status._
-import assets.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull, successModelFull}
-import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpClient, SessionId}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class CalculationDetailsConnectorLegacyISpec extends AnyWordSpec with WiremockSpec with Matchers {
 
   lazy val connector: CalculationDetailsConnectorLegacy = app.injector.instanceOf[CalculationDetailsConnectorLegacy]
 
-  lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
+  lazy val httpClient: HttpClientV2 = app.injector.instanceOf[HttpClientV2]
 
   def appConfig(ifHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
     override val ifBaseUrl: String = s"http://$ifHost:$wireMockPort"

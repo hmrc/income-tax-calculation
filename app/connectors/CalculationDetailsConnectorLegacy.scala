@@ -18,13 +18,13 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.CalculationDetailsHttpParser.{CalculationDetailResponse, CalculationDetailsHttpReads}
-
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
+class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClientV2,
                                                   val appConfig: AppConfig)
                                                  (implicit ec: ExecutionContext) extends IFConnector {
 
@@ -32,7 +32,9 @@ class CalculationDetailsConnectorLegacy @Inject()(httpClient: HttpClient,
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$nino/$calculationId"
 
     def iFCall(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-      httpClient.GET(url = getCalculationDetailsUrl)(CalculationDetailsHttpReads, hc, ec)
+      httpClient
+        .get(url"$getCalculationDetailsUrl")
+        .execute[CalculationDetailResponse]
     }
 
     iFCall(iFHeaderCarrier(getCalculationDetailsUrl, "1523"))
