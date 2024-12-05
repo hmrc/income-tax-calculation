@@ -47,11 +47,6 @@ trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach wit
     SharedMetricRegistries.clear()
   }
 
-   val confidenceLevel: ConfidenceLevel = ConfidenceLevel.fromInt(ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")) match {
-    case Success(value) => value
-    case Failure(ex) => throw ex
-  }
-
 
   implicit val actorSystem: ActorSystem = ActorSystem()
 
@@ -88,7 +83,7 @@ trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach wit
 
     (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-      .returning(Future.successful(enrolments and confidenceLevel))
+      .returning(Future.successful(enrolments and ConfidenceLevel.L250))
   }
 
   val agentEnrolments: Enrolments = Enrolments(Set(
