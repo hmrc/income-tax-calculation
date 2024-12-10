@@ -52,6 +52,8 @@ class MockAppConfig extends AppConfig {
 
   override val useGetCalcListIFPlatform: Boolean = true
 
+  override def emaSupportingAgentsEnabled: Boolean = false
+
   def config(encrypt: Boolean = true): AppConfig = new AppConfig() {
 
     override val incomeTaxSubmissionStubUrl: String = "/stub"
@@ -85,6 +87,8 @@ class MockAppConfig extends AppConfig {
     override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
     override val useGetCalcListIFPlatform: Boolean = true
+
+    override def emaSupportingAgentsEnabled: Boolean = false
 
   }
 }

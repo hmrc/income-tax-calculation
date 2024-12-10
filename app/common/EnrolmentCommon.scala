@@ -19,6 +19,7 @@ package common
 object EnrolmentKeys {
   val Individual = "HMRC-MTD-IT"
   val Agent = "HMRC-AS-AGENT"
+  val SupportingAgent = "HMRC-MTD-IT-SUPP"
   val nino = "HMRC-NI"
 }
 
@@ -26,4 +27,9 @@ object EnrolmentIdentifiers {
   val individualId = "MTDITID"
   val agentReference = "AgentReferenceNumber"
   val nino = "NINO"
+}
+
+object DelegatedAuthRules {
+  val agentDelegatedAuthRule = "mtd-it-auth"
+  val supportingAgentDelegatedAuthRule = "mtd-it-auth-supp"
 }

@@ -45,8 +45,10 @@ trait AppConfig {
   val encryptionKey: String
   val useEncryption: Boolean
   val useBusinessDetailsStub: Boolean
-  val confidenceLevel: Int
+  def confidenceLevel: Int
   val useGetCalcListIFPlatform: Boolean
+
+  def emaSupportingAgentsEnabled: Boolean
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -76,4 +78,6 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
 
   override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
   lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("useGetCalcListIFPlatform")
+
+  def emaSupportingAgentsEnabled: Boolean = config.get[Boolean]("feature-switch.ema-supporting-agents-enabled")
 }
