@@ -50,13 +50,13 @@ trait WiremockSpec extends BeforeAndAfterEach with BeforeAndAfterAll with GuiceO
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
     .configure(
-      ("useEncryption" -> true) +: ("auditing.consumer.baseUri.port" -> wireMockPort) +:
+      ("feature-switch.useEncryption" -> true) +: ("auditing.consumer.baseUri.port" -> wireMockPort) +:
         servicesToUrlConfig: _*
     )
     .build()
 
   lazy val appWithInvalidEncryptionKey: Application = GuiceApplicationBuilder()
-    .configure(("useEncryption" -> true) +: ("mongodb.encryption.key" -> "key") +: ("auditing.consumer.baseUri.port" -> wireMockPort) +: servicesToUrlConfig: _*)
+    .configure(("feature-switch.useEncryption" -> true) +: ("mongodb.encryption.key" -> "key") +: ("auditing.consumer.baseUri.port" -> wireMockPort) +: servicesToUrlConfig: _*)
     .build()
 
   override def beforeAll(): Unit = {
