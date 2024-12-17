@@ -74,8 +74,8 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   lazy val mongoTTL: Int = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
 
   override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
-  lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("useGetCalcListIFPlatform")
 
+  lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListIFPlatform")
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")
   def emaSupportingAgentsEnabled: Boolean = config.get[Boolean]("feature-switch.ema-supporting-agents-enabled")
