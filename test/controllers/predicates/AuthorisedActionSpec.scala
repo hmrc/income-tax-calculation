@@ -27,7 +27,7 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, _}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -68,84 +68,13 @@ class AuthorisedActionSpec extends TestSuite {
       }
 
     }
+  }
 
-    ".individualAuthentication" should {
+  ".individualAuthentication" should {
 
-      "perform the block action" when {
+    "perform the block action" when {
 
-        "the correct enrolment and nino exist" which {
-          val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
-          val mtditid = "AAAAAA"
-          val enrolments = Enrolments(Set(Enrolment(
-            EnrolmentKeys.Individual,
-            Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtditid)), "Activated"),
-            Enrolment(
-              EnrolmentKeys.nino,
-              Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, mtditid)), "Activated")
-          ))
-
-          lazy val result: Future[Result] = {
-            (() => mockedAppConfig.confidenceLevel).expects().returning(250)
-            (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-              .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-              .returning(Future.successful(enrolments and ConfidenceLevel.L250))
-            auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
-          }
-
-          "returns an OK status" in {
-            status(result) mustBe OK
-          }
-
-          "returns a body of the mtditid" in {
-            bodyOf(result) mustBe mtditid
-          }
-        }
-
-      }
-
-      "return a UNAUTHORIZED" when {
-
-        "the correct enrolment is missing" which {
-          val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
-          val mtditid = "AAAAAA"
-          val enrolments = Enrolments(Set(Enrolment("notAnIndividualOops", Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtditid)), "Activated")))
-
-          lazy val result: Future[Result] = {
-            (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-              .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-              .returning(Future.successful(enrolments and ConfidenceLevel.L250))
-            auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
-          }
-
-          "returns a UNAUTHORIZED" in {
-            status(result) mustBe UNAUTHORIZED
-          }
-        }
-      }
-
-      "the correct enrolment and nino exist but the request is for a different id" which {
-        val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
-        val mtditid = "AAAAAA"
-        val enrolments = Enrolments(Set(Enrolment(
-          EnrolmentKeys.Individual,
-          Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "123456")), "Activated"),
-          Enrolment(
-            EnrolmentKeys.nino,
-            Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, mtditid)), "Activated")
-        ))
-
-        lazy val result: Future[Result] = {
-          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-            .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
-          auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
-        }
-
-        "returns an UNAUTHORIZED status" in {
-          status(result) mustBe UNAUTHORIZED
-        }
-      }
-      "the correct enrolment and nino exist but low CL" which {
+      "the correct enrolment and nino exist" which {
         val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
         val mtditid = "AAAAAA"
         val enrolments = Enrolments(Set(Enrolment(
@@ -157,25 +86,30 @@ class AuthorisedActionSpec extends TestSuite {
         ))
 
         lazy val result: Future[Result] = {
-          (() => mockedAppConfig.confidenceLevel).expects().returning(50)
+          (() => mockedAppConfig.confidenceLevel).expects().returning(250)
           (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L50))
+            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
         }
 
-        "returns an UNAUTHORIZED status" in {
-          status(result) mustBe UNAUTHORIZED
+        "returns an OK status" in {
+          status(result) mustBe OK
+        }
+
+        "returns a body of the mtditid" in {
+          bodyOf(result) mustBe mtditid
         }
       }
 
-      "the correct enrolment exist but no nino" which {
+    }
+
+    "return a UNAUTHORIZED" when {
+
+      "the correct enrolment is missing" which {
         val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
         val mtditid = "AAAAAA"
-        val enrolments = Enrolments(Set(Enrolment(
-          EnrolmentKeys.Individual,
-          Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtditid)), "Activated")
-        ))
+        val enrolments = Enrolments(Set(Enrolment("notAnIndividualOops", Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtditid)), "Activated")))
 
         lazy val result: Future[Result] = {
           (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
@@ -184,216 +118,302 @@ class AuthorisedActionSpec extends TestSuite {
           auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
         }
 
-        "returns an 401 status" in {
+        "returns a UNAUTHORIZED" in {
           status(result) mustBe UNAUTHORIZED
         }
       }
-      "the correct nino exist but no enrolment" which {
-        val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
-        val id = "AAAAAA"
-        val enrolments = Enrolments(Set(Enrolment(
+    }
+
+    "the correct enrolment and nino exist but the request is for a different id" which {
+      val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
+      val mtditid = "AAAAAA"
+      val enrolments = Enrolments(Set(Enrolment(
+        EnrolmentKeys.Individual,
+        Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "123456")), "Activated"),
+        Enrolment(
           EnrolmentKeys.nino,
-          Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, id)), "Activated")
+          Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, mtditid)), "Activated")
+      ))
+
+      lazy val result: Future[Result] = {
+        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
+          .returning(Future.successful(enrolments and ConfidenceLevel.L250))
+        auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
+      }
+
+      "returns an UNAUTHORIZED status" in {
+        status(result) mustBe UNAUTHORIZED
+      }
+    }
+    "the correct enrolment and nino exist but low CL" which {
+      val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
+      val mtditid = "AAAAAA"
+      val enrolments = Enrolments(Set(Enrolment(
+        EnrolmentKeys.Individual,
+        Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtditid)), "Activated"),
+        Enrolment(
+          EnrolmentKeys.nino,
+          Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, mtditid)), "Activated")
+      ))
+
+      lazy val result: Future[Result] = {
+        (() => mockedAppConfig.confidenceLevel).expects().returning(50)
+        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
+          .returning(Future.successful(enrolments and ConfidenceLevel.L50))
+        auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
+      }
+
+      "returns an UNAUTHORIZED status" in {
+        status(result) mustBe UNAUTHORIZED
+      }
+    }
+
+    "the correct enrolment exist but no nino" which {
+      val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
+      val mtditid = "AAAAAA"
+      val enrolments = Enrolments(Set(Enrolment(
+        EnrolmentKeys.Individual,
+        Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtditid)), "Activated")
+      ))
+
+      lazy val result: Future[Result] = {
+        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
+          .returning(Future.successful(enrolments and ConfidenceLevel.L250))
+        auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
+      }
+
+      "returns an 401 status" in {
+        status(result) mustBe UNAUTHORIZED
+      }
+    }
+    "the correct nino exist but no enrolment" which {
+      val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(user.mtditid))
+      val id = "AAAAAA"
+      val enrolments = Enrolments(Set(Enrolment(
+        EnrolmentKeys.nino,
+        Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, id)), "Activated")
+      ))
+
+      lazy val result: Future[Result] = {
+        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
+          .returning(Future.successful(enrolments and ConfidenceLevel.L250))
+        auth.individualAuthentication(block, id)(fakeRequest, emptyHeaderCarrier)
+      }
+
+      "returns an 401 status" in {
+        status(result) mustBe UNAUTHORIZED
+      }
+    }
+  }
+
+  ".agentAuthenticated" should {
+
+    val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(s"${user.mtditid} ${user.arn.get}"))
+
+    "perform the block action" when {
+
+      "the agent is authorised for the given user (primary agent)" which {
+
+        val enrolments = Enrolments(Set(
+          Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
+          Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
         ))
 
-        lazy val result: Future[Result] = {
+        lazy val result = {
           (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-            .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
-          auth.individualAuthentication(block, id)(fakeRequest, emptyHeaderCarrier)
+            .expects(*, Retrievals.allEnrolments, *, *)
+            .returning(Future.successful(enrolments))
+
+          auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
         }
 
-        "returns an 401 status" in {
-          status(result) mustBe UNAUTHORIZED
-        }
-      }
-    }
-    ".agentAuthenticated" should {
-
-      val block: User[AnyContent] => Future[Result] = user => Future.successful(Ok(s"${user.mtditid} ${user.arn.get}"))
-
-      "perform the block action" when {
-
-        "the agent is authorised for the given user (primary agent)" which {
-
-          val enrolments = Enrolments(Set(
-            Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
-            Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
-          ))
-
-          lazy val result = {
-            (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-              .expects(*, Retrievals.allEnrolments, *, *)
-              .returning(Future.successful(enrolments))
-
-            auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
-          }
-
-          "has a status of OK" in {
-            status(result) mustBe OK
-          }
-
-          "has the correct body" in {
-            bodyOf(result) mustBe "1234567890 0987654321"
-          }
+        "has a status of OK" in {
+          status(result) mustBe OK
         }
 
-        "the agent is authorised for the given user (secondary agent)" which {
-
-          val enrolments = Enrolments(Set(
-            Enrolment(EnrolmentKeys.SupportingAgent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
-            Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
-          ))
-
-          lazy val result = {
-
-            (() => mockedAppConfig.emaSupportingAgentsEnabled).expects().returning(true)
-            mockAuthReturnException(InsufficientEnrolments())
-            (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-              .expects(*, Retrievals.allEnrolments, *, *)
-              .returning(Future.successful(enrolments))
-              .once()
-
-            auth.agentAuthentication(block, "1234567890")(fakeRequest, emptyHeaderCarrier)
-          }
-
-          "has a status of OK" in {
-            status(result) mustBe OK
-          }
-
-          "has the correct body" in {
-            bodyOf(result) mustBe "1234567890 0987654321"
-          }
+        "has the correct body" in {
+          bodyOf(result) mustBe "1234567890 0987654321"
         }
       }
 
-      "return an Unauthorised" when {
+      "the agent is authorised for the given user (secondary agent)" which {
 
-        "the authorisation service returns an AuthorisationException exception (EMA Secondary Agent Disabled)" in {
+        val enrolments = Enrolments(Set(
+          Enrolment(EnrolmentKeys.SupportingAgent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
+          Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
+        ))
 
-          lazy val result = {
-            (() => mockedAppConfig.emaSupportingAgentsEnabled).expects().returning(false)
-            mockAuthReturnException(InsufficientEnrolments())
-            auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
-          }
-          status(result) mustBe UNAUTHORIZED
+        lazy val result = {
+
+          (() => mockedAppConfig.emaSupportingAgentsEnabled).expects().returning(true)
+          mockAuthReturnException(InsufficientEnrolments())
+          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+            .expects(*, Retrievals.allEnrolments, *, *)
+            .returning(Future.successful(enrolments))
+            .once()
+
+          auth.agentAuthentication(block, "1234567890")(fakeRequest, emptyHeaderCarrier)
         }
 
-        "the authorisation service returns an AuthorisationException exception on the second call (EMA Secondary Enabled)" in {
-
-          lazy val result = {
-            //Enabled EMA Supporting/Secondary Agent feature
-            (() => mockedAppConfig.emaSupportingAgentsEnabled).expects().returning(true)
-
-            //Simulate first & second call failing for Primary Agent check
-            mockAuthReturnException(InsufficientEnrolments()).twice()
-
-            auth.agentAuthentication(block, "1234567890")(fakeRequest, emptyHeaderCarrier)
-          }
-          status(result) mustBe UNAUTHORIZED
+        "has a status of OK" in {
+          status(result) mustBe OK
         }
 
-      }
-
-      "return an Unauthorised" when {
-
-        "the authorisation service returns a NoActiveSession exception" in {
-          object NoActiveSession extends NoActiveSession("Some reason")
-
-          lazy val result = {
-            mockAuthReturnException(NoActiveSession)
-            auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
-          }
-
-          status(result) mustBe UNAUTHORIZED
-        }
-      }
-      "return a UNAUTHORIZED" when {
-
-        "the user does not have an enrolment for the agent" in {
-          val enrolments = Enrolments(Set(
-            Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated")
-          ))
-
-          lazy val result = {
-            (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-              .expects(*, Retrievals.allEnrolments, *, *)
-              .returning(Future.successful(enrolments))
-            auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
-          }
-
-          status(result) mustBe UNAUTHORIZED
+        "has the correct body" in {
+          bodyOf(result) mustBe "1234567890 0987654321"
         }
       }
     }
 
-    ".async" should {
-      lazy val block: User[AnyContent] => Future[Result] = user =>
-        Future.successful(Ok(s"mtditid: ${user.mtditid}${user.arn.fold("")(arn => " arn: " + arn)}"))
+    "return an Unauthorised" when {
 
-      "perform the block action" when {
+      "the authorisation service returns an AuthorisationException exception (EMA Secondary Agent Disabled)" in {
 
-        "the user is successfully verified as an agent" which {
+        lazy val result = {
+          (() => mockedAppConfig.emaSupportingAgentsEnabled).expects().returning(false)
+          mockAuthReturnException(InsufficientEnrolments())
+          auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
+        }
+        status(result) mustBe UNAUTHORIZED
+      }
 
-          lazy val result = {
-            mockAuthAsAgent()
-            auth.async(block)(fakeRequestWithMtditid)
-          }
+      "the authorisation service returns an AuthorisationException exception on the second call (EMA Secondary Enabled)" in {
 
-          "should return an OK(200) status" in {
+        lazy val result = {
+          //Enabled EMA Supporting/Secondary Agent feature
+          (() => mockedAppConfig.emaSupportingAgentsEnabled).expects().returning(true)
 
-            status(result) mustBe OK
-            bodyOf(result) mustBe "mtditid: 1234567890 arn: 0987654321"
-          }
+          //Simulate first & second call failing for Primary Agent check
+          mockAuthReturnException(InsufficientEnrolments()).twice()
+
+          auth.agentAuthentication(block, "1234567890")(fakeRequest, emptyHeaderCarrier)
+        }
+        status(result) mustBe UNAUTHORIZED
+      }
+
+      "the authorisation service returns a NoActiveSession exception" in {
+        object NoActiveSession extends NoActiveSession("Some reason")
+
+        lazy val result = {
+          mockAuthReturnException(NoActiveSession)
+          auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
         }
 
-        "the user is successfully verified as an individual" in {
+        status(result) mustBe UNAUTHORIZED
+      }
 
-          lazy val result = {
-            mockAuth()
-            auth.async(block)(fakeRequestWithMtditid)
-          }
+      "the user does not have an enrolment for the agent" in {
+        val enrolments = Enrolments(Set(
+          Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated")
+        ))
+
+        lazy val result = {
+          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+            .expects(*, Retrievals.allEnrolments, *, *)
+            .returning(Future.successful(enrolments))
+          auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
+        }
+
+        status(result) mustBe UNAUTHORIZED
+      }
+    }
+
+    "return InternalServerError" when {
+
+      "any other type of exception is thrown for the Primary Agent check" in {
+        lazy val result = {
+          mockAuthReturnException(new Exception("bang"))
+          auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)
+        }
+        status(result) mustBe INTERNAL_SERVER_ERROR
+      }
+
+      "any other type of exception is thrown for the Secondary Agent check" in {
+        lazy val result = {
+          //Enabled EMA Supporting/Secondary Agent feature
+          (() => mockedAppConfig.emaSupportingAgentsEnabled).expects().returning(true)
+
+          //Simulate first & second call failing for Primary then Secondary Agent check
+          mockAuthReturnException(InsufficientEnrolments()).once()
+          mockAuthReturnException(new Exception("bang")).once()
+
+          auth.agentAuthentication(block, "1234567890")(fakeRequest, emptyHeaderCarrier)
+        }
+        status(result) mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
+
+  ".async" should {
+    lazy val block: User[AnyContent] => Future[Result] = user =>
+      Future.successful(Ok(s"mtditid: ${user.mtditid}${user.arn.fold("")(arn => " arn: " + arn)}"))
+
+    "perform the block action" when {
+
+      "the user is successfully verified as an agent" which {
+
+        lazy val result = {
+          mockAuthAsAgent()
+          auth.async(block)(fakeRequestWithMtditid)
+        }
+
+        "should return an OK(200) status" in {
 
           status(result) mustBe OK
-          bodyOf(result) mustBe "mtditid: 1234567890"
+          bodyOf(result) mustBe "mtditid: 1234567890 arn: 0987654321"
         }
       }
 
-      "return an Unauthorised" when {
+      "the user is successfully verified as an individual" in {
 
-        "the authorisation service returns an AuthorisationException exception" in {
-          object AuthException extends AuthorisationException("Some reason")
-
-          lazy val result = {
-            mockAuthReturnException(AuthException)
-            auth.async(block)
-          }
-          status(result(fakeRequestWithMtditid)) mustBe UNAUTHORIZED
+        lazy val result = {
+          mockAuth()
+          auth.async(block)(fakeRequestWithMtditid)
         }
 
+        status(result) mustBe OK
+        bodyOf(result) mustBe "mtditid: 1234567890"
       }
+    }
 
-      "return an Unauthorised" when {
+    "return an Unauthorised" when {
 
-        "the authorisation service returns a NoActiveSession exception" in {
-          object NoActiveSession extends NoActiveSession("Some reason")
+      "the authorisation service returns an AuthorisationException exception" in {
+        object AuthException extends AuthorisationException("Some reason")
 
-          lazy val result = {
-            mockAuthReturnException(NoActiveSession)
-            auth.async(block)
-          }
-
-          status(result(fakeRequestWithMtditid)) mustBe UNAUTHORIZED
+        lazy val result = {
+          mockAuthReturnException(AuthException)
+          auth.async(block)
         }
-
-        "the request does not contain an mtditid header" in {
-
-          lazy val result = auth.async(block)
-
-          status(result(fakeRequest)) mustBe UNAUTHORIZED
-        }
+        status(result(fakeRequestWithMtditid)) mustBe UNAUTHORIZED
       }
 
     }
+
+    "return an Unauthorised" when {
+
+      "the authorisation service returns a NoActiveSession exception" in {
+        object NoActiveSession extends NoActiveSession("Some reason")
+
+        lazy val result = {
+          mockAuthReturnException(NoActiveSession)
+          auth.async(block)
+        }
+
+        status(result(fakeRequestWithMtditid)) mustBe UNAUTHORIZED
+      }
+
+      "the request does not contain an mtditid header" in {
+
+        lazy val result = auth.async(block)
+
+        status(result(fakeRequest)) mustBe UNAUTHORIZED
+      }
+    }
+
   }
 }
