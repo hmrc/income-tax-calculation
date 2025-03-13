@@ -24,7 +24,6 @@ class EnrolmentCommonSpec extends AnyWordSpec with Matchers {
   "EnrolmentKeys" should {
     "have the correct values" in {
       EnrolmentKeys.Individual mustBe "HMRC-MTD-IT"
-      EnrolmentKeys.SupportingAgent mustBe "HMRC-MTD-IT-SUPP"
       EnrolmentKeys.Agent mustBe "HMRC-AS-AGENT"
       EnrolmentKeys.nino mustBe "HMRC-NI"
     }
@@ -41,7 +40,6 @@ class EnrolmentCommonSpec extends AnyWordSpec with Matchers {
   "DelegatedAuthRules" should {
     "have the correct values" in {
       DelegatedAuthRules.agentDelegatedAuthRule mustBe "mtd-it-auth"
-      DelegatedAuthRules.supportingAgentDelegatedAuthRule mustBe "mtd-it-auth-supp"
     }
   }
 
