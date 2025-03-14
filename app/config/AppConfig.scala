@@ -47,8 +47,6 @@ trait AppConfig {
   val useBusinessDetailsStub: Boolean
   def confidenceLevel: Int
   val useGetCalcListIFPlatform: Boolean
-
-  def emaSupportingAgentsEnabled: Boolean
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -78,5 +76,4 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListIFPlatform")
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")
-  def emaSupportingAgentsEnabled: Boolean = config.get[Boolean]("feature-switch.ema-supporting-agents-enabled")
 }

@@ -40,7 +40,7 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
 
   implicit val executionContext: ExecutionContext = cc.executionContext
 
-  val unauthorized: Future[Result] = Future(Unauthorized)
+  private val unauthorized: Future[Result] = Future(Unauthorized)
 
   def async(block: User[AnyContent] => Future[Result]): Action[AnyContent] = defaultActionBuilder.async { implicit request =>
 
@@ -106,38 +106,19 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
       .withIdentifier(EnrolmentIdentifiers.individualId, mtdId)
       .withDelegatedAuthRule(DelegatedAuthRules.agentDelegatedAuthRule)
 
-  private[predicates] def secondaryAgentPredicate(mtdId: String): Predicate =
-    Enrolment(EnrolmentKeys.SupportingAgent)
-      .withIdentifier(EnrolmentIdentifiers.individualId, mtdId)
-      .withDelegatedAuthRule(DelegatedAuthRules.supportingAgentDelegatedAuthRule)
-
   private[predicates] def agentAuthentication[A](block: User[A] => Future[Result], mtdItId: String)
                                                 (implicit request: Request[A], hc: HeaderCarrier): Future[Result] = {
 
     authorised(agentAuthPredicate(mtdItId))
       .retrieve(allEnrolments) {
         populateAgent(block, mtdItId, _)
-      }.recoverWith(agentRecovery(block, mtdItId))
+      }.recoverWith(agentRecovery())
   }
 
-  private def agentRecovery[A](block: User[A] => Future[Result],
-                               mtdItId: String)
-                              (implicit request: Request[A], hc: HeaderCarrier): PartialFunction[Throwable, Future[Result]] = {
+  private def agentRecovery(): PartialFunction[Throwable, Future[Result]] = {
     case _: NoActiveSession =>
       logger.info(s"[AuthorisedAction][agentAuthentication] - No active session.")
       unauthorized
-    case _: AuthorisationException if appConfig.emaSupportingAgentsEnabled =>
-      authorised(secondaryAgentPredicate(mtdItId))
-        .retrieve(allEnrolments) {
-          populateAgent(block, mtdItId, _)
-        }.recoverWith {
-          case _: AuthorisationException =>
-            logger.warn(s"[AuthorisedAction][agentAuthentication] - Agent does not have secondary delegated authority for Client.")
-            unauthorized
-          case e =>
-            logger.error(s"[AuthorisedAction][agentAuthentication] - Unexpected exception of type '${e.getClass.getSimpleName}' was caught.")
-            Future(InternalServerError)
-        }
     case _: AuthorisationException =>
       logger.warn(s"[AuthorisedAction][agentAuthentication] - Agent does not have delegated authority for Client.")
       unauthorized
