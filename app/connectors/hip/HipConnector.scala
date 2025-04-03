@@ -26,7 +26,9 @@ trait HipConnector {
 
   private[connectors] def hipHeaderCarrier(apiNumber: String)(implicit hc: HeaderCarrier): HeaderCarrier = {
     val basicAuthToken : String = appConfig.hipAuthorisationToken(apiNumber)
-    hc.copy(authorization = Some(Authorization(s"Basic $basicAuthToken")))
+    // TODO: need to verify if we need to use Basic auth instead
+    //hc.copy(authorization = Some(Authorization(s"Basic $basicAuthToken")))
+    hc.copy(authorization = Some(Authorization(s"Bearer $basicAuthToken")))
   }
 
 }
