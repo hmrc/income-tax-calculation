@@ -40,10 +40,9 @@ trait AppConfig {
   val authorisationToken: String
   val ifBaseUrl: String
   val hipBaseUrl: String
-  val hip1404clientId: String
-  val hip1404secret: String
 
   def iFAuthorisationToken(api: String): String
+  def hipAuthorisationToken(apiNumber: String): String
 
   val mongoTTL: Int
   val encryptionKey: String
@@ -63,8 +62,6 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val ifBaseUrl: String = servicesConfig.baseUrl("if")
 
   val hipBaseUrl: String = servicesConfig.baseUrl("hip")
-  val hip1404clientId: String = config.get[String]("microservice.services.hip.1404.clientId")
-  val hip1404secret: String = config.get[String]("microservice.services.hip.1404.secret")
 
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
@@ -88,4 +85,6 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
 
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")
+
+  override def hipAuthorisationToken(apiNumber: String): String = config.get[String](s"microservice.services.hip.authorisation-token.$apiNumber")
 }

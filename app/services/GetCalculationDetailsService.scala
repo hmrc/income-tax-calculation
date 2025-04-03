@@ -62,7 +62,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     }
   }
 
-  // TODO: merge handleLegacy and handleHipLegacy ?
+  // TODO: merge handleLegacy and handleHipLegacy
   private def handleLegacy(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
     listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
       case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>

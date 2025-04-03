@@ -18,26 +18,15 @@ package connectors.hip
 
 import config.AppConfig
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
-import java.util.Base64
 
 trait HipConnector {
 
   val appConfig: AppConfig
 
 
-  private[connectors] def hipHeaderCarrier(implicit hc: HeaderCarrier): HeaderCarrier = {
-    val basicAuth : String = authorizeHip1404
-    hc.copy(authorization = Some(Authorization(basicAuth)))
+  private[connectors] def hipHeaderCarrier(apiNumber: String)(implicit hc: HeaderCarrier): HeaderCarrier = {
+    val basicAuthToken : String = appConfig.hipAuthorisationToken(apiNumber)
+    hc.copy(authorization = Some(Authorization(s"Basic $basicAuthToken")))
   }
-
-  private def authorizeHip1404: String = {
-    val clientId = appConfig.hip1404clientId
-    val secret = appConfig.hip1404secret
-
-    val encoded = Base64.getEncoder.encodeToString(s"$clientId:$secret".getBytes("UTF-8"))
-    s"Basic $encoded"
-  }
-
-
 
 }
