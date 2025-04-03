@@ -17,6 +17,7 @@
 package connectors.hip
 
 import config.AppConfig
+import connectors.CalculationLegacyConnectorInterface
 import connectors.httpParsers.GetCalculationListHttpParserLegacy._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -28,12 +29,11 @@ class HipCalculationLegacyListConnector @Inject()
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
-    val getCalcListUrl: String = {
-      s"${appConfig.hipBaseUrl}/income-tax/list-of-calculation-results/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
-    }
+    val endpointUrl: String =
+      s"${appConfig.hipBaseUrl}/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
     def getCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-      http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
+      http.GET(url = endpointUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
     }
 
     getCall(hipHeaderCarrier("1404"))

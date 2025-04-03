@@ -19,7 +19,8 @@ package services
 import config.AppConfig
 import connectors.hip.HipCalculationLegacyListConnector
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
+import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
+import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, CalculationLegacyConnectorInterface, GetCalculationListConnector, GetCalculationListConnectorLegacy}
 import models.{ErrorBodyModel, ErrorModel}
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,14 +37,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              val appConfig: AppConfig)(implicit ec: ExecutionContext) {
 
   private val specificTaxYear: Int = TaxYear.specificTaxYear
-  private val viewAndChangeUniqueHeaderName : String = "VIEW-AND-CHANGE-REQUEST"
-
-  private def getHipSwitchStatus(implicit hc: HeaderCarrier): Boolean = {
-    // We Assume that custom header would be in other hc.headers ???
-    appConfig.useGetCalcListHiPlatform && hc.otherHeaders.collect {
-      case (name, _) => name.toUpperCase
-    }.contains(viewAndChangeUniqueHeaderName)
-  }
+  private val viewAndChangeUniqueHeaderName: String = "VIEW-AND-CHANGE-REQUEST"
 
   def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
     taxYearOption match {
@@ -55,26 +49,31 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
             getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYearOption)
           case Left(desError) => Future.successful(Left(desError))
         }
-      case _ if getHipSwitchStatus =>
-        handleHipLegacy(nino, taxYearOption)
-      case _ =>
-        handleLegacy(nino, taxYearOption)
+      case _ => handleLegacy(nino, taxYearOption)
     }
   }
 
-  // TODO: merge handleLegacy and handleHipLegacy
-  private def handleLegacy(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-    listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
-      case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
-        Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
-      case Right(listOfCalculationDetails) =>
-        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
-      case Left(desError) => Future.successful(Left(desError))
+  private def getLegacyCalcListResult(nino: String, taxYear: Option[String])
+                                     (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+    // TODO: re-enable V&C specific switch
+    //    val connectorSelector: Boolean = appConfig.useGetCalcListHiPlatform && hc.otherHeaders.collect {
+    //      case (name, _) => name.toUpperCase
+    //    }.contains(viewAndChangeUniqueHeaderName)
+
+    val connectorSelector: Boolean = appConfig.useGetCalcListHiPlatform && hc.otherHeaders.collect {
+      case (name, _) => name.toUpperCase
+    }.contains(viewAndChangeUniqueHeaderName)
+
+    if (connectorSelector) {
+      calcListHipLegacyConnector.calcList(nino, taxYear)
+    } else {
+      listCalculationDetailsConnectorLegacy.calcList(nino, taxYear)
     }
   }
 
-  private def handleHipLegacy(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-    calcListHipLegacyConnector.calcList(nino, taxYear).flatMap {
+  private def handleLegacy(nino: String, taxYear: Option[String])
+                          (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    getLegacyCalcListResult(nino, taxYear).flatMap {
       case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
         Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
       case Right(listOfCalculationDetails) =>
