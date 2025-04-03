@@ -81,7 +81,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
 
   lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListIFPlatform")
-  lazy val useGetCalcListHiPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListIFPlatform")
+  lazy val useGetCalcListHiPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListHIPlatform")
 
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")

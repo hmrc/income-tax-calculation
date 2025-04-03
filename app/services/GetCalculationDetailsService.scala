@@ -22,6 +22,7 @@ import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResp
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
 import models.{ErrorBodyModel, ErrorModel}
+import play.api.Logging
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TaxYear
@@ -34,7 +35,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              listCalculationDetailsConnector: GetCalculationListConnector,
                                              listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy,
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
-                                             val appConfig: AppConfig)(implicit ec: ExecutionContext) {
+                                             val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private val specificTaxYear: Int = TaxYear.specificTaxYear
   private val viewAndChangeUniqueHeaderName: String = "VIEW-AND-CHANGE-REQUEST"
@@ -60,13 +61,13 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     //      case (name, _) => name.toUpperCase
     //    }.contains(viewAndChangeUniqueHeaderName)
 
-    val connectorSelector: Boolean = appConfig.useGetCalcListHiPlatform && hc.otherHeaders.collect {
-      case (name, _) => name.toUpperCase
-    }.contains(viewAndChangeUniqueHeaderName)
-
+    val connectorSelector: Boolean = appConfig.useGetCalcListHiPlatform
     if (connectorSelector) {
+      logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
       calcListHipLegacyConnector.calcList(nino, taxYear)
     } else {
+      // DES or IF connection will be used instead
+      logger.info(s"[GetCalculationDetailsService][listCalculationDetailsConnectorLegacy]")
       listCalculationDetailsConnectorLegacy.calcList(nino, taxYear)
     }
   }
