@@ -16,6 +16,8 @@
 
 package services
 
+import config.AppConfig
+import connectors.hip.HipCalculationLegacyListConnector
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
 import models.{ErrorBodyModel, ErrorModel}
@@ -29,9 +31,19 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
                                              calculationDetailsConnector: CalculationDetailsConnector,
                                              listCalculationDetailsConnector: GetCalculationListConnector,
-                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy)(implicit ec: ExecutionContext) {
+                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy,
+                                             calcListHipLegacyConnector: HipCalculationLegacyListConnector,
+                                             val appConfig: AppConfig)(implicit ec: ExecutionContext) {
 
   private val specificTaxYear: Int = TaxYear.specificTaxYear
+  private val viewAndChangeUniqueHeaderName : String = "VIEW-AND-CHANGE-REQUEST"
+
+  private def getHipSwitchStatus(implicit hc: HeaderCarrier): Boolean = {
+    // We Assume that custom header would be in other hc.headers ???
+    appConfig.useGetCalcListHiPlatform && hc.otherHeaders.collect {
+      case (name, _) => name.toUpperCase
+    }.contains(viewAndChangeUniqueHeaderName)
+  }
 
   def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
     taxYearOption match {
@@ -43,12 +55,26 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
             getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYearOption)
           case Left(desError) => Future.successful(Left(desError))
         }
-      case _ => handleLegacy(nino, taxYearOption)
+      case _ if getHipSwitchStatus =>
+        handleHipLegacy(nino, taxYearOption)
+      case _ =>
+        handleLegacy(nino, taxYearOption)
     }
   }
 
+  // TODO: merge handleLegacy and handleHipLegacy ?
   private def handleLegacy(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
     listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
+      case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
+        Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
+      case Right(listOfCalculationDetails) =>
+        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
+      case Left(desError) => Future.successful(Left(desError))
+    }
+  }
+
+  private def handleHipLegacy(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    calcListHipLegacyConnector.calcList(nino, taxYear).flatMap {
       case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
         Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
       case Right(listOfCalculationDetails) =>

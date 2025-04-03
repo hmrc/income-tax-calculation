@@ -84,6 +84,17 @@ class MockAppConfig extends AppConfig {
 
     override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
+    override val hipEnvironment: String = "dev"
+    override val hipBaseUrl: String = "/hip"
+    override val hip1404clientId: String = "hip1404clientTestId"
+    override val hip1404secret: String = "hip1404TestSecret"
+    override val useGetCalcListHiPlatform: Boolean = false
     override val useGetCalcListIFPlatform: Boolean = true
   }
+
+  override val hipEnvironment: String = "dev"
+  override val hipBaseUrl: String = "/hip"
+  override val hip1404clientId: String = "hip1404clientTestId"
+  override val hip1404secret: String = "hip1404TestSecret"
+  override val useGetCalcListHiPlatform: Boolean = false
 }
