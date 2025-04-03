@@ -17,7 +17,6 @@
 package connectors.hip
 
 import config.AppConfig
-import connectors.CalculationLegacyConnectorInterface
 import connectors.httpParsers.GetCalculationListHttpParserLegacy._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
