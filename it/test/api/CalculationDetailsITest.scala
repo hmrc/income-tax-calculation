@@ -30,7 +30,8 @@ import play.api.libs.json.Json
 class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers {
 
   trait Setup {
-    val enableHip: Boolean = false
+    val enableHip: Boolean = true
+
     implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
     val successNino: String = "AA123123A"
     val taxYear = "2021"
@@ -40,8 +41,9 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
     val hipCalcListLegacyWithoutTaxYear = s"/calculations/liability/$successNino"
     val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
 
-
     val desUrlForListCalcWithTaxYear = s"/income-tax/list-of-calculation-results/$successNino\\?taxYear=$taxYear"
+    val hipUrlForListCalcWithTaxYear = s"/calculations/liability/$successNino\\?taxYear=$taxYear"
+
     val desUrlForCalculationDetails = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
     val ifUrlforTYS24 = s"/income-tax/view/calculations/liability/23-24/$successNino/$calculationId"
     val ifUrlforTYS25 = s"/income-tax/view/calculations/liability/24-25/$successNino/$calculationId"
@@ -93,7 +95,7 @@ class CalculationDetailsITest extends AnyWordSpec with WiremockSpec with ScalaFu
       "return the calculation details when called with tax year" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(hipUrlForListCalcWithTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
