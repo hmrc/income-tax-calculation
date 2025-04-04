@@ -38,7 +38,6 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private val specificTaxYear: Int = TaxYear.specificTaxYear
-  private val viewAndChangeUniqueHeaderName: String = "VIEW-AND-CHANGE-REQUEST"
 
   def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
     taxYearOption match {
@@ -56,13 +55,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
   private def getLegacyCalcListResult(nino: String, taxYear: Option[String])
                                      (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-    // TODO: re-enable V&C specific switch
-    //    val connectorSelector: Boolean = appConfig.useGetCalcListHiPlatform && hc.otherHeaders.collect {
-    //      case (name, _) => name.toUpperCase
-    //    }.contains(viewAndChangeUniqueHeaderName)
-
-    val connectorSelector: Boolean = appConfig.useGetCalcListHiPlatform
-    if (connectorSelector) {
+    if (appConfig.useGetCalcListHiPlatform) {
       logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
       calcListHipLegacyConnector.calcList(nino, taxYear)
     } else {

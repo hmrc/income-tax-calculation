@@ -17,23 +17,21 @@
 package api
 
 import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
-import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
-import models.{ErrorBodyModel, GetCalculationListModel, GetCalculationListModelLegacy}
+import models.ErrorBodyModel
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
-import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 
-class CalculationDetailsITest extends AnyWordSpec
+class CalculationDetailsHipITest extends AnyWordSpec
   with WiremockSpec with ScalaFutures with Matchers with CalculationDetailsITestHelper {
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
-  private val enableHip: Boolean = false
+  private val enableHip: Boolean = true
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
     .configure(
@@ -71,7 +69,7 @@ class CalculationDetailsITest extends AnyWordSpec
       "return the calculation details when called with tax year" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(hipUrlForListCalcWithTaxYear, 200, listCalcResponseLegacy)
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
