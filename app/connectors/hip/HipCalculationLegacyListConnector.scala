@@ -32,7 +32,7 @@ class HipCalculationLegacyListConnector @Inject()
     val endpointUrl: String =
       s"${appConfig.hipBaseUrl}/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
-    logger.info(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl}")
+    logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl}")
 
     def getCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
       http.GET(url = endpointUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
