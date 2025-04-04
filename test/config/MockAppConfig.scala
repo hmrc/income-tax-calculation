@@ -89,12 +89,14 @@ class MockAppConfig extends AppConfig {
     override val useGetCalcListHiPlatform: Boolean = false
     override val useGetCalcListIFPlatform: Boolean = true
 
-    override def hipAuthorisationToken(apiNumber: String): String = s"someSecret${apiNumber}"
+    override def hipSecret(apiNumber: String): String = "secret"
+    override def hipClientId(apiNumber: String): String = "clientId"
   }
 
   override val hipEnvironment: String = "dev"
   override val hipBaseUrl: String = "/hip"
   override val useGetCalcListHiPlatform: Boolean = false
 
-  override def hipAuthorisationToken(apiNumber: String): String = s"someSecret${apiNumber}"
+  override def hipSecret(apiNumber: String): String = "secret"
+  override def hipClientId(apiNumber: String): String = "clientId"
 }
