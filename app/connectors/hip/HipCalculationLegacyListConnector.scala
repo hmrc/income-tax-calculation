@@ -30,7 +30,7 @@ class HipCalculationLegacyListConnector @Inject()
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
     val endpointUrl: String =
-      s"${appConfig.hipBaseUrl}/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
+      s"${appConfig.hipBaseUrl}/itsd/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
     logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl}")
 
