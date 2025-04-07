@@ -26,8 +26,8 @@ trait HipConnector {
   val appConfig: AppConfig
 
   private[connectors] def hipHeaderCarrier(apiNumber: String)(implicit hc: HeaderCarrier): HeaderCarrier = {
-    val clientId = appConfig.hipClientId(s"1404")
-    val secret = appConfig.hipSecret(s"1404")
+    val clientId = appConfig.hipClientId(apiNumber)
+    val secret = appConfig.hipSecret(apiNumber)
     val encoded = Base64.getEncoder.encodeToString(s"$clientId:$secret".getBytes("UTF-8"))
     hc.copy(authorization = Some(Authorization(s"Basic $encoded")))
   }
