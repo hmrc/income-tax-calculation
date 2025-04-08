@@ -17,15 +17,18 @@
 package connectors.hip
 
 import config.AppConfig
+import connectors.core.CorrelationId
 import connectors.httpParsers.GetCalculationListHttpParserLegacy._
+import org.apache.pekko.http.scaladsl.model.headers.Authorization
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HipCalculationLegacyListConnector @Inject()
-(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends HipConnector with Logging {
+(http: HttpClientV2, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends HipConnector with Logging {
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
@@ -34,10 +37,12 @@ class HipCalculationLegacyListConnector @Inject()
 
     logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl}")
 
-    def getCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-      http.GET(url = endpointUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
-    }
-
-    getCall(hipHeaderCarrier("1404"))
+    val correlationId = CorrelationId.fromHeaderCarrier(hc)
+      .getOrElse(CorrelationId())
+    http
+      .get(url"$endpointUrl")
+      .setHeader(correlationId.asHeader())
+      .setHeader(("Authorization", getBasicAuthValue("1404")) )
+      .execute[GetCalculationListResponseLegacy]
   }
 }
