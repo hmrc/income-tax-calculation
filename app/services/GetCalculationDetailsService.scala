@@ -16,9 +16,13 @@
 
 package services
 
+import config.AppConfig
+import connectors.hip.HipCalculationLegacyListConnector
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
+import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
 import models.{ErrorBodyModel, ErrorModel}
+import play.api.Logging
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TaxYear
@@ -29,7 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
                                              calculationDetailsConnector: CalculationDetailsConnector,
                                              listCalculationDetailsConnector: GetCalculationListConnector,
-                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy)(implicit ec: ExecutionContext) {
+                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy,
+                                             calcListHipLegacyConnector: HipCalculationLegacyListConnector,
+                                             val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private val specificTaxYear: Int = TaxYear.specificTaxYear
 
@@ -47,8 +53,21 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     }
   }
 
-  private def handleLegacy(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
-    listCalculationDetailsConnectorLegacy.calcList(nino, taxYear).flatMap {
+  private def getLegacyCalcListResult(nino: String, taxYear: Option[String])
+                                     (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+    if (appConfig.useGetCalcListHiPlatform) {
+      logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
+      calcListHipLegacyConnector.calcList(nino, taxYear)
+    } else {
+      // DES or IF connection will be used instead
+      logger.info(s"[GetCalculationDetailsService][listCalculationDetailsConnectorLegacy]")
+      listCalculationDetailsConnectorLegacy.calcList(nino, taxYear)
+    }
+  }
+
+  private def handleLegacy(nino: String, taxYear: Option[String])
+                          (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+    getLegacyCalcListResult(nino, taxYear).flatMap {
       case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
         Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
       case Right(listOfCalculationDetails) =>

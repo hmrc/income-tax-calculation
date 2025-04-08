@@ -43,10 +43,11 @@ trait WiremockSpec extends BeforeAndAfterEach with BeforeAndAfterAll with GuiceO
 
   val wireMockServer: WireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort))
 
-  lazy val connectedServices: Seq[String] = Seq("des", "if", "auth")
+  lazy val connectedServices: Seq[String] = Seq("des", "if", "auth", "hip")
 
   def servicesToUrlConfig: Seq[(String, String)] = connectedServices
-    .flatMap(service => Seq(s"microservice.services.$service.host" -> s"localhost", s"microservice.services.$service.port" -> wireMockPort.toString))
+    .flatMap(service => Seq(s"microservice.services.$service.host" -> s"localhost",
+      s"microservice.services.$service.port" -> wireMockPort.toString))
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
     .configure(

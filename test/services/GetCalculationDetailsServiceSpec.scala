@@ -16,6 +16,7 @@
 
 package services
 
+import connectors.hip.HipCalculationLegacyListConnector
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
@@ -36,8 +37,10 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val mockSingleCalculationConnector: CalculationDetailsConnector = mock[CalculationDetailsConnector]
   val mockListCalculationConnector: GetCalculationListConnector = mock[GetCalculationListConnector]
   val mockListCalculationConnectorLegacy: GetCalculationListConnectorLegacy = mock[GetCalculationListConnectorLegacy]
+  val mockHipCalculationListConnectorLegacy: HipCalculationLegacyListConnector = mock[HipCalculationLegacyListConnector]
+
   val service = new GetCalculationDetailsService(mockSingleCalculationConnectorLegacy, mockSingleCalculationConnector,
-    mockListCalculationConnector, mockListCalculationConnectorLegacy)
+    mockListCalculationConnector, mockListCalculationConnectorLegacy, mockHipCalculationListConnectorLegacy, mockAppConfig)
 
   val nino = "AA123456A"
   val taxYear: Option[String] = Some("2022")

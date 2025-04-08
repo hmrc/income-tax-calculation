@@ -36,10 +36,15 @@ trait AppConfig {
   val desEnvironment: String
   val incomeTaxSubmissionStubUrl: String
   val ifEnvironment: String
+  val hipEnvironment: String
   val authorisationToken: String
   val ifBaseUrl: String
+  val hipBaseUrl: String
 
   def iFAuthorisationToken(api: String): String
+  def hipSecret(apiNumber: String): String
+  def hipClientId(apiNumber: String): String
+
 
   val mongoTTL: Int
   val encryptionKey: String
@@ -47,6 +52,7 @@ trait AppConfig {
   val useBusinessDetailsStub: Boolean
   def confidenceLevel: Int
   val useGetCalcListIFPlatform: Boolean
+  val useGetCalcListHiPlatform: Boolean
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -57,11 +63,14 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   val incomeTaxSubmissionStubUrl: String = config.get[String]("income-tax-submission-stub-url")
   val ifBaseUrl: String = servicesConfig.baseUrl("if")
 
+  val hipBaseUrl: String = servicesConfig.baseUrl("hip")
+
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
 
   val desEnvironment: String = config.get[String]("microservice.services.des.environment")
   val ifEnvironment: String = config.get[String]("microservice.services.if.environment")
+  val hipEnvironment: String = config.get[String]("microservice.services.hip.environment")
 
   val authorisationToken: String = config.get[String]("microservice.services.des.authorisation-token")
 
@@ -74,6 +83,12 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
 
   lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListIFPlatform")
+  lazy val useGetCalcListHiPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListHIPlatform")
+
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")
+
+  override def hipSecret(apiNumber: String): String = config.get[String](s"microservice.services.hip.$apiNumber.secret")
+  override def hipClientId(apiNumber: String): String = config.get[String](s"microservice.services.hip.$apiNumber.clientId")
+
 }
