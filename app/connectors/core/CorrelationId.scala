@@ -28,7 +28,7 @@ case class CorrelationId(id: UUID = randomUUID()) {
 
 object CorrelationId {
 
-  val correlationId = "Correlation-Id"
+  val correlationId = "correlationId"
   def fromHeaderCarrier(hc: HeaderCarrier): Option[CorrelationId] = {
     hc.headers(Seq(correlationId))
       .headOption
