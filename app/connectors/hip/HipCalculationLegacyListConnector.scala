@@ -42,7 +42,7 @@ class HipCalculationLegacyListConnector @Inject()
       correlationId.asHeader()
     )
 
-      logger.info(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl} - ${hipHeaders} ")
+      logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl} - ${hipHeaders} ")
 
     http
       .get(url"$endpointUrl")
