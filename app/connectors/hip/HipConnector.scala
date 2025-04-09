@@ -17,7 +17,6 @@
 package connectors.hip
 
 import config.AppConfig
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import java.util.Base64
 
