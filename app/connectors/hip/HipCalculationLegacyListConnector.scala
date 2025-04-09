@@ -17,27 +17,36 @@
 package connectors.hip
 
 import config.AppConfig
+import connectors.core.CorrelationId
 import connectors.httpParsers.GetCalculationListHttpParserLegacy._
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HipCalculationLegacyListConnector @Inject()
-(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends HipConnector with Logging {
+(http: HttpClientV2, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends HipConnector with Logging {
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
     val endpointUrl: String =
       s"${appConfig.hipBaseUrl}/itsd/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
-    logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl}")
+    val correlationId = CorrelationId.fromHeaderCarrier(hc)
+      .getOrElse(CorrelationId())
 
-    def getCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-      http.GET(url = endpointUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
-    }
+    val hipHeaders =  Seq(
+      (HeaderNames.authorisation, getBasicAuthValue("1404")),
+      correlationId.asHeader()
+    )
 
-    getCall(hipHeaderCarrier("1404"))
+      logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl} - ${hipHeaders} ")
+
+    http
+      .get(url"$endpointUrl")
+      .setHeader(hipHeaders: _*)
+      .execute[GetCalculationListResponseLegacy]
   }
 }
