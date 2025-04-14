@@ -36,7 +36,6 @@ trait AppConfig {
   val desEnvironment: String
   val incomeTaxSubmissionStubUrl: String
   val ifEnvironment: String
-  val hipEnvironment: String
   val authorisationToken: String
   val ifBaseUrl: String
   val hipBaseUrl: String
@@ -70,7 +69,6 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
 
   val desEnvironment: String = config.get[String]("microservice.services.des.environment")
   val ifEnvironment: String = config.get[String]("microservice.services.if.environment")
-  val hipEnvironment: String = config.get[String]("microservice.services.hip.environment")
 
   val authorisationToken: String = config.get[String]("microservice.services.des.authorisation-token")
 
