@@ -18,7 +18,6 @@ package testUtils
 
 
 import com.codahale.metrics.SharedMetricRegistries
-import com.typesafe.config.ConfigFactory
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.{AppConfig, MockAppConfig}
 import controllers.predicates.AuthorisedAction
@@ -38,7 +37,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 trait TestSuite extends AnyWordSpec with MockFactory with BeforeAndAfterEach with Matchers {
 

@@ -37,7 +37,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
                                              val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-  private val specificTaxYear: Int = TaxYear.specificTaxYear
+  private val specificTaxYear: Int = TaxYear.taxYear2024
 
   def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
     taxYearOption match {

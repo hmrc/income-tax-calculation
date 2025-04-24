@@ -20,6 +20,7 @@ import config.AppConfig
 import connectors.httpParsers.GetCalculationListHttpParser.{GetCalculationListHttpReads, GetCalculationListResponse}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import utils.TaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,19 +32,31 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
   import uk.gov.hmrc.http.HttpReads.Implicits._
 
   def getCalculationList(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+    if(taxYear.toInt >= TaxYear.taxYear2026) {
+      getCalculationList2083(nino, taxYear)
+    } else {
+      getCalculationList1896(nino, taxYear)
+    }
+  }
+
+  private def getCalculationList1896(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
     val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
     val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYearRange/$nino"
+    iFCall(getCalculationListUrl)(iFHeaderCarrier(getCalculationListUrl, "1896"))
+  }
 
-    def iFCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-      val urlString = getCalculationListUrl
-      logger.info(s"[getCalculationList][getCalculationList] - GET URL: -$urlString-")
-      httpClient.GET[HttpResponse](url = urlString)(HttpReads[HttpResponse], hc, ec).map {
-        response =>
-          logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
-          GetCalculationListHttpReads.read("GET", urlString, response)
-      }
+  private def getCalculationList2083(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+    val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
+    val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/$taxYearRange/view/$nino/calculations-summary"
+    iFCall(getCalculationListUrl)(iFHeaderCarrier(getCalculationListUrl, "2083"))
+  }
+
+  def iFCall(urlString: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+    logger.info(s"[getCalculationList][getCalculationList] - GET URL: -$urlString-")
+    httpClient.GET[HttpResponse](url = urlString)(HttpReads[HttpResponse], hc, ec).map {
+      response =>
+        logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
+        GetCalculationListHttpReads.read("GET", urlString, response)
     }
-
-    iFCall(iFHeaderCarrier(getCalculationListUrl, "1896"))
   }
 }

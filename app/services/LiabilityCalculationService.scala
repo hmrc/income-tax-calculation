@@ -29,7 +29,7 @@ class LiabilityCalculationService @Inject()(liabilityCalculationConnector: Liabi
 
   def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)
                         (implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
-    if (taxYear.toInt >= TaxYear.specificTaxYear) {
+    if (taxYear.toInt >= TaxYear.taxYear2024) {
       postCalculateIncomeTaxLiabilityConnector.calculateLiability(nino, taxYear, crystallise)
     }
     else {

@@ -45,8 +45,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val nino = "AA123456A"
   val taxYear: Option[String] = Some("2022")
   val taxYear2016: Int = 2016
-  val specificTaxYear: Option[String] = Some(TaxYear.specificTaxYear.toString)
-  val specificTaxYearPlusOne: Option[String] = Some((TaxYear.specificTaxYear + 1).toString)
+  val specificTaxYear: Option[String] = Some(TaxYear.taxYear2024.toString)
+  val specificTaxYearPlusOne: Option[String] = Some((TaxYear.taxYear2024 + 1).toString)
   val optionalTaxYear = false
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
@@ -71,13 +71,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "inYear",
             requestedBy = Some("customer"),
-            year = Some(taxYear2016),
             fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
-            totalIncomeTaxAndNicsDue = Some(500.00),
-            intentToCrystallise = None,
-            crystallised = None,
-            crystallisationTimestamp = None
+            toDate = Some("2016-05-d1")
           )))
         )
       )

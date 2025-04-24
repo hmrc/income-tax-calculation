@@ -31,7 +31,9 @@ object GetCalculationListHttpParser extends APIParser with Logging {
   implicit object GetCalculationListHttpReads extends HttpReads[GetCalculationListResponse] {
     override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponse = {
       response.status match {
-        case OK => response.json.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](
+        case OK =>
+          val jsonArray = (response.json \ "calculationsSummary").getOrElse(response.json)
+          jsonArray.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](
           validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )
