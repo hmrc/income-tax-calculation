@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class LiabilityCalculationServiceSpec extends TestSuite {
 
-  val specificTaxYear: String = TaxYear.specificTaxYear.toString
-  val specificTaxYearPlusOne: String = (TaxYear.specificTaxYear + 1).toString
+  val specificTaxYear: String = TaxYear.taxYear2024.toString
+  val specificTaxYearPlusOne: String = (TaxYear.taxYear2024 + 1).toString
   val mockConnector: LiabilityCalculationConnector = mock[LiabilityCalculationConnector]
   val mockIfConnector: PostCalculateIncomeTaxLiabilityConnector = mock[PostCalculateIncomeTaxLiabilityConnector]
   val service = new LiabilityCalculationService(mockConnector, mockIfConnector)

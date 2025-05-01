@@ -18,7 +18,8 @@ package utils
 
 object TaxYear {
 
-  val specificTaxYear: Int = 2024
+  val taxYear2024: Int = 2024
+  val taxYear2026: Int = 2026
 
   def convert(taxYear: Option[String]): Either[String, Int] = {
 

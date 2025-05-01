@@ -45,13 +45,8 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
       calculationTimestamp = "2019-03-17T09:22:59Z",
       calculationType = "inYear",
       requestedBy = Some("customer"),
-      year = Some(2024),
       fromDate = Some("2013-05-d1"),
-      toDate = Some("2016-05-d1"),
-      totalIncomeTaxAndNicsDue = Some(500.00),
-      intentToCrystallise = None,
-      crystallised = None,
-      crystallisationTimestamp = None
+      toDate = Some("2016-05-d1")
     ))).toString
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"

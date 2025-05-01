@@ -43,8 +43,8 @@ class PostCalculateIncomeTaxLiabilityConnectorISpec extends AnyWordSpec with Wir
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  private val specificTaxYear: String = TaxYear.specificTaxYear.toString
-  private val specificTaxYearPlusOne: String = (TaxYear.specificTaxYear + 1).toString
+  private val specificTaxYear: String = TaxYear.taxYear2024.toString
+  private val specificTaxYearPlusOne: String = (TaxYear.taxYear2024 + 1).toString
   val taxYearParameter: String = convertSpecificTaxYear(specificTaxYear)
   val taxYearParameterPlusOne: String = convertSpecificTaxYear(specificTaxYearPlusOne)
   val url = s"/income-tax/calculation/$taxYearParameter/$nino"

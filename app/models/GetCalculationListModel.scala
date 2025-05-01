@@ -23,13 +23,9 @@ case class GetCalculationListModel(calculationId: String,
                                    calculationTimestamp: String,
                                    calculationType: String,
                                    requestedBy: Option[String],
-                                   year: Option[Int],
                                    fromDate: Option[String],
-                                   toDate: Option[String],
-                                   totalIncomeTaxAndNicsDue: Option[BigDecimal],
-                                   intentToCrystallise: Option[Boolean],
-                                   crystallised: Option[Boolean],
-                                   crystallisationTimestamp: Option[String])
+                                   toDate: Option[String]
+                                   )
 
 
 object GetCalculationListModel{
@@ -39,13 +35,8 @@ object GetCalculationListModel{
       (JsPath \ "calculationTimestamp").read[String] and
       (JsPath \ "calculationType").read[String] and
       (JsPath \ "requestedBy").readNullable[String] and
-      (JsPath \ "year").readNullable[Int] and
       (JsPath \ "fromDate").readNullable[String] and
-      (JsPath \ "toDate").readNullable[String] and
-      (JsPath \ "totalIncomeTaxAndNicsDue").readNullable[BigDecimal] and
-      (JsPath \ "intentToCrystallise").readNullable[Boolean] and
-      (JsPath \ "crystallised").readNullable[Boolean] and
-      (JsPath \ "crystallisationTimestamp").readNullable[String]
+      (JsPath \ "toDate").readNullable[String]
       ) (GetCalculationListModel.apply _)
 
 }
@@ -54,7 +45,8 @@ case class CalculationsListResponse(calculations: Seq[GetCalculationListModel])
 
 object CalculationsListResponse {
   implicit val writes: Writes[CalculationsListResponse] = Json.writes[CalculationsListResponse]
-  implicit val reads: Reads[CalculationsListResponse] =
+  implicit val reads: Reads[CalculationsListResponse] = {
     implicitly[Reads[Seq[GetCalculationListModel]]].map(CalculationsListResponse(_))
+  }
 
 }
