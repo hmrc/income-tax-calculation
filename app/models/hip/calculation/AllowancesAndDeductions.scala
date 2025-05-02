@@ -16,25 +16,34 @@
 
 package models.hip.calculation
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class AllowancesAndDeductions(personalAllowance: Option[Int] = None,
                                    marriageAllowanceTransferOut: Option[MarriageAllowanceTransferOut] = None,
                                    reducedPersonalAllowance: Option[Int] = None,
                                    giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
-                                   blindPersonsAllowance: Option[Int] = None,
                                    lossesAppliedToGeneralIncome: Option[Int] = None,
-                                   cgtLossSetAgainstInYearGeneralIncome: Option[Int] = None,
                                    qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
                                    postCessationTradeReceipts: Option[BigDecimal] = None,
                                    paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
                                    grossAnnuityPayments: Option[BigDecimal] = None,
-                                   annuityPayments: Option[AnnuityPayments] = None,
-                                   pensionContributions: Option[BigDecimal] = None,
-                                   pensionContributionsDetail: Option[PensionContributionsDetail] = None)
+                                   pensionContributions: Option[BigDecimal] = None)
 
 object AllowancesAndDeductions {
-  implicit val format: OFormat[AllowancesAndDeductions] = Json.format[AllowancesAndDeductions]
+  implicit val reads: Reads[AllowancesAndDeductions] =
+    ((__ \ "personalAllowance").readNullable[Int] and
+      (__ \ "marriageAllowanceTransferOut").readNullable[MarriageAllowanceTransferOut] and
+      (__ \ "reducedPersonalAllowance").readNullable[Int] and
+      (__ \ "giftOfInvestmentsAndPropertyToCharity").readNullable[Int] and
+      (__ \ "lossesAppliedToGeneralIncome").readNullable[Int] and
+      (__ \ "qualifyingLoanInterestFromInvestments").readNullable[BigDecimal] and
+      (__ \ "postCessationTradeReceipts").readNullable[BigDecimal] and
+      (__ \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal] and
+      (__ \ "grossAnnuityPayments").readNullable[BigDecimal] and
+      (__ \ "pensionContributions").readNullable[BigDecimal])(AllowancesAndDeductions.apply _)
+
+  implicit val writes: Writes[AllowancesAndDeductions] = Json.writes[AllowancesAndDeductions]
 }
 
 case class MarriageAllowanceTransferOut(
@@ -46,17 +55,6 @@ object MarriageAllowanceTransferOut {
   implicit val format: OFormat[MarriageAllowanceTransferOut] = Json.format[MarriageAllowanceTransferOut]
 }
 
-case class AnnuityPayments(reliefClaimed: Option[BigDecimal], rate: Option[BigDecimal])
 
-object AnnuityPayments {
-  implicit val format: OFormat[AnnuityPayments] = Json.format[AnnuityPayments]
-}
 
-case class PensionContributionsDetail(retirementAnnuityPayments: Option[BigDecimal],
-                                      paymentToEmployersSchemeNoTaxRelief: Option[BigDecimal],
-                                      overseasPensionSchemeContributions: Option[BigDecimal])
-
-object PensionContributionsDetail {
-  implicit val format: OFormat[PensionContributionsDetail] = Json.format[PensionContributionsDetail]
-}
 
