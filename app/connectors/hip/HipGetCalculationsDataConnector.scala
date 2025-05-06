@@ -31,9 +31,6 @@ class HipGetCalculationsDataConnector @Inject()(http: HttpClientV2,
                                                (implicit ec: ExecutionContext) extends HipConnector with Logging {
 
   def getCalculationsData(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[GetCalculationDetailsResponse] = {
-    // need to add the correlationId in as a header (no other headers needed)
-    // passing through the other parameters in the path
-
     val url = s"${appConfig.hipBaseUrl}/income-tax/v1/$taxYear/view/calculations/liability/$nino/$calculationId"
 
     val correlationId = CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
