@@ -42,6 +42,10 @@ case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        transitionProfit: Option[TransitionProfit]
                       )
 
+object Calculation {
+  implicit val format: OFormat[Calculation] = Json.format[Calculation]
+}
+
 case class GiftAid(
                     grossGiftAidPayments: Int,
                     rate: BigDecimal,
