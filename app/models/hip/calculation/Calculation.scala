@@ -16,6 +16,7 @@
 
 package models.hip.calculation
 
+import models.hip.calculation.taxCalculation.TaxCalculation
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -33,7 +34,13 @@ case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        chargeableEventGainsIncome: Option[ChargeableEventGainsIncome],
                        savingsAndGainsIncome: Option[SavingsAndGainsIncome],
                        dividendsIncome: Option[DividendsIncome],
-                       incomeSummaryTotals: Option[IncomeSummaryTotals])
+                       incomeSummaryTotals: Option[IncomeSummaryTotals],
+                       taxCalculation: Option[TaxCalculation],
+                       endOfYearEstimate: Option[EndOfYearEstimate],
+                       pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
+                       otherIncome: Option[OtherIncome],
+                       transitionProfit: Option[TransitionProfit]
+                      )
 
 case class GiftAid(
                     grossGiftAidPayments: Int,
@@ -155,6 +162,12 @@ object DividendsIncome {
   implicit val format: OFormat[DividendsIncome] = Json.format[DividendsIncome]
 }
 
+/*
+    totalFHLPropertyProfit, totalEeaFhlProfit fields are no longer in the HIP API 1885 for
+    IncomeSummaryTotals
+    https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=872973684
+ */
+
 case class IncomeSummaryTotals(
                                 totalSelfEmploymentProfit: Option[Int] = None,
                                 totalPropertyProfit: Option[Int] = None,
@@ -169,5 +182,25 @@ object IncomeSummaryTotals {
       (__ \ "totalPropertyProfit").readNullable[Int] and
       (__ \ "totalForeignPropertyProfit").readNullable[Int])(IncomeSummaryTotals.apply _)
 
+}
+
+case class PensionSavingsTaxCharges(totalPensionCharges: Option[BigDecimal] = None,
+                                    totalTaxPaid: Option[BigDecimal] = None,
+                                    totalPensionChargesDue: Option[BigDecimal] = None)
+
+object PensionSavingsTaxCharges {
+  implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
+}
+
+case class OtherIncome(totalOtherIncome: BigDecimal)
+
+object OtherIncome {
+  implicit val format: OFormat[OtherIncome] = Json.format[OtherIncome]
+}
+
+case class TransitionProfit(totalTaxableTransitionProfit: Option[Int] = None)
+
+object TransitionProfit {
+  implicit val format: OFormat[TransitionProfit] = Json.format[TransitionProfit]
 }
 

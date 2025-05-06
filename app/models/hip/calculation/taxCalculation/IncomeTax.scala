@@ -1,4 +1,23 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package models.hip.calculation.taxCalculation
+
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class IncomeTax(totalIncomeReceivedFromAllSources: Int,
                      totalAllowancesAndDeductions: Int,
@@ -16,17 +35,69 @@ case class IncomeTax(totalIncomeReceivedFromAllSources: Int,
                      payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
                      giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
                      incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None,
-                     incomeTaxCharged: BigDecimal)
+                    )
+
+object IncomeTax {
+  implicit val writes: Writes[IncomeTax] = Json.writes[IncomeTax]
+
+  implicit val reads: Reads[IncomeTax] = (
+    (__ \ "totalIncomeReceivedFromAllSources").read[Int] and
+      (__ \ "totalAllowancesAndDeductions").read[Int] and
+      (__ \ "totalTaxableIncome").read[Int] and
+      (__ \ "payPensionsProfit").readNullable[PayPensionsProfit] and
+      (__ \ "savingsAndGains").readNullable[SavingsAndGains] and
+      (__ \ "dividends").readNullable[Dividends] and
+      (__ \ "lumpSums").readNullable[LumpSums] and
+      (__ \ "gainsOnLifePolicies").readNullable[GainsOnLifePolicies] and
+      (__ \ "totalReliefs").readNullable[BigDecimal] and
+      (__ \ "totalNotionalTax").readNullable[BigDecimal] and
+      (__ \ "incomeTaxDueAfterTaxReductions").readNullable[BigDecimal] and
+      (__ \ "totalPensionSavingsTaxCharges").readNullable[BigDecimal] and
+      (__ \ "statePensionLumpSumCharges").readNullable[BigDecimal] and
+      (__ \ "payeUnderpaymentsCodedOut").readNullable[BigDecimal] and
+      (__ \ "giftAidTaxChargeWhereBasicRateDiffers").readNullable[BigDecimal] and
+      (__ \ "incomeTaxChargedOnTransitionProfits").readNullable[BigDecimal])(IncomeTax.apply _)
+}
 
 
-case class PayPensionsProfit(incomeReceived: Int,
-                             allowancesAllocated: Int,
-                            )
+case class PayPensionsProfit(taxBands: Option[Seq[TaxBands]])
 
-case class SavingsAndGains()
+object PayPensionsProfit {
+  implicit val format: OFormat[PayPensionsProfit] = Json.format[PayPensionsProfit]
+}
 
-case class Dividends()
+case class TaxBands(name: String,
+                    rate: BigDecimal,
+                    bandLimit: Int,
+                    apportionedBandLimit: Int,
+                    income: Int,
+                    taxAmount: BigDecimal
+                   )
 
-case class LumpSums()
+object TaxBands {
+  implicit val format: OFormat[TaxBands] = Json.format[TaxBands]
+}
 
-case class GainsOnLifePolicies()
+case class SavingsAndGains(taxableIncome: Int, taxBands: Option[Seq[TaxBands]])
+
+object SavingsAndGains {
+  implicit val format: OFormat[SavingsAndGains] = Json.format[SavingsAndGains]
+}
+
+case class Dividends(taxableIncome: Int, taxBands: Option[Seq[TaxBands]])
+
+object Dividends {
+  implicit val format: OFormat[Dividends] = Json.format[Dividends]
+}
+
+case class LumpSums(taxBands: Option[Seq[TaxBands]])
+
+object LumpSums {
+  implicit val format: OFormat[LumpSums] = Json.format[LumpSums]
+}
+
+case class GainsOnLifePolicies(taxBands: Option[Seq[TaxBands]])
+
+object GainsOnLifePolicies {
+  implicit val format: OFormat[GainsOnLifePolicies] = Json.format[GainsOnLifePolicies]
+}
