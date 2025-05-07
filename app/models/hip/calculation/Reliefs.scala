@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class Reliefs(residentialFinanceCosts: Option[ResidentialFinanceCosts],
                    reliefsClaimed: Option[Seq[ReliefsClaimed]],
-                   foreignTaxCreditRelief: ForeignTaxCreditRelief,
+                   foreignTaxCreditRelief: Option[ForeignTaxCreditRelief],
                    topSlicingRelief: Option[TopSlicingRelief],
                    giftAidTaxReductionWhereBasicRateDiffers: Option[GiftAidTaxReductionWhereBasicRateDiffers])
 
@@ -28,55 +28,22 @@ object Reliefs {
   implicit val format: OFormat[Reliefs] = Json.format[Reliefs]
 }
 
-case class ReliefsClaimed(`type`: String,
-                          amountClaimed: Option[BigDecimal],
-                          allowableAmount: Option[BigDecimal],
-                          amountUsed: Option[BigDecimal],
-                          rate: Option[BigDecimal],
-                          reliefsClaimedDetail: Option[Seq[ReliefsClaimedDetail]])
+case class ResidentialFinanceCosts(totalResidentialFinanceCostsRelief: BigDecimal)
+
+object ResidentialFinanceCosts {
+  implicit val format: OFormat[ResidentialFinanceCosts] = Json.format[ResidentialFinanceCosts]
+}
+
+case class ReliefsClaimed(`type`: String, amountUsed: Option[BigDecimal] = None)
 
 object ReliefsClaimed {
   implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
 }
 
-
-case class ReliefsClaimedDetail(amountClaimed: Option[BigDecimal],
-                                uniqueInvestmentRef: Option[String],
-                                name: Option[String],
-                                socialEnterpriseName: Option[String],
-                                companyName: Option[String],
-                                deficiencyReliefType: Option[String],
-                                customerReference: Option[String])
-
-object ReliefsClaimedDetail {
-  implicit val format: OFormat[ReliefsClaimedDetail] = Json.format[ReliefsClaimedDetail]
-}
-
-case class ForeignTaxCreditRelief(customerCalculatedRelief: Option[Boolean],
-                                  totalForeignTaxCreditRelief: BigDecimal,
-                                  foreignTaxCreditReliefOnProperty: BigDecimal,
-                                  foreignTaxCreditReliefOnDividends: BigDecimal,
-                                  foreignTaxCreditReliefOnSavings: BigDecimal,
-                                  foreignTaxCreditReliefOnForeignIncome: BigDecimal,
-                                  foreignTaxCreditReliefDetail: Seq[ForeignTaxCreditReliefDetail])
+case class ForeignTaxCreditRelief(totalForeignTaxCreditRelief: BigDecimal)
 
 object ForeignTaxCreditRelief {
   implicit val format: OFormat[ForeignTaxCreditRelief] = Json.format[ForeignTaxCreditRelief]
-}
-
-case class ForeignTaxCreditReliefDetail(incomeSourceType: Option[String],
-                                        incomeSourceId: Option[String],
-                                        countryCode: String,
-                                        foreignIncome: BigDecimal,
-                                        foreignTax: Option[BigDecimal],
-                                        dtaRate: Option[BigDecimal],
-                                        dtaAmount: Option[BigDecimal],
-                                        ukLiabilityOnIncome: Option[BigDecimal],
-                                        foreignTaxCredit: BigDecimal,
-                                        employmentLumpSum: Option[Boolean])
-
-object ForeignTaxCreditReliefDetail {
-  implicit val format: OFormat[ForeignTaxCreditReliefDetail] = Json.format[ForeignTaxCreditReliefDetail]
 }
 
 case class TopSlicingRelief(amount: Option[BigDecimal] = None)
@@ -85,7 +52,7 @@ object TopSlicingRelief {
   implicit val format: OFormat[TopSlicingRelief] = Json.format[TopSlicingRelief]
 }
 
-case class GiftAidTaxReductionWhereBasicRateDiffers(amount: BigDecimal)
+case class GiftAidTaxReductionWhereBasicRateDiffers(amount: Option[BigDecimal] = None)
 
 object GiftAidTaxReductionWhereBasicRateDiffers {
   implicit val format: OFormat[GiftAidTaxReductionWhereBasicRateDiffers] = Json.format[GiftAidTaxReductionWhereBasicRateDiffers]

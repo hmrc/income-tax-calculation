@@ -41,7 +41,7 @@ object CalculationResponseModel {
 /*
   "crystallised" boolean has been removed from the metadata object in new API
  */
-case class Metadata(calculationTimestamp: Option[String],
+case class Metadata(calculationTimestamp: Option[LocalDate],
                     calculationReason: String,
                     periodFrom: LocalDate,
                     periodTo: LocalDate)

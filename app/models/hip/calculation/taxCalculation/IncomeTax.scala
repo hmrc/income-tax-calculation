@@ -16,7 +16,6 @@
 
 package models.hip.calculation.taxCalculation
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class IncomeTax(totalIncomeReceivedFromAllSources: Int,
@@ -38,27 +37,8 @@ case class IncomeTax(totalIncomeReceivedFromAllSources: Int,
                     )
 
 object IncomeTax {
-  implicit val writes: Writes[IncomeTax] = Json.writes[IncomeTax]
-
-  implicit val reads: Reads[IncomeTax] = (
-    (__ \ "totalIncomeReceivedFromAllSources").read[Int] and
-      (__ \ "totalAllowancesAndDeductions").read[Int] and
-      (__ \ "totalTaxableIncome").read[Int] and
-      (__ \ "payPensionsProfit").readNullable[PayPensionsProfit] and
-      (__ \ "savingsAndGains").readNullable[SavingsAndGains] and
-      (__ \ "dividends").readNullable[Dividends] and
-      (__ \ "lumpSums").readNullable[LumpSums] and
-      (__ \ "gainsOnLifePolicies").readNullable[GainsOnLifePolicies] and
-      (__ \ "totalReliefs").readNullable[BigDecimal] and
-      (__ \ "totalNotionalTax").readNullable[BigDecimal] and
-      (__ \ "incomeTaxDueAfterTaxReductions").readNullable[BigDecimal] and
-      (__ \ "totalPensionSavingsTaxCharges").readNullable[BigDecimal] and
-      (__ \ "statePensionLumpSumCharges").readNullable[BigDecimal] and
-      (__ \ "payeUnderpaymentsCodedOut").readNullable[BigDecimal] and
-      (__ \ "giftAidTaxChargeWhereBasicRateDiffers").readNullable[BigDecimal] and
-      (__ \ "incomeTaxChargedOnTransitionProfits").readNullable[BigDecimal])(IncomeTax.apply _)
+  implicit val format: OFormat[IncomeTax] = Json.format[IncomeTax]
 }
-
 
 case class PayPensionsProfit(taxBands: Option[Seq[TaxBands]])
 
@@ -71,8 +51,7 @@ case class TaxBands(name: String,
                     bandLimit: Int,
                     apportionedBandLimit: Int,
                     income: Int,
-                    taxAmount: BigDecimal
-                   )
+                    taxAmount: BigDecimal)
 
 object TaxBands {
   implicit val format: OFormat[TaxBands] = Json.format[TaxBands]

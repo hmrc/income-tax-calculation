@@ -16,7 +16,7 @@
 
 package models.hip.calculation.taxCalculation
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
 case class CapitalGainsTax(totalTaxableGains: BigDecimal,
                            adjustments: Option[BigDecimal] = None,
@@ -55,10 +55,9 @@ object OtherGains {
   implicit val format: OFormat[OtherGains] = Json.format[OtherGains]
 }
 
-case class BusinessAssetsDisposalsAndInvestorsRel(
-                                                   taxableGains: Option[BigDecimal] = None,
-                                                   rate: Option[BigDecimal] = None,
-                                                   taxAmount: Option[BigDecimal] = None
+case class BusinessAssetsDisposalsAndInvestorsRel(taxableGains: Option[BigDecimal] = None,
+                                                  rate: Option[BigDecimal] = None,
+                                                  taxAmount: Option[BigDecimal] = None
                                                  )
 
 object BusinessAssetsDisposalsAndInvestorsRel {

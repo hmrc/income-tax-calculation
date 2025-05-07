@@ -25,7 +25,7 @@ case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        taxDeductedAtSource: Option[TaxDeductedAtSource],
                        giftAid: Option[GiftAid],
                        marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn],
-                       studentLoans: Option[Seq[StudentLoans]],
+                       studentLoans: Option[Seq[StudentLoan]],
                        employmentAndPensionsIncome: Option[EmploymentAndPensionsIncome],
                        employmentExpenses: Option[EmploymentExpenses],
                        stateBenefitsIncome: Option[StateBenefitsIncome],
@@ -46,19 +46,10 @@ object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
 }
 
-case class GiftAid(
-                    grossGiftAidPayments: Int,
-                    rate: BigDecimal,
-                    giftAidTax: BigDecimal)
-
+case class GiftAid(grossGiftAidPayments: Int, giftAidTax: BigDecimal)
 
 object GiftAid {
-  implicit val writes: Writes[GiftAid] = Json.writes[GiftAid]
-
-  implicit val reads: Reads[GiftAid] = (
-    (__ \ "grossGiftAidPayments").read[Int] and
-      (__ \ "rate").read[BigDecimal] and
-      (__ \ "giftAidTax").read[BigDecimal])(GiftAid.apply _)
+  implicit val format: OFormat[GiftAid] = Json.format[GiftAid]
 }
 
 case class MarriageAllowanceTransferredIn(amount: Option[BigDecimal] = None)
@@ -67,7 +58,7 @@ object MarriageAllowanceTransferredIn {
   implicit val format: OFormat[MarriageAllowanceTransferredIn] = Json.format[MarriageAllowanceTransferredIn]
 }
 
-case class StudentLoans(planType: String,
+case class StudentLoan(planType: String,
                        studentLoanTotalIncomeAmount: BigDecimal,
                        studentLoanChargeableIncomeAmount: BigDecimal,
                        studentLoanRepaymentAmount: BigDecimal,
@@ -75,23 +66,23 @@ case class StudentLoans(planType: String,
                        studentLoanApportionedIncomeThreshold: Int,
                        studentLoanRate: BigDecimal)
 
-object StudentLoans {
-  implicit val writes: Writes[StudentLoans] = Json.writes[StudentLoans]
+object StudentLoan {
+  implicit val writes: Writes[StudentLoan] = Json.writes[StudentLoan]
 
-  implicit val reads: Reads[StudentLoans] = (
+  implicit val reads: Reads[StudentLoan] = (
     (__ \ "planType").read[String] and
       (__ \ "studentLoanTotalIncomeAmount").read[BigDecimal] and
       (__ \ "studentLoanChargeableIncomeAmount").read[BigDecimal] and
       (__ \ "studentLoanRepaymentAmount").read[BigDecimal] and
       (__ \ "studentLoanRepaymentAmountNetOfDeductions").read[BigDecimal] and
       (__ \ "studentLoanApportionedIncomeThreshold").read[Int] and
-      (__ \ "studentLoanRate").read[BigDecimal])(StudentLoans.apply _)
+      (__ \ "studentLoanRate").read[BigDecimal])(StudentLoan.apply _)
 }
 
-case class EmploymentAndPensionsIncome(
-                                        totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
-                                        totalOccupationalPensionIncome: Option[BigDecimal] = None,
-                                        totalBenefitsInKind: Option[BigDecimal] = None)
+case class EmploymentAndPensionsIncome(totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
+                                       totalOccupationalPensionIncome: Option[BigDecimal] = None,
+                                       totalBenefitsInKind: Option[BigDecimal] = None
+                                      )
 
 object EmploymentAndPensionsIncome {
   implicit val writes: Writes[EmploymentAndPensionsIncome] = Json.writes[EmploymentAndPensionsIncome]
