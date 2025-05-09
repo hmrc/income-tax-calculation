@@ -22,7 +22,7 @@ import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, Unauthorised
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNAUTHORIZED}
+import play.api.http.Status.{BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -112,6 +112,21 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   "return a failure result" when {
     val appConfigWithInternalHost = appConfig("localhost")
     val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
+
+      val errorBodyModel = ErrorBodyModel("DES_CODE", "DES_REASON")
+
+      Seq(BAD_REQUEST, CONFLICT, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { status =>
+        s"DES returns $status" in {
+          val desError = ErrorModel(status, errorBodyModel)
+          implicit val hc: HeaderCarrier = HeaderCarrier()
+
+          stubGetWithResponseBody(getURL2083(nino, "25-26"), status, desError.toJson.toString)
+
+          val result = await(connector.getCalculationList(nino, "2026")(hc))
+
+          result mustBe Left(desError)
+        }
+      }
 
     "IF returns an 401 error" in {
       val response =
