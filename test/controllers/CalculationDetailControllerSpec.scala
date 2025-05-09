@@ -20,7 +20,6 @@ import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResp
 import models.{ErrorBodyModel, ErrorModel}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.Mockito.{mock, when}
-import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
 import play.api.libs.json.{JsValue, Json}
@@ -42,12 +41,6 @@ class CalculationDetailControllerSpec extends TestSuite {
   val taxYear = "2022"
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
-
-//  def calculationSuccessResponse: CallHandler3[String, Option[String], HeaderCarrier, Future[JsValue]] =
-//    (service.getCalculationDetails(_: String, _: Option[String])(_: HeaderCarrier))
-//      .expects(nino, Some(taxYear), *)
-//      .returning(Future.successful(Right(Json.toJson(successModelFull))))
-
   def calculationResponse(nino: String, taxYearOption: Option[String])(response: CalculationDetailResponse): Unit = {
     when(service.getCalculationDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYearOption))(ArgumentMatchers.any())) thenReturn Future (
       response match {
@@ -57,15 +50,6 @@ class CalculationDetailControllerSpec extends TestSuite {
       )
   }
 
-//  def calculationErrorResponse(status: Int): CallHandler3[String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
-//    (service.getCalculationDetails(_: String, _: Option[String])(_: HeaderCarrier))
-//      .expects(nino, Some(taxYear), *)
-//      .returning(Future.successful(Left(ErrorModel(status, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
-
-//  def calculationSuccessResponseByCalcId: CallHandler4[String, String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
-//    (service.getCalculationDetailsByCalcId(_: String, _: String, _: Option[String])(_: HeaderCarrier))
-//      .expects(nino, calculationId, Some(taxYear), *)
-//      .returning(Future.successful(Right(successModelFull)))
   def calculationResponseByCalcId(nino: String, calculationId: String, taxYearOption: Option[String])(response: CalculationDetailResponse): Unit = {
     when(service.getCalculationDetailsByCalcId(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(calculationId), ArgumentMatchers.eq(taxYearOption))(ArgumentMatchers.any())) thenReturn Future (
       response match {
@@ -74,11 +58,6 @@ class CalculationDetailControllerSpec extends TestSuite {
       }
     )
   }
-//
-//  def calculationErrorResponseByCalcId(status: Int): CallHandler4[String, String, Option[String], HeaderCarrier, Future[CalculationDetailResponse]] =
-//    (service.getCalculationDetailsByCalcId(_: String, _: String, _: Option[String])(_: HeaderCarrier))
-//      .expects(nino, calculationId, Some(taxYear), *)
-//      .returning(Future.successful(Left(ErrorModel(status, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error")))))
 
 
     "CalculationDetailController.calculationDetail" should {
