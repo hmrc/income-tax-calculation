@@ -18,8 +18,8 @@ package controllers
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import models.{ErrorBodyModel, ErrorModel}
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.when
+import org.mockito.{ArgumentMatchers, Mockito}
+import org.mockito.Mockito.{mock, when}
 import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class CalculationDetailControllerSpec extends TestSuite {
 
-  val service: GetCalculationDetailsService = mock[GetCalculationDetailsService]
+  val service: GetCalculationDetailsService = Mockito.mock(classOf[GetCalculationDetailsService])
   val controller = new CalculationDetailController(service, mockControllerComponents,authorisedAction)
 
 
@@ -90,7 +90,7 @@ class CalculationDetailControllerSpec extends TestSuite {
 
       val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
       status(result) mustBe Status.OK
-      contentAsJson(result) mustBe Json.toJson(successModelFull).toString()
+      bodyOf(result) mustBe Json.toJson(successModelFull).toString()
 
     }
 
@@ -122,7 +122,6 @@ class CalculationDetailControllerSpec extends TestSuite {
 
       val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
       status(result) mustBe Status.BAD_REQUEST
-
     }
 
     "return a 403 error response with a calculation error" in {
