@@ -49,6 +49,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
           case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
             Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
           case Right(listOfCalculationDetails) =>
+
             getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYearOption)
           case Left(desError) => Future.successful(Left(desError))
         }
@@ -58,6 +59,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
   private def getLegacyCalcListResult(nino: String, taxYear: Option[String])
                                      (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+
     if (appConfig.useGetCalcListHiPlatform) {
       logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
       calcListHipLegacyConnector.calcList(nino, taxYear)
@@ -80,9 +82,9 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   }
 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
-
     if(appConfig.useGetCalcDetailsHipPlatform) {
-      hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.toString), nino, calcId).collect {
+
+      hipGetCalculationsDataConnector.getCalculationsData( TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
         case Right(value) => Right(Json.toJson(value))
         case Left(error) => Left(error)
       }

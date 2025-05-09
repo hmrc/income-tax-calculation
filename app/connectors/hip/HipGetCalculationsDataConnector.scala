@@ -33,6 +33,7 @@ class HipGetCalculationsDataConnector @Inject()(http: HttpClientV2,
   def getCalculationsData(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[HipGetCalculationDetailsResponse] = {
     val url = s"${appConfig.hipBaseUrl}/income-tax/v1/$taxYear/view/calculations/liability/$nino/$calculationId"
 
+
     val correlationId = CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
     val hipHeaders = Seq((HeaderNames.authorisation, getBasicAuthValue("1885")), correlationId.asHeader())
 

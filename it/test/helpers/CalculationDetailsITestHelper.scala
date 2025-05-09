@@ -55,7 +55,7 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     val mtditidHeader = ("mtditid", "555555555")
     val requestHeaders: Seq[HttpHeader] = Seq(new HttpHeader("mtditid", "555555555"))
     val requestHeaderCalc = Seq(new HttpHeader("correlationId", "abc-123"))
-    val correlationId = ("correlationId", "abc-123")
+    val correlationId = ("correlationId", "239825dd-250d-4d1d-a022-afe5dde7410f")
     auditStubs()
     mergedAuditStubs()
   }

@@ -41,6 +41,7 @@ object GetCalculationListHttpParser extends APIParser with Logging {
           logger.info(s"[GetCalculationListHttpReads]: $NOT_FOUND converted to $NO_CONTENT")
           Left(ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
         case INTERNAL_SERVER_ERROR =>
+          logger.error(s"[GetCalculationListHttpReads]:=>ERROR")
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleIFError(response)
         case SERVICE_UNAVAILABLE =>

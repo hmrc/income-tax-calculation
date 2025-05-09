@@ -35,6 +35,7 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
     if(taxYear.toInt >= TaxYear.taxYear2026) {
       getCalculationList2083(nino, taxYear)
     } else {
+
       getCalculationList1896(nino, taxYear)
     }
   }
@@ -46,13 +47,15 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
   }
 
   private def getCalculationList2083(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+
     val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
     val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/$taxYearRange/view/$nino/calculations-summary"
+
     iFCall(getCalculationListUrl)(iFHeaderCarrier(getCalculationListUrl, "2083"))
   }
 
   def iFCall(urlString: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-    logger.info(s"[getCalculationList][getCalculationList] - GET URL: -$urlString-")
+    logger.error(s"[getCalculationList][getCalculationList]=> GET URL: -$urlString-")
     httpClient.GET[HttpResponse](url = urlString)(HttpReads[HttpResponse], hc, ec).map {
       response =>
         logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
