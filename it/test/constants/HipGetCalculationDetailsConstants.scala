@@ -16,7 +16,7 @@
 
 package constants
 
-import models.hip.{CalculationResponseModel, Inputs, Messages, Metadata, PersonalInformation}
+import models.hip.{CalculationHipResponseModel, Inputs, Messages, Metadata, PersonalInformation}
 import models.hip.calculation._
 import models.hip.calculation.taxCalculation._
 
@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 object HipGetCalculationDetailsConstants {
 
-  val successFullModel: CalculationResponseModel = CalculationResponseModel(
+  val successFullModelGetCalculationDetailsHip: CalculationHipResponseModel = CalculationHipResponseModel(
     metadata = Metadata(
       calculationTimestamp = Some(LocalDate.of(2022, 1, 1)),
       calculationReason = "Calculation reason",

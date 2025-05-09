@@ -26,7 +26,8 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
 
 
     val successNino: String = "AA123123A"
-    val taxYear = "2021"
+    val taxYear = "2026"
+    val taxYearUpdated = "25-26"
     val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
     val desUrlForListCalcWithoutTaxYear = s"/income-tax/list-of-calculation-results/$successNino"
@@ -36,6 +37,7 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     val hipUrlForListCalcWithTaxYear = s"/itsd/calculations/liability/$successNino\\?taxYear=$taxYear"
 
     val desUrlForCalculationDetails = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
+    val hipUrlForCalculationDetails = s"/income-tax/v1/$taxYearUpdated/view/calculations/liability/$successNino/$calculationId"
     val ifUrlforTYS24 = s"/income-tax/view/calculations/liability/23-24/$successNino/$calculationId"
     val ifUrlforTYS25 = s"/income-tax/view/calculations/liability/24-25/$successNino/$calculationId"
     val ifUrlForCalculationList = s"/income-tax/view/calculations/liability/23-24/$successNino"
@@ -52,6 +54,8 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
     val mtditidHeader = ("mtditid", "555555555")
     val requestHeaders: Seq[HttpHeader] = Seq(new HttpHeader("mtditid", "555555555"))
+    val requestHeaderCalc = Seq(new HttpHeader("correlationId", "abc-123"))
+    val correlationId = ("correlationId", "abc-123")
     auditStubs()
     mergedAuditStubs()
   }

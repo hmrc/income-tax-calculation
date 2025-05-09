@@ -51,7 +51,8 @@ class CalculationDetailControllerSpec extends TestSuite {
   }
 
   def calculationResponseByCalcId(nino: String, calculationId: String, taxYearOption: Option[String])(response: CalculationDetailResponse): Unit = {
-    when(service.getCalculationDetailsByCalcId(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(calculationId), ArgumentMatchers.eq(taxYearOption))(ArgumentMatchers.any())) thenReturn Future (
+    when(service.getCalculationDetailsByCalcId(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(calculationId), ArgumentMatchers.eq(taxYearOption))
+    (ArgumentMatchers.any()))thenReturn Future (
       response match {
         case Right(obj) => Right(Json.toJson(obj))
         case Left(err) => Left(err)

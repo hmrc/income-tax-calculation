@@ -81,7 +81,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
 
-    if(appConfig.useGetCalcListHiPlatform) {
+    if(appConfig.useGetCalcDetailsHipPlatform) {
       hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.toString), nino, calcId).collect {
         case Right(value) => Right(Json.toJson(value))
         case Left(error) => Left(error)

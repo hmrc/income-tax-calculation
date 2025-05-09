@@ -30,9 +30,9 @@ object LiabilityCalculationError {
 }
 
 case class CalculationHipResponseModel(metadata: Metadata,
-                                    inputs: Inputs,
-                                    calculation: Option[Calculation],
-                                    messages: Option[Messages])
+                                       inputs: Inputs,
+                                       calculation: Option[Calculation],
+                                       messages: Option[Messages])
 
 object CalculationHipResponseModel {
   implicit val format: OFormat[CalculationHipResponseModel] = Json.format[CalculationHipResponseModel]
