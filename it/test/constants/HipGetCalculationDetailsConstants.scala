@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 object HipGetCalculationDetailsConstants {
 
-  val successFullModel = CalculationResponseModel(
+  val successFullModel: CalculationResponseModel = CalculationResponseModel(
     metadata = Metadata(
       calculationTimestamp = Some(LocalDate.of(2022, 1, 1)),
       calculationReason = "Calculation reason",
@@ -287,5 +287,271 @@ object HipGetCalculationDetailsConstants {
     )),
     messages = None
   )
+
+  val successModelJson: String = """{
+                           |  "metadata" : {
+                           |    "calculationTimestamp" : "2022-01-01",
+                           |    "calculationReason" : "Calculation reason",
+                           |    "periodFrom" : "2023-03-02",
+                           |    "periodTo" : "2023-03-10"
+                           |  },
+                           |  "inputs" : {
+                           |    "personalInformation" : {
+                           |      "taxRegime" : "taxRegime",
+                           |      "class2VoluntaryContributions" : true
+                           |    }
+                           |  },
+                           |  "calculation" : {
+                           |    "allowancesAndDeductions" : {
+                           |      "personalAllowance" : 50000,
+                           |      "marriageAllowanceTransferOut" : {
+                           |        "personalAllowanceBeforeTransferOut" : 1000,
+                           |        "transferredOutAmount" : 50.56
+                           |      },
+                           |      "reducedPersonalAllowance" : 10,
+                           |      "giftOfInvestmentsAndPropertyToCharity" : 555,
+                           |      "lossesAppliedToGeneralIncome" : 345,
+                           |      "qualifyingLoanInterestFromInvestments" : 150000,
+                           |      "postCessationTradeReceipts" : 123.56,
+                           |      "paymentsToTradeUnionsForDeathBenefits" : 10,
+                           |      "grossAnnuityPayments" : 23.21,
+                           |      "pensionContributions" : 1234.78
+                           |    },
+                           |    "reliefs" : {
+                           |      "residentialFinanceCosts" : {
+                           |        "totalResidentialFinanceCostsRelief" : 123
+                           |      },
+                           |      "reliefsClaimed" : [ {
+                           |        "type" : "type",
+                           |        "amountUsed" : 50
+                           |      } ],
+                           |      "foreignTaxCreditRelief" : {
+                           |        "totalForeignTaxCreditRelief" : 500.34
+                           |      },
+                           |      "topSlicingRelief" : {
+                           |        "amount" : 345.89
+                           |      },
+                           |      "giftAidTaxReductionWhereBasicRateDiffers" : {
+                           |        "amount" : 300
+                           |      }
+                           |    },
+                           |    "taxDeductedAtSource" : {
+                           |      "bbsi" : 200,
+                           |      "ukLandAndProperty" : 300,
+                           |      "cis" : 400,
+                           |      "voidedIsa" : 500,
+                           |      "payeEmployments" : 100,
+                           |      "occupationalPensions" : 200,
+                           |      "stateBenefits" : 300,
+                           |      "specialWithholdingTaxOrUkTaxPaid" : 400,
+                           |      "inYearAdjustmentCodedInLaterTaxYear" : 500,
+                           |      "taxTakenOffTradingIncome" : 100
+                           |    },
+                           |    "giftAid" : {
+                           |      "grossGiftAidPayments" : 30,
+                           |      "giftAidTax" : 123.45
+                           |    },
+                           |    "marriageAllowanceTransferredIn" : {
+                           |      "amount" : 321.11
+                           |    },
+                           |    "studentLoans" : [ {
+                           |      "planType" : "planType",
+                           |      "studentLoanTotalIncomeAmount" : 67321,
+                           |      "studentLoanChargeableIncomeAmount" : 10000.99,
+                           |      "studentLoanRepaymentAmount" : 100.11,
+                           |      "studentLoanRepaymentAmountNetOfDeductions" : 200,
+                           |      "studentLoanApportionedIncomeThreshold" : 10,
+                           |      "studentLoanRate" : 10
+                           |    } ],
+                           |    "employmentAndPensionsIncome" : {
+                           |      "totalPayeEmploymentAndLumpSumIncome" : 12456.23,
+                           |      "totalOccupationalPensionIncome" : 100,
+                           |      "totalBenefitsInKind" : 50
+                           |    },
+                           |    "employmentExpenses" : {
+                           |      "totalEmploymentExpenses" : 500
+                           |    },
+                           |    "stateBenefitsIncome" : {
+                           |      "totalStateBenefitsIncome" : 1050,
+                           |      "totalStateBenefitsIncomeExcStatePensionLumpSum" : 2050
+                           |    },
+                           |    "shareSchemesIncome" : {
+                           |      "totalIncome" : 50000.5
+                           |    },
+                           |    "foreignIncome" : {
+                           |      "chargeableOverseasPensionsStateBenefitsRoyalties" : 100,
+                           |      "chargeableAllOtherIncomeReceivedWhilstAbroad" : 200,
+                           |      "overseasIncomeAndGains" : {
+                           |        "gainAmount" : 300
+                           |      },
+                           |      "totalForeignBenefitsAndGifts" : 400
+                           |    },
+                           |    "chargeableEventGainsIncome" : {
+                           |      "totalOfAllGains" : 40000
+                           |    },
+                           |    "savingsAndGainsIncome" : {
+                           |      "chargeableForeignSavingsAndGains" : 10
+                           |    },
+                           |    "dividendsIncome" : {
+                           |      "chargeableForeignDividends" : 500
+                           |    },
+                           |    "incomeSummaryTotals" : {
+                           |      "totalSelfEmploymentProfit" : 50,
+                           |      "totalPropertyProfit" : 50,
+                           |      "totalForeignPropertyProfit" : 50
+                           |    },
+                           |    "taxCalculation" : {
+                           |      "incomeTax" : {
+                           |        "totalIncomeReceivedFromAllSources" : 50000,
+                           |        "totalAllowancesAndDeductions" : 10000,
+                           |        "totalTaxableIncome" : 25000,
+                           |        "payPensionsProfit" : {
+                           |          "taxBands" : [ {
+                           |            "name" : "name",
+                           |            "rate" : 50,
+                           |            "bandLimit" : 15,
+                           |            "apportionedBandLimit" : 5,
+                           |            "income" : 2300,
+                           |            "taxAmount" : 150.11
+                           |          } ]
+                           |        },
+                           |        "savingsAndGains" : {
+                           |          "taxableIncome" : 4000,
+                           |          "taxBands" : [ {
+                           |            "name" : "name1",
+                           |            "rate" : 100.11,
+                           |            "bandLimit" : 20,
+                           |            "apportionedBandLimit" : 10,
+                           |            "income" : 5000,
+                           |            "taxAmount" : 150
+                           |          } ]
+                           |        },
+                           |        "dividends" : {
+                           |          "taxableIncome" : 15000,
+                           |          "taxBands" : [ {
+                           |            "name" : "name2",
+                           |            "rate" : 200.22,
+                           |            "bandLimit" : 15,
+                           |            "apportionedBandLimit" : 10,
+                           |            "income" : 10000,
+                           |            "taxAmount" : 2000
+                           |          } ]
+                           |        },
+                           |        "lumpSums" : {
+                           |          "taxBands" : [ {
+                           |            "name" : "name3",
+                           |            "rate" : 333.33,
+                           |            "bandLimit" : 30,
+                           |            "apportionedBandLimit" : 15,
+                           |            "income" : 150000,
+                           |            "taxAmount" : 50000
+                           |          } ]
+                           |        },
+                           |        "gainsOnLifePolicies" : {
+                           |          "taxBands" : [ {
+                           |            "name" : "name4",
+                           |            "rate" : 444.44,
+                           |            "bandLimit" : 40,
+                           |            "apportionedBandLimit" : 15,
+                           |            "income" : 75000,
+                           |            "taxAmount" : 15000
+                           |          } ]
+                           |        },
+                           |        "totalReliefs" : 1500.11,
+                           |        "totalNotionalTax" : 250.11,
+                           |        "incomeTaxDueAfterTaxReductions" : 50,
+                           |        "totalPensionSavingsTaxCharges" : 500,
+                           |        "statePensionLumpSumCharges" : 200.22,
+                           |        "payeUnderpaymentsCodedOut" : 500.11,
+                           |        "giftAidTaxChargeWhereBasicRateDiffers" : 1000.22,
+                           |        "incomeTaxChargedOnTransitionProfits" : 400.22
+                           |      },
+                           |      "nics" : {
+                           |        "class2Nics" : {
+                           |          "amount" : 4500.11
+                           |        },
+                           |        "class4Nics" : {
+                           |          "nic4Bands" : [ {
+                           |            "name" : "nic 4 name",
+                           |            "rate" : 111.11,
+                           |            "income" : 45000,
+                           |            "amount" : 2400
+                           |          } ]
+                           |        }
+                           |      },
+                           |      "capitalGainsTax" : {
+                           |        "totalTaxableGains" : 3500.11,
+                           |        "adjustments" : 200,
+                           |        "foreignTaxCreditRelief" : 200,
+                           |        "taxOnGainsAlreadyPaid" : 50,
+                           |        "capitalGainsTaxDue" : 100,
+                           |        "capitalGainsOverpaid" : 10,
+                           |        "residentialPropertyAndCarriedInterest" : {
+                           |          "cgtTaxBands" : [ {
+                           |            "name" : "cgtTaxBand",
+                           |            "rate" : 111,
+                           |            "income" : 2500,
+                           |            "taxAmount" : 100
+                           |          } ]
+                           |        },
+                           |        "otherGains" : {
+                           |          "cgtTaxBands" : [ {
+                           |            "name" : "cgtTaxBand2",
+                           |            "rate" : 222,
+                           |            "income" : 4500,
+                           |            "taxAmount" : 200
+                           |          } ]
+                           |        },
+                           |        "businessAssetsDisposalsAndInvestorsRel" : {
+                           |          "taxableGains" : 200,
+                           |          "rate" : 30,
+                           |          "taxAmount" : 450
+                           |        }
+                           |      },
+                           |      "totalStudentLoansRepaymentAmount" : 1050,
+                           |      "saUnderpaymentsCodedOut" : 100,
+                           |      "totalAnnuityPaymentsTaxCharged" : 50,
+                           |      "totalRoyaltyPaymentsTaxCharged" : 50,
+                           |      "totalIncomeTaxAndNicsDue" : 2000,
+                           |      "totalTaxDeducted" : 5000,
+                           |      "totalIncomeTaxAndNicsAndCgt" : 2500
+                           |    },
+                           |    "endOfYearEstimate" : {
+                           |      "incomeSource" : [ {
+                           |        "incomeSourceType" : "incomeSource",
+                           |        "incomeSourceName" : "incomeSourceName",
+                           |        "taxableIncome" : 4500
+                           |      } ],
+                           |      "totalAllowancesAndDeductions" : 400,
+                           |      "totalEstimatedIncome" : 400,
+                           |      "totalTaxableIncome" : 200,
+                           |      "incomeTaxAmount" : 200.13,
+                           |      "nic2" : 100,
+                           |      "nic4" : 100,
+                           |      "totalNicAmount" : 200,
+                           |      "totalTaxDeductedBeforeCodingOut" : 150,
+                           |      "saUnderpaymentsCodedOut" : 50,
+                           |      "totalStudentLoansRepaymentAmount" : 400,
+                           |      "totalAnnuityPaymentsTaxCharged" : 250,
+                           |      "totalRoyaltyPaymentsTaxCharged" : 250,
+                           |      "totalTaxDeducted" : 100,
+                           |      "incomeTaxNicAmount" : 100,
+                           |      "cgtAmount" : 50,
+                           |      "incomeTaxNicAndCgtAmount" : 150
+                           |    },
+                           |    "pensionSavingsTaxCharges" : {
+                           |      "totalPensionCharges" : 400,
+                           |      "totalTaxPaid" : 1000.5,
+                           |      "totalPensionChargesDue" : 100.23
+                           |    },
+                           |    "otherIncome" : {
+                           |      "totalOtherIncome" : 2000
+                           |    },
+                           |    "transitionProfit" : {
+                           |      "totalTaxableTransitionProfit" : 300
+                           |    }
+                           |  }
+                           |}
+                           |""".stripMargin.trim
 
 }

@@ -17,23 +17,23 @@
 package connectors.httpParsers.hip
 
 import connectors.httpParsers.APIParser
+import models.hip.CalculationHipResponseModel
 import models.{ErrorBodyModel, ErrorModel}
-import models.hip.CalculationResponseModel
 import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper.pagerDutyLog
 
-object GetCalculationDetailsHttpParser extends APIParser with Logging {
-  type GetCalculationDetailsResponse = Either[ErrorModel, CalculationResponseModel]
+object HipGetCalculationDetailsHttpParser extends APIParser with Logging {
+  type HipGetCalculationDetailsResponse = Either[ErrorModel, CalculationHipResponseModel]
 
   override val parserName: String = "CalculationDetailsHttpParser"
 
-  implicit object GetCalculationDetailsHttpReads extends HttpReads[GetCalculationDetailsResponse] {
-    override def read(method: String, url: String, response: HttpResponse): GetCalculationDetailsResponse = {
+  implicit object GetCalculationDetailsHttpReads extends HttpReads[HipGetCalculationDetailsResponse] {
+    override def read(method: String, url: String, response: HttpResponse): HipGetCalculationDetailsResponse = {
       response.status match {
-        case OK => response.json.validate[CalculationResponseModel].fold[GetCalculationDetailsResponse](
+        case OK => response.json.validate[CalculationHipResponseModel].fold[HipGetCalculationDetailsResponse](
           validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )

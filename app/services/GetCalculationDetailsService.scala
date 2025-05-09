@@ -17,13 +17,14 @@
 package services
 
 import config.AppConfig
-import connectors.hip.HipCalculationLegacyListConnector
+import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
 import models.{ErrorBodyModel, ErrorModel}
 import play.api.Logging
 import play.api.http.Status.NO_CONTENT
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TaxYear
 
@@ -35,11 +36,13 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              listCalculationDetailsConnector: GetCalculationListConnector,
                                              listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy,
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
-                                             val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
+                                             hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
+                                            val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private val specificTaxYear: Int = TaxYear.taxYear2024
+  type CalculationDetailAsJsonResponse = Either[ErrorModel, JsValue]
 
-  def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+  def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
     taxYearOption match {
       case Some(taxYear) if taxYear.toInt >= specificTaxYear =>
         listCalculationDetailsConnector.getCalculationList(nino, taxYear).flatMap {
@@ -66,7 +69,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   }
 
   private def handleLegacy(nino: String, taxYear: Option[String])
-                          (implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+                          (implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
     getLegacyCalcListResult(nino, taxYear).flatMap {
       case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
         Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
@@ -76,14 +79,31 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     }
   }
 
-  def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailResponse] = {
+  def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
 
-    TaxYear.convert(taxYear) match {
-      case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
-      case Right(year) if year >= specificTaxYear =>
-        calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId)
-      case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId)
-      case Left(error) => throw new RuntimeException(error)
+    if(appConfig.useGetCalcListHiPlatform) {
+      hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.toString), nino, calcId).collect {
+        case Right(value) => Right(Json.toJson(value))
+        case Left(error) => Left(error)
+      }
+    } else {
+
+      TaxYear.convert(taxYear) match {
+        case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
+          case Right(value) => Right(Json.toJson(value))
+          case Left(error) => Left(error)
+        }
+        case Right(year) if year >= specificTaxYear =>
+          calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId).collect {
+            case Right(value) => Right(Json.toJson(value))
+            case Left(error) => Left(error)
+          }
+        case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
+          case Right(value) => Right(Json.toJson(value))
+          case Left(error) => Left(error)
+        }
+        case Left(error) => throw new RuntimeException(error)
+      }
     }
   }
 }

@@ -29,13 +29,13 @@ object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-case class CalculationResponseModel(metadata: Metadata,
+case class CalculationHipResponseModel(metadata: Metadata,
                                     inputs: Inputs,
                                     calculation: Option[Calculation],
                                     messages: Option[Messages])
 
-object CalculationResponseModel {
-  implicit val format: OFormat[CalculationResponseModel] = Json.format[CalculationResponseModel]
+object CalculationHipResponseModel {
+  implicit val format: OFormat[CalculationHipResponseModel] = Json.format[CalculationHipResponseModel]
 }
 
 /*

@@ -18,7 +18,7 @@ package connectors.hip
 
 import config.AppConfig
 import connectors.core.CorrelationId
-import connectors.httpParsers.hip.GetCalculationDetailsHttpParser._
+import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser._
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -30,7 +30,7 @@ class HipGetCalculationsDataConnector @Inject()(http: HttpClientV2,
                                                 val appConfig: AppConfig)
                                                (implicit ec: ExecutionContext) extends HipConnector with Logging {
 
-  def getCalculationsData(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[GetCalculationDetailsResponse] = {
+  def getCalculationsData(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[HipGetCalculationDetailsResponse] = {
     val url = s"${appConfig.hipBaseUrl}/income-tax/v1/$taxYear/view/calculations/liability/$nino/$calculationId"
 
     val correlationId = CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
@@ -41,7 +41,7 @@ class HipGetCalculationsDataConnector @Inject()(http: HttpClientV2,
     http
       .get(url"$url")
       .setHeader(hipHeaders: _*)
-      .execute[GetCalculationDetailsResponse]
+      .execute[HipGetCalculationDetailsResponse]
   }
 
 }
