@@ -18,11 +18,11 @@ package connectors
 
 import config.BackendAppConfig
 import helpers.WiremockSpec
-import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, UnauthorisedErrorBodyModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNAUTHORIZED}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -113,6 +113,15 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
     val appConfigWithInternalHost = appConfig("localhost")
     val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
 
+    "IF returns an 401 error" in {
+      val response =
+        """{"error_description":"The access token is invalid or has expired","error":"invalid_token"}"""
+      stubGetWithResponseBody(getURL2083(nino, "25-26"), UNAUTHORIZED, response)
+
+      val result = await(connector.getCalculationList(nino, taxYear = "2026"))
+
+      result mustBe Left(ErrorModel(UNAUTHORIZED, UnauthorisedErrorBodyModel("invalid_token", "The access token is invalid or has expired")))
+    }
     "IF returns an 503 error" in {
       val response =
         """
