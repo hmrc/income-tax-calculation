@@ -17,7 +17,6 @@
 package api
 
 import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
-import com.github.tomakehurst.wiremock.http.HttpHeader
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
 import models.{ErrorBodyModel, GetCalculationListModel, GetCalculationListModelLegacy}
 import org.scalatest.concurrent.ScalaFutures
@@ -33,7 +32,7 @@ class CalculationDetailsITest extends AnyWordSpec
   with WiremockSpec with ScalaFutures with Matchers with CalculationDetailsITestHelper {
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
-  private val enableHip: Boolean = false
+  private val enableHip: Boolean = true
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
     .configure(
@@ -41,6 +40,7 @@ class CalculationDetailsITest extends AnyWordSpec
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
         ("feature-switch.useGetCalcListHIPlatform" -> enableHip) +:
         ("feature-switch.useGetCalcListIFPlatform" -> !enableHip) +:
+        ("feature-switch.useGetCalcDetailHIPlatform" -> !enableHip) +:
         servicesToUrlConfig: _*
     )
     .build()
@@ -65,14 +65,13 @@ class CalculationDetailsITest extends AnyWordSpec
             Json.parse(result.body) mustBe
               Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
         }
-
       }
 
       "return the calculation details when called with tax year" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(s"/income-tax/25-26/view/$successNino/calculations-summary", 200, listCalcResponse)
+        stubGetWithResponseBody(ifUrlForTYS26, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -91,7 +90,7 @@ class CalculationDetailsITest extends AnyWordSpec
         def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
 
         stubGetWithResponseBody(getCalcListURL("23-24"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlforTYS24, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifUrlForTYS24, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -109,7 +108,7 @@ class CalculationDetailsITest extends AnyWordSpec
         def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
 
         stubGetWithResponseBody(getCalcListURL("24-25"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlforTYS25, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifUrlForTYS25, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")
           .withHttpHeaders(mtditidHeader, authorization)

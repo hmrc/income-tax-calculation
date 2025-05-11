@@ -43,7 +43,7 @@ object TaxDeductedAtSource {
       (__ \ "payeEmployments").readNullable[BigDecimal] and
       (__ \ "occupationalPensions").readNullable[BigDecimal] and
       (__ \ "stateBenefits").readNullable[BigDecimal] and
-      (__ \ "stateBenefits").readNullable[BigDecimal] and
+      (__ \ "specialWithholdingTaxOrUkTaxPaid").readNullable[BigDecimal] and
       (__ \ "inYearAdjustmentCodedInLaterTaxYear").readNullable[BigDecimal] and
       (__ \ "taxTakenOffTradingIncome").readNullable[BigDecimal])(TaxDeductedAtSource.apply _)
 }

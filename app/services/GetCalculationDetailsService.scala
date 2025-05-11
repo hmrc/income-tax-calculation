@@ -18,7 +18,6 @@ package services
 
 import config.AppConfig
 import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationsDataConnector}
-import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
 import models.{ErrorBodyModel, ErrorModel}
@@ -82,7 +81,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
 
     if(appConfig.useGetCalcDetailsHipPlatform) {
-      hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.toString), nino, calcId).collect {
+      hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
         case Right(value) => Right(Json.toJson(value))
         case Left(error) => Left(error)
       }
