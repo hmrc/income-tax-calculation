@@ -33,7 +33,7 @@ case class IncomeTax(totalIncomeReceivedFromAllSources: Int,
                      statePensionLumpSumCharges: Option[BigDecimal] = None,
                      payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
                      giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
-                     incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None,
+                     incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None
                     )
 
 object IncomeTax {

@@ -20,6 +20,12 @@ import models.hip.calculation.taxCalculation.TaxCalculation
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+/*
+    totalFHLPropertyProfit, totalEeaFhlProfit fields are no longer in the HIP API 1885 for
+    IncomeSummaryTotals
+    https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=872973684
+ */
+
 case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        reliefs: Option[Reliefs],
                        taxDeductedAtSource: Option[TaxDeductedAtSource],
@@ -64,7 +70,8 @@ case class StudentLoan(planType: String,
                        studentLoanRepaymentAmount: BigDecimal,
                        studentLoanRepaymentAmountNetOfDeductions: BigDecimal,
                        studentLoanApportionedIncomeThreshold: Int,
-                       studentLoanRate: BigDecimal)
+                       studentLoanRate: BigDecimal
+                      )
 
 object StudentLoan {
   implicit val writes: Writes[StudentLoan] = Json.writes[StudentLoan]
@@ -100,7 +107,8 @@ object EmploymentExpenses {
 }
 
 case class StateBenefitsIncome(totalStateBenefitsIncome: Option[BigDecimal] = None,
-                               totalStateBenefitsIncomeExcStatePensionLumpSum: Option[BigDecimal] = None)
+                               totalStateBenefitsIncomeExcStatePensionLumpSum: Option[BigDecimal] = None
+                              )
 
 object StateBenefitsIncome {
   implicit val writes: Writes[StateBenefitsIncome] = Json.writes[StateBenefitsIncome]
@@ -157,16 +165,11 @@ object DividendsIncome {
   implicit val format: OFormat[DividendsIncome] = Json.format[DividendsIncome]
 }
 
-/*
-    totalFHLPropertyProfit, totalEeaFhlProfit fields are no longer in the HIP API 1885 for
-    IncomeSummaryTotals
-    https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=872973684
- */
 
 case class IncomeSummaryTotals(
                                 totalSelfEmploymentProfit: Option[Int] = None,
                                 totalPropertyProfit: Option[Int] = None,
-                                totalForeignPropertyProfit: Option[Int] = None,
+                                totalForeignPropertyProfit: Option[Int] = None
                               )
 
 object IncomeSummaryTotals {
@@ -181,7 +184,8 @@ object IncomeSummaryTotals {
 
 case class PensionSavingsTaxCharges(totalPensionCharges: Option[BigDecimal] = None,
                                     totalTaxPaid: Option[BigDecimal] = None,
-                                    totalPensionChargesDue: Option[BigDecimal] = None)
+                                    totalPensionChargesDue: Option[BigDecimal] = None
+                                   )
 
 object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
