@@ -20,7 +20,6 @@ import controllers.predicates.AuthorisedAction
 import play.api.Logging
 
 import javax.inject.Inject
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.GetCalculationDetailsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -36,7 +35,7 @@ class CalculationDetailController @Inject()(getCalculationDetailsService: GetCal
     getCalculationDetailsService.getCalculationDetails(nino, taxYear).map {
       case Right(success) =>
         logger.debug(s"[CalculationDetailController][calculationDetail] - Successful Response: $success")
-        Ok(Json.toJson(success))
+        Ok(success)
       case Left(error) =>
         logger.error(s"[CalculationDetailController][calculationDetail] - Error Response: $error")
         Status(error.status)(error.toJson)
@@ -48,7 +47,7 @@ class CalculationDetailController @Inject()(getCalculationDetailsService: GetCal
     getCalculationDetailsService.getCalculationDetailsByCalcId(nino, calcId, taxYear).map {
       case Right(success) =>
         logger.debug(s"[CalculationDetailController][calculationDetailByCalcId] - Successful Response: $success")
-        Ok(Json.toJson(success))
+        Ok(success)
       case Left(error) =>
         logger.error(s"[CalculationDetailController][calculationDetailByCalcId] - Error Response: $error")
         Status(error.status)(error.toJson)

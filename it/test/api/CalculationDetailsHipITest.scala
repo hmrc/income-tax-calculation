@@ -16,7 +16,7 @@
 
 package api
 
-import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
+import constants.HipGetCalculationDetailsConstants._
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
 import models.ErrorBodyModel
 import org.scalatest.concurrent.ScalaFutures
@@ -39,6 +39,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
         ("feature-switch.useGetCalcListHIPlatform" -> enableHip) +:
         ("feature-switch.useGetCalcListIFPlatform" -> !enableHip) +:
+        ("feature-switch.useGetCalcDetailHIPlatform" -> enableHip) +:
         servicesToUrlConfig: _*
     )
     .build()
@@ -47,88 +48,66 @@ class CalculationDetailsHipITest extends AnyWordSpec
 
     "the user is an individual" should {
 
-      "return the calculation details when called without tax year" in new Setup {
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
-
+      "return the calculation details when called with the tax year 2026" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifGetCalcListUrl26, 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026")
+          .withHttpHeaders(mtditidHeader, authorization, correlationId)
           .get()) {
           result =>
             result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
-        }
-
-      }
-
-      "return the calculation details when called with tax year" in new Setup {
-        authorised()
-
-        stubGetWithResponseBody(hipUrlForListCalcWithTaxYear, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
-
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
-        }
-
-      }
-
-      "return the calculation details when called with TYS tax year 23/24" in new Setup {
-        authorised()
-
-        def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
-
-        stubGetWithResponseBody(getCalcListURL("23-24"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlforTYS24, 200, successCalcDetailsExpectedJsonFull)
-
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+            result.body mustBe
+              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
         }
       }
 
-      "return the calculation details when called with TYS tax year 24/25" in new Setup {
+            "return the calculation details when called with TYS tax year 2024" in new Setup {
+              authorised()
+              val getCalcList1896 = s"/income-tax/view/calculations/liability/23-24/$successNino"
+
+              stubGetWithResponseBody(getCalcList1896, 200, listCalcResponse)
+              stubGetWithResponseBody(s"/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
+
+              whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
+                .withHttpHeaders(mtditidHeader, authorization, correlationId)
+                .get()) {
+                result =>
+                  result.status mustBe 200
+                  result.body mustBe
+                    Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              }
+            }
+
+            "return the calculation details when called with TYS tax year 2025" in new Setup {
+              val getCalcList1896 = s"/income-tax/view/calculations/liability/24-25/$successNino"
+              authorised()
+
+              stubGetWithResponseBody(getCalcList1896, 200, listCalcResponse)
+              stubGetWithResponseBody(s"/income-tax/v1/24-25/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
+
+              whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")
+                .withHttpHeaders(mtditidHeader, authorization, correlationId)
+                .get()) {
+                result =>
+                  result.status mustBe 200
+                  result.body mustBe
+                    Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              }
+            }
+
+
+      "return a INTERNAL_SERVER_ERROR when IF returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+
         authorised()
 
-        def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
+        stubGetWithResponseBody(ifGetCalcListUrl26, 500, response)
 
-        stubGetWithResponseBody(getCalcListURL("24-25"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlforTYS25, 200, successCalcDetailsExpectedJsonFull)
-
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
-        }
-      }
-
-      "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
-
-        authorised()
-
-        stubGetWithResponseBody(calcListLegacyUrl, 500, response)
-
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026")
+          .withHttpHeaders(mtditidHeader, authorization, correlationId)
           .get()) {
           result =>
             result.status mustBe 500
@@ -138,16 +117,15 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
+        stubGetWithResponseBody("/income-tax/25-26/view/AA123123A/calculations-summary", 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 500, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026")
+          .withHttpHeaders(mtditidHeader, authorization, correlationId)
           .get()) {
           result =>
             result.status mustBe 500
@@ -157,7 +135,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from list calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
         val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
 
         authorised()
@@ -175,16 +153,15 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
+        stubGetWithResponseBody("/income-tax/25-26/view/AA123123A/calculations-summary", 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 503, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026")
+          .withHttpHeaders(mtditidHeader, authorization, correlationId)
           .get()) {
           result =>
             result.status mustBe 503
@@ -194,13 +171,15 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return a NO_CONTENT when if returns an NOT_FOUND from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        authorised()
-        stubGetWithResponseBody(ifUrlForCalculationList, 404, response)
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .withQueryStringParameters(("taxYear","2024"))
+        authorised()
+
+        stubGetWithResponseBody("/income-tax/25-26/view/AA123123A/calculations-summary", 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 404, response)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026")
+          .withHttpHeaders(mtditidHeader, authorization, correlationId)
           .get()) {
           result =>
             result.status mustBe 204
@@ -208,8 +187,10 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return a NO_CONTENT when des returns an NOT_FOUND from get calc details legacy" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+
         authorised()
+
         stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 404, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
@@ -222,7 +203,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return a 204 when des returns an 404" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
 
@@ -241,31 +222,30 @@ class CalculationDetailsHipITest extends AnyWordSpec
 
       "return the calc details" in new Setup {
         agentAuthorised()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifGetCalcListUrl26, 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader, authorization)
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
+          .withHttpHeaders(mtditidHeader, authorization, correlationId)
           .get()) {
           result =>
             result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+            result.body mustBe
+              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
         }
-
       }
 
-      "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
+
+      "return a INTERNAL_SERVER_ERROR when IF returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 500, response)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 500, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
+        whenReady(buildClient(
+          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
@@ -275,16 +255,17 @@ class CalculationDetailsHipITest extends AnyWordSpec
         }
       }
 
-      "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
+
+      "return a INTERNAL_SERVER_ERROR when HIP returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
+        stubGetWithResponseBody(ifGetCalcListUrl26, 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 500, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
+        whenReady(buildClient(
+          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
@@ -294,15 +275,15 @@ class CalculationDetailsHipITest extends AnyWordSpec
         }
       }
 
-      "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from list calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
+
+      "return a SERVICE_UNAVAILABLE when IF returns an SERVICE_UNAVAILABLE from list calc details" in new Setup {
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 503, response)
+        stubGetWithResponseBody(ifGetCalcListUrl26, 503, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
@@ -312,16 +293,15 @@ class CalculationDetailsHipITest extends AnyWordSpec
         }
       }
 
-      "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-        val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
+      "return a SERVICE_UNAVAILABLE when HIP returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
+        val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
-        stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
+        stubGetWithResponseBody(ifGetCalcListUrl26, 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalculationDetails, 503, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
@@ -332,7 +312,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return a 204 when des returns an 404" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
+        val response: String = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
 
@@ -345,151 +325,149 @@ class CalculationDetailsHipITest extends AnyWordSpec
             result.status mustBe 204
         }
       }
-
     }
   }
 
-  "get calculation details with calcId" when {
+    "get calculation details with calcId" when {
 
-    "the user is an individual" should {
+      "the user is an individual" should {
 
-      "return the calculation details" in new Setup {
-        authorised()
+        "return the calculation details" in new Setup {
+          authorised()
 
-        stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+          whenReady(buildClient(
+            s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
+            .withHttpHeaders(mtditidHeader, authorization, correlationId)
+            .get()) {
+            result =>
+              result.status mustBe 200
+          }
+
         }
 
-      }
 
-      "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+        "return a INTERNAL_SERVER_ERROR when HIP returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
+          val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
-        authorised()
+          authorised()
 
-        stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 500, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 500
-            result.body mustBe
-              """{"code":"ERROR","reason":"error"}"""
+          whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026")
+            .withHttpHeaders(mtditidHeader, authorization)
+            .get()) {
+            result =>
+              result.status mustBe 500
+              result.body mustBe
+                """{"code":"ERROR","reason":"error"}"""
+          }
+        }
+
+        "return a SERVICE_UNAVAILABLE when HIP returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
+          val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+
+          authorised()
+
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 503, response)
+
+          whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026")
+            .withHttpHeaders(mtditidHeader, authorization)
+            .get()) {
+            result =>
+              result.status mustBe 503
+              result.body mustBe
+                """{"code":"ERROR","reason":"error"}"""
+          }
+        }
+
+        "return a 204 when IF returns an 404" in new Setup {
+          val response: String = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
+
+          authorised()
+
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 404, response)
+
+          whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026")
+            .withHttpHeaders(mtditidHeader, authorization)
+            .get()) {
+            result =>
+              result.status mustBe 204
+          }
         }
       }
 
-      "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+      "the user is an agent" should {
 
-        authorised()
+        "return the calc details" in new Setup {
+          agentAuthorised()
 
-        stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 503
-            result.body mustBe
-              """{"code":"ERROR","reason":"error"}"""
+          whenReady(buildClient(
+            s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
+            .withHttpHeaders(mtditidHeader, authorization)
+            .get()) {
+            result =>
+              result.status mustBe 200
+              result.body mustBe
+                Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+          }
+
         }
-      }
 
-      "return a 204 when IF returns an 404" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
+        "return a INTERNAL_SERVER_ERROR when HIP returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
+          val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
-        authorised()
+          authorised()
 
-        stubGetWithResponseBody(desUrlForCalculationDetails, 404, response)
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 500, response)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 204
+          whenReady(buildClient(
+            s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
+            .withHttpHeaders(mtditidHeader, authorization)
+            .get()) {
+            result =>
+              result.status mustBe 500
+              result.body mustBe
+                """{"code":"ERROR","reason":"error"}"""
+          }
+        }
+
+        "return a SERVICE_UNAVAILABLE when HIP returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
+          val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
+
+          authorised()
+
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 503, response)
+
+          whenReady(buildClient(
+            s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
+            .withHttpHeaders(mtditidHeader, authorization)
+            .get()) {
+            result =>
+              result.status mustBe 503
+              result.body mustBe
+                """{"code":"ERROR","reason":"error"}"""
+          }
+        }
+
+        "return a 204 when des returns an 404" in new Setup {
+          val response: String = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
+
+          authorised()
+
+          stubGetWithResponseBody(hipUrlForCalculationDetails, 404, response)
+
+          whenReady(buildClient(
+            s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
+            .withHttpHeaders(mtditidHeader, authorization)
+            .get()) {
+            result =>
+              result.status mustBe 204
+          }
         }
       }
     }
-
-    "the user is an agent" should {
-
-      "return the calc details" in new Setup {
-        agentAuthorised()
-
-        stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
-
-        whenReady(buildClient(
-          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
-        }
-
-      }
-
-      "return a INTERNAL_SERVER_ERROR when des returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-
-        authorised()
-
-        stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
-
-        whenReady(buildClient(
-          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 500
-            result.body mustBe
-              """{"code":"ERROR","reason":"error"}"""
-        }
-      }
-
-      "return a SERVICE_UNAVAILABLE when des returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
-
-        authorised()
-
-        stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
-
-        whenReady(buildClient(
-          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 503
-            result.body mustBe
-              """{"code":"ERROR","reason":"error"}"""
-        }
-      }
-
-      "return a 204 when des returns an 404" in new Setup {
-        val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
-
-        authorised()
-
-        stubGetWithResponseBody(desUrlForCalculationDetails, 404, response)
-
-        whenReady(buildClient(
-          s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 204
-        }
-      }
-
-    }
-  }
 }

@@ -52,6 +52,7 @@ trait AppConfig {
   def confidenceLevel: Int
   val useGetCalcListIFPlatform: Boolean
   val useGetCalcListHiPlatform: Boolean
+  val useGetCalcDetailsHipPlatform: Boolean
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -82,6 +83,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
 
   lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListIFPlatform")
   lazy val useGetCalcListHiPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListHIPlatform")
+  lazy val useGetCalcDetailsHipPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcDetailHIPlatform")
 
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,45 +14,44 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.httpParsers.hip
 
-import models._
+import connectors.httpParsers.APIParser
+import models.hip.CalculationHipResponseModel
+import models.{ErrorBodyModel, ErrorModel}
 import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
-import utils.PagerDutyHelper._
+import utils.PagerDutyHelper.pagerDutyLog
 
-object GetCalculationListHttpParser extends APIParser with Logging {
-  type GetCalculationListResponse = Either[ErrorModel, Seq[GetCalculationListModel]]
+object HipGetCalculationDetailsHttpParser extends APIParser with Logging {
+  type HipGetCalculationDetailsResponse = Either[ErrorModel, CalculationHipResponseModel]
 
-  override val parserName: String = "GetCalculationListHttpParser"
+  override val parserName: String = "CalculationDetailsHttpParser"
 
-  implicit object GetCalculationListHttpReads extends HttpReads[GetCalculationListResponse] {
-    override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponse = {
+  implicit object GetCalculationDetailsHttpReads extends HttpReads[HipGetCalculationDetailsResponse] {
+    override def read(method: String, url: String, response: HttpResponse): HipGetCalculationDetailsResponse = {
       response.status match {
-        case OK =>
-          val jsonArray = (response.json \ "calculationsSummary").getOrElse(response.json)
-          jsonArray.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](
+        case OK => response.json.validate[CalculationHipResponseModel].fold[HipGetCalculationDetailsResponse](
           validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )
         case NOT_FOUND =>
-          logger.info(s"[GetCalculationListHttpReads]: $NOT_FOUND converted to $NO_CONTENT")
+          logger.info(s"[CalculationDetailsHttpReads]: $NOT_FOUND converted to $NO_CONTENT")
           Left(ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
         case INTERNAL_SERVER_ERROR =>
-          logger.error(s"[GetCalculationListHttpReads]:=>ERROR")
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleIFError(response)
         case SERVICE_UNAVAILABLE =>
           pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
           handleIFError(response)
-        case BAD_REQUEST | CONFLICT | UNPROCESSABLE_ENTITY | FORBIDDEN =>
+        case BAD_REQUEST | CONFLICT | UNPROCESSABLE_ENTITY =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
           handleIFError(response)
         case _ =>
           pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
-          handleIFError(response, Some(INTERNAL_SERVER_ERROR))
+          handleIFError(response)
       }
     }
   }
