@@ -31,12 +31,12 @@ class HipGetCalculationsDataConnector @Inject()(http: HttpClientV2,
                                                (implicit ec: ExecutionContext) extends HipConnector with Logging {
 
   def getCalculationsData(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[HipGetCalculationDetailsResponse] = {
-    val url = s"${appConfig.hipBaseUrl}/income-tax/v1/$taxYear/view/calculations/liability/$nino/$calculationId"
+    val url = s"${appConfig.hipBaseUrl}/itsa/income-tax/v1/$taxYear/view/calculations/liability/$nino/$calculationId"
 
     val correlationId = CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
     val hipHeaders = Seq((HeaderNames.authorisation, getBasicAuthValue("5294")), correlationId.asHeader())
 
-    logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${url} - ${hipHeaders} ")
+    logger.debug(s"[HipGetCalculationsDataConnector][getCalculationsData] - URL: ${url} - ${hipHeaders} ")
 
     http
       .get(url"$url")
