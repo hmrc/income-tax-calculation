@@ -283,7 +283,8 @@ object HipGetCalculationDetailsConstants {
       )),
       transitionProfit = Some(TransitionProfit(
         totalTaxableTransitionProfit = Some(300)
-      ))
+      )),
+      highIncomeChildBenefitCharge = None
     )),
     messages = None
   )
