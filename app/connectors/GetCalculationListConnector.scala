@@ -52,7 +52,6 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClient,
   }
 
   def iFCall(urlString: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-    logger.error(s"[getCalculationList][getCalculationList] => GET URL: -$urlString-")
     httpClient.GET[HttpResponse](url = urlString)(HttpReads[HttpResponse], hc, ec).map {
       response =>
         logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
