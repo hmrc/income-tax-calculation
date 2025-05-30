@@ -37,7 +37,7 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     val hipUrlForListCalcWithTaxYear = s"/itsd/calculations/liability/$successNino\\?taxYear=$taxYear"
 
     val desUrlForCalculationDetails = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
-    val hipUrlForCalculationDetails = s"/income-tax/v1/$taxYearUpdated/view/calculations/liability/$successNino/$calculationId"
+    val hipUrlForCalculationDetails = s"/itsa/income-tax/v1/$taxYearUpdated/view/calculations/liability/$successNino/$calculationId"
     val ifUrlForTYS24 = s"/income-tax/view/calculations/liability/23-24/$successNino/$calculationId"
     val ifUrlForTYS25 = s"/income-tax/view/calculations/liability/24-25/$successNino/$calculationId"
     val ifUrlForTYS26 = s"/income-tax/view/calculations/liability/25-26/$successNino/$calculationId"

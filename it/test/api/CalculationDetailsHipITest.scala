@@ -69,7 +69,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
               val getCalcList1896 = s"/income-tax/view/calculations/liability/23-24/$successNino"
 
               stubGetWithResponseBody(getCalcList1896, 200, listCalcResponse)
-              stubGetWithResponseBody(s"/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
+              stubGetWithResponseBody(s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
               whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
                 .withHttpHeaders(mtditidHeader, authorization, correlationId)
@@ -86,7 +86,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
               authorised()
 
               stubGetWithResponseBody(getCalcList1896, 200, listCalcResponse)
-              stubGetWithResponseBody(s"/income-tax/v1/24-25/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
+              stubGetWithResponseBody(s"/itsa/income-tax/v1/24-25/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
               whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")
                 .withHttpHeaders(mtditidHeader, authorization, correlationId)
