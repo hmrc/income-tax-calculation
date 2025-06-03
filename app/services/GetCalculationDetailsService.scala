@@ -79,23 +79,22 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   }
 
   def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
-
-    if(appConfig.useGetCalcDetailsHipPlatform) {
-      hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
-        case Right(value) => Right(Json.toJson(value))
-        case Left(error) => Left(error)
-      }
-    } else {
-
       TaxYear.convert(taxYear) match {
         case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
           case Right(value) => Right(Json.toJson(value))
           case Left(error) => Left(error)
         }
         case Right(year) if year >= specificTaxYear =>
-          calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId).collect {
-            case Right(value) => Right(Json.toJson(value))
-            case Left(error) => Left(error)
+          if(appConfig.useGetCalcDetailsHipPlatform) {
+            hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
+              case Right(value) => Right(Json.toJson(value))
+              case Left(error) => Left(error)
+            }
+          } else {
+            calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId).collect {
+              case Right(value) => Right(Json.toJson(value))
+              case Left(error) => Left(error)
+            }
           }
         case Right(_) => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
           case Right(value) => Right(Json.toJson(value))
@@ -104,5 +103,4 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
         case Left(error) => throw new RuntimeException(error)
       }
     }
-  }
 }
