@@ -45,7 +45,8 @@ case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        endOfYearEstimate: Option[EndOfYearEstimate],
                        pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
                        otherIncome: Option[OtherIncome],
-                       transitionProfit: Option[TransitionProfit]
+                       transitionProfit: Option[TransitionProfit],
+                       highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitCharge]
                       )
 
 object Calculation {
@@ -201,5 +202,17 @@ case class TransitionProfit(totalTaxableTransitionProfit: Option[Int] = None)
 
 object TransitionProfit {
   implicit val format: OFormat[TransitionProfit] = Json.format[TransitionProfit]
+}
+
+
+case class HighIncomeChildBenefitCharge(adjustedNetIncome: BigDecimal,
+                                        amountOfChildBenefitReceived: BigDecimal,
+                                        incomeThreshold: BigDecimal,
+                                        childBenefitChargeTaper: BigDecimal,
+                                        rate: Short,
+                                        highIncomeBenefitCharge: BigDecimal)
+
+object HighIncomeChildBenefitCharge {
+  implicit val format: OFormat[HighIncomeChildBenefitCharge] = Json.format[HighIncomeChildBenefitCharge]
 }
 
