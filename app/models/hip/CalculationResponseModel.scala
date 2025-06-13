@@ -42,6 +42,7 @@ object CalculationHipResponseModel {
   "crystallised" boolean has been removed from the metadata object in new API
  */
 case class Metadata(calculationTimestamp: Option[String],
+                    calculationType: String,
                     calculationReason: String,
                     periodFrom: LocalDate,
                     periodTo: LocalDate)

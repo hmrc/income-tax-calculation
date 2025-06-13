@@ -27,6 +27,7 @@ object HipGetCalculationDetailsConstants {
   val successFullModelGetCalculationDetailsHip: CalculationHipResponseModel = CalculationHipResponseModel(
     metadata = Metadata(
       calculationTimestamp = Some("2022-07-15T09:35:15.094Z"),
+      calculationType = "IY",
       calculationReason = "Calculation reason",
       periodFrom = LocalDate.of(2023, 3, 2),
       periodTo = LocalDate.of(2023, 3, 10)),
@@ -292,6 +293,7 @@ object HipGetCalculationDetailsConstants {
   val successModelJson: String = """{
                            |  "metadata" : {
                            |    "calculationTimestamp" : "2022-07-15T09:35:15.094Z",
+                           |    "calculationType" : "IY",
                            |    "calculationReason" : "Calculation reason",
                            |    "periodFrom" : "2023-03-02",
                            |    "periodTo" : "2023-03-10"
@@ -313,7 +315,7 @@ object HipGetCalculationDetailsConstants {
                            |      "giftOfInvestmentsAndPropertyToCharity" : 555,
                            |      "lossesAppliedToGeneralIncome" : 345,
                            |      "qualifyingLoanInterestFromInvestments" : 150000,
-                           |      "postCessationTradeReceipts" : 123.56,
+                           |      "post-cessationTradeReceipts" : 123.56,
                            |      "paymentsToTradeUnionsForDeathBenefits" : 10,
                            |      "grossAnnuityPayments" : 23.21,
                            |      "pensionContributions" : 1234.78

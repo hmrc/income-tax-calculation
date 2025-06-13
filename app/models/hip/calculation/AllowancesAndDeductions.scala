@@ -38,12 +38,23 @@ object AllowancesAndDeductions {
       (__ \ "giftOfInvestmentsAndPropertyToCharity").readNullable[Int] and
       (__ \ "lossesAppliedToGeneralIncome").readNullable[Int] and
       (__ \ "qualifyingLoanInterestFromInvestments").readNullable[BigDecimal] and
-      (__ \ "postCessationTradeReceipts").readNullable[BigDecimal] and
+      (__ \ "post-cessationTradeReceipts").readNullable[BigDecimal] and
       (__ \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal] and
       (__ \ "grossAnnuityPayments").readNullable[BigDecimal] and
       (__ \ "pensionContributions").readNullable[BigDecimal])(AllowancesAndDeductions.apply _)
 
-  implicit val writes: Writes[AllowancesAndDeductions] = Json.writes[AllowancesAndDeductions]
+  implicit val writes: OWrites[AllowancesAndDeductions] = (
+    (JsPath \ "personalAllowance").writeNullable[Int] and
+      (JsPath \ "marriageAllowanceTransferOut").writeNullable[MarriageAllowanceTransferOut] and
+      (JsPath \ "reducedPersonalAllowance").writeNullable[Int] and
+      (JsPath \ "giftOfInvestmentsAndPropertyToCharity").writeNullable[Int] and
+      (JsPath \ "lossesAppliedToGeneralIncome").writeNullable[Int] and
+      (JsPath \ "qualifyingLoanInterestFromInvestments").writeNullable[BigDecimal] and
+      (JsPath \ "post-cessationTradeReceipts").writeNullable[BigDecimal] and
+      (JsPath \ "paymentsToTradeUnionsForDeathBenefits").writeNullable[BigDecimal] and
+      (JsPath \ "grossAnnuityPayments").writeNullable[BigDecimal] and
+      (JsPath \ "pensionContributions").writeNullable[BigDecimal]
+    ) (unlift(AllowancesAndDeductions.unapply))
 }
 
 case class MarriageAllowanceTransferOut(

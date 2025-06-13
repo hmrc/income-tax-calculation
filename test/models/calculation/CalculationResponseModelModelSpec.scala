@@ -34,6 +34,7 @@ class CalculationResponseModelModelSpec extends TestSuite {
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+          calculationType = Some("crystallisation"),
           crystallised = Some(true),
           calculationReason = Some("customerRequest"),
           periodFrom = Some(LocalDate.of(taxYear-1,1,1)),
@@ -45,6 +46,7 @@ class CalculationResponseModelModelSpec extends TestSuite {
                             |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
                             |  "metadata" : {
                             |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+                            |    "calculationType" : "crystallisation",
                             |    "crystallised" : true,
                             |    "calculationReason": "customerRequest",
                             |    "periodFrom": "2019-01-01",
