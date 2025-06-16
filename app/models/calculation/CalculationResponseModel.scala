@@ -41,7 +41,7 @@ object CalculationResponseModel {
 
 case class Metadata(
                      calculationTimestamp: Option[String],
-                     calculationType: Option[String],
+                     calculationType: String,
                      crystallised: Option[Boolean],
                      calculationReason: Option[String],
                      periodFrom: Option[LocalDate],

@@ -272,7 +272,7 @@ object GetCalculationDetailsConstants {
       transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = Some("crystallisation"),
+      calculationType = "crystallisation",
       crystallised = Some(true),
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2019, 1, 1)),
@@ -436,7 +436,7 @@ object GetCalculationDetailsConstants {
       transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = Some("crystallisation"),
+      calculationType = "crystallisation",
       crystallised = Some(true),
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2019, 1, 1)),
