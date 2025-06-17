@@ -26,8 +26,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class HipCalculationLegacyListConnector @Inject()
-(http: HttpClientV2, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends HipConnector with Logging {
+class HipCalculationLegacyListConnector @Inject()(http: HttpClientV2, val appConfig: AppConfig)
+                                                 (implicit ec: ExecutionContext) extends HipConnector with Logging {
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 

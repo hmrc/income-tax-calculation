@@ -24,14 +24,15 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers{
 
   lazy val connector: GetCalculationListConnector = app.injector.instanceOf[GetCalculationListConnector]
 
-  lazy val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
+  lazy val httpClient: HttpClientV2 = app.injector.instanceOf[HttpClientV2]
 
   def appConfig(ifHost: String): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
     override val ifBaseUrl: String = s"http://$ifHost:$wireMockPort"

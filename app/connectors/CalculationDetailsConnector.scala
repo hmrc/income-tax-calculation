@@ -28,7 +28,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class CalculationDetailsConnector @Inject()(httpClient: HttpClientV2,
                                             val appConfig: AppConfig)
                                            (implicit ec: ExecutionContext) extends IFConnector with Logging {
-  import uk.gov.hmrc.http.HttpReads.Implicits._
 
   def getCalculationDetails(taxYear: String, nino: String, calculationId: String)(implicit hc: HeaderCarrier): Future[CalculationDetailResponse]  = {
     val getCalculationDetailsUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYear/$nino/$calculationId"
