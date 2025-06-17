@@ -18,13 +18,14 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.DeclareCrystallisationHttpParser._
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclareCrystallisationConnector @Inject()(httpClient: HttpClient,
+class DeclareCrystallisationConnector @Inject()(httpClient: HttpClientV2,
                                                 val appConfig: AppConfig)
                                                (implicit ec: ExecutionContext) extends IFConnector {
 
@@ -32,12 +33,14 @@ class DeclareCrystallisationConnector @Inject()(httpClient: HttpClient,
     s"${(taxYear - 1).toString takeRight 2}-${taxYear.toString takeRight 2}"
   }
 
-  def declareCrystallisation(nino: String, taxYear: Int, calculationId: String)(implicit hc: HeaderCarrier): Future[DeclareCrystallisationResponse] ={
+  def declareCrystallisation(nino: String, taxYear: Int, calculationId: String)(implicit hc: HeaderCarrier): Future[DeclareCrystallisationResponse] = {
     val declareCrystallisationUrl: String = appConfig.ifBaseUrl +
       s"/income-tax/${toTaxYearParam(taxYear)}/calculation/$nino/$calculationId/crystallise"
 
     def iFCall(implicit hc: HeaderCarrier): Future[DeclareCrystallisationResponse] = {
-      httpClient.POST[JsValue, DeclareCrystallisationResponse](declareCrystallisationUrl, Json.parse("""{}"""))
+      httpClient.post(url"$declareCrystallisationUrl")
+        .withBody(Json.parse("""{}"""))
+        .execute[DeclareCrystallisationResponse]
     }
 
     iFCall(iFHeaderCarrier(declareCrystallisationUrl, "1780"))
