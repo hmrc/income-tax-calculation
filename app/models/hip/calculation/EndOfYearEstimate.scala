@@ -19,7 +19,7 @@ package models.hip.calculation
 import play.api.libs.json._
 
 case class EndOfYearEstimate(incomeSource: Option[List[IncomeSource]],
-                             totalAllowancesAndDeductions: Option[BigDecimal] = None,
+                             totalAllowancesAndDeductions: Option[Int] = None,
                              totalEstimatedIncome: Option[Int] = None,
                              totalTaxableIncome: Option[Int] = None,
                              incomeTaxAmount: Option[BigDecimal] = None,

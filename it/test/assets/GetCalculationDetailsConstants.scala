@@ -272,6 +272,7 @@ object GetCalculationDetailsConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2019, 1, 1)),
       periodTo = Some(LocalDate.of(2020, 1, 1)))
@@ -309,6 +310,7 @@ object GetCalculationDetailsConstants {
        |  "metadata" : {
        |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
        |    "crystallised" : true,
+       |    "calculationType" : "crystallisation",
        |    "calculationReason": "customerRequest",
        |    "periodFrom": "2019-01-01",
        |    "periodTo": "2020-01-01"
