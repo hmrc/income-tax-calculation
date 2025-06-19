@@ -18,12 +18,13 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.GetBusinessDetailsHttpParser.{GetBusinessDetailsHttpReads, GetBusinessDetailsResponse}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetBusinessDetailsConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends IFConnector {
+class GetBusinessDetailsConnector @Inject()(http: HttpClientV2, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends IFConnector {
 
   def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
 
@@ -37,7 +38,8 @@ class GetBusinessDetailsConnector @Inject()(http: HttpClient, val appConfig: App
     }
 
     def ifCall(implicit hc: HeaderCarrier): Future[GetBusinessDetailsResponse] = {
-      http.GET(url = getBusinessDetailsUrl(nino))(GetBusinessDetailsHttpReads, hc, ec)
+      http.get(url"${getBusinessDetailsUrl(nino)}")
+        .execute[GetBusinessDetailsResponse]
     }
 
     ifCall(iFHeaderCarrier(getBusinessDetailsUrl(nino), "1171"))

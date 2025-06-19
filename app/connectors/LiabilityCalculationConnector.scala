@@ -18,20 +18,23 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.LiabilityCalculationHttpParser._
-import javax.inject.Inject
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class LiabilityCalculationConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
+class LiabilityCalculationConnector @Inject()(http: HttpClientV2, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector {
 
   def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
     val liabilityCalculationUrl: String = appConfig.desBaseUrl +
       s"/income-tax/nino/$nino/taxYear/$taxYear/tax-calculation?crystallise=$crystallise"
 
     def desCall(implicit hc: HeaderCarrier): Future[LiabilityCalculationResponse] = {
-      http.POST[JsValue,LiabilityCalculationResponse](liabilityCalculationUrl, Json.parse("""{}"""))
+      http.post(url"$liabilityCalculationUrl")
+        .withBody(Json.parse("""{}"""))
+        .execute[LiabilityCalculationResponse]
     }
 
     desCall(desHeaderCarrier(liabilityCalculationUrl))

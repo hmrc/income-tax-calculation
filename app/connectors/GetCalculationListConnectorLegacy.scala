@@ -18,13 +18,14 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.GetCalculationListHttpParserLegacy._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class GetCalculationListConnectorLegacy @Inject()
-(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector with IFConnector {
+(http: HttpClientV2, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends DesConnector with IFConnector {
 
   def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
 
@@ -34,7 +35,8 @@ class GetCalculationListConnectorLegacy @Inject()
     }
 
     def getCall(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-      http.GET(url = getCalcListUrl)(GetCalculationListHttpReadsLegacy, hc, ec)
+      http.get(url"$getCalcListUrl")
+        .execute[GetCalculationListResponseLegacy]
     }
 
     if (appConfig.useGetCalcListIFPlatform) {

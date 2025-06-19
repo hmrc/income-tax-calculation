@@ -18,13 +18,14 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.PostCalculateIncomeTaxLiabilityHttpParser._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import utils.TaxYear.convertSpecificTaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PostCalculateIncomeTaxLiabilityConnector @Inject()(http: HttpClient, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends IFConnector {
+class PostCalculateIncomeTaxLiabilityConnector @Inject()(http: HttpClientV2, val appConfig: AppConfig)(implicit ec: ExecutionContext) extends IFConnector {
   val PostCalculateIncomeTaxLiability = "1897"
 
   def calculateLiability(nino: String, taxYear: String, crystallise: Boolean)(implicit hc: HeaderCarrier): Future[PostCalculateIncomeTaxLiabilityResponse] = {
@@ -33,7 +34,8 @@ class PostCalculateIncomeTaxLiabilityConnector @Inject()(http: HttpClient, val a
       s"/income-tax/calculation/$taxYearParameter/$nino?crystallise=$crystallise"
 
     def ifCall(implicit hc: HeaderCarrier): Future[PostCalculateIncomeTaxLiabilityResponse] = {
-      http.POSTEmpty(liabilityIfCalculationUrl)
+      http.post(url"$liabilityIfCalculationUrl")
+        .execute[PostCalculateIncomeTaxLiabilityResponse]
     }
 
     ifCall(iFHeaderCarrier(liabilityIfCalculationUrl, PostCalculateIncomeTaxLiability))
