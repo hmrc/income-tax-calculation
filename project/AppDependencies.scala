@@ -18,7 +18,7 @@ import sbt._
 
 object AppDependencies {
 
-  private val bootstrapPlay30Version = "8.6.0"
+  private val bootstrapPlay30Version = "9.13.0"
   private val mongoPlay30Version = "2.6.0"
   private val scalaTestVersion = "3.2.9"
   private val scalaTestPlusVersion = "7.0.0"
@@ -40,6 +40,6 @@ object AppDependencies {
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8"               % "test",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % scalaTestPlusVersion   % "test",
     "com.github.tomakehurst"  %  "wiremock"                 % wiremockVersion        % "test",
-    "org.scalamock"           %% "scalamock"                % "5.2.0"                % "test"
+    "org.scalamock"           %% "scalamock"                % "7.3.3"                % "test"
   )
 }
