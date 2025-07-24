@@ -237,7 +237,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
 
     "the user is an agent" should {
 
-      "return the calc details" in new Setup {
+      "return the calc details when called with the tax year 2026" in new Setup {
         agentAuthorised()
 
         stubGetWithResponseBody(ifGetCalcListUrl26, 200, listCalcResponse)
@@ -253,11 +253,27 @@ class CalculationDetailsHipITest extends AnyWordSpec
         }
       }
 
+      "return the calculation details when called with the tax year 2019" in new Setup {
+        agentAuthorised()
+
+        stubGetWithResponseBody(s"/itsd/calculations/liability/$successNino\\?taxYear=2019", 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(s"/itsa/income-tax/v1/18-19/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2019")
+          .withHttpHeaders(mtditidHeader, authorization, correlationId)
+          .get()) {
+          result =>
+            result.status mustBe 200
+            result.body mustBe
+              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+        }
+      }
+
 
       "return a INTERNAL_SERVER_ERROR when IF returns an INTERNAL_SERVER_ERROR from list calc details" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
-        authorised()
+        agentAuthorised()
 
         stubGetWithResponseBody(hipUrlForCalculationDetails, 500, response)
 
@@ -276,7 +292,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       "return a INTERNAL_SERVER_ERROR when HIP returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
-        authorised()
+        agentAuthorised()
 
         stubGetWithResponseBody(ifGetCalcListUrl26, 200, listCalcResponse)
         stubGetWithResponseBody(hipUrlForCalculationDetails, 500, response)
@@ -296,7 +312,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       "return a SERVICE_UNAVAILABLE when IF returns an SERVICE_UNAVAILABLE from list calc details" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
-        authorised()
+        agentAuthorised()
 
         stubGetWithResponseBody(ifGetCalcListUrl26, 503, response)
 
@@ -313,7 +329,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       "return a SERVICE_UNAVAILABLE when HIP returns an SERVICE_UNAVAILABLE from get calc details" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
-        authorised()
+        agentAuthorised()
 
         stubGetWithResponseBody(ifGetCalcListUrl26, 200, listCalcResponse)
         stubGetWithResponseBody(hipUrlForCalculationDetails, 503, response)
@@ -331,7 +347,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       "return a 204 when des returns an 404" in new Setup {
         val response: String = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
-        authorised()
+        agentAuthorised()
 
         stubGetWithResponseBody(desUrlForListCalcWithoutTaxYear, 404, response)
 
@@ -349,19 +365,34 @@ class CalculationDetailsHipITest extends AnyWordSpec
 
     "the user is an individual" should {
 
-      "return the calculation details" in new Setup {
+      "return the calculation details when called with the tax year 2026" in new Setup {
         authorised()
 
         stubGetWithResponseBody(hipUrlForCalculationDetails, 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
         whenReady(buildClient(
           s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2026", additionalCookies = agentClientCookie)
-          .withHttpHeaders(mtditidHeader, authorization, correlationId)
+          .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
             result.status mustBe 200
         }
 
+      }
+
+      "return the calculation details when called with the tax year 2019" in new Setup {
+        authorised()
+
+        stubGetWithResponseBody(s"/itsa/income-tax/v1/18-19/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2019")
+          .withHttpHeaders(mtditidHeader, authorization)
+          .get()) {
+          result =>
+            result.status mustBe 200
+            result.body mustBe
+              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+        }
       }
 
 
@@ -417,7 +448,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
 
     "the user is an agent" should {
 
-      "return the calc details" in new Setup {
+      "return the calc details when called with the tax year 2026" in new Setup {
         agentAuthorised()
 
         stubGetWithResponseBody(hipUrlForCalculationDetails, 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
@@ -432,6 +463,21 @@ class CalculationDetailsHipITest extends AnyWordSpec
               Json.toJson(successFullModelGetCalculationDetailsHip).toString()
         }
 
+      }
+
+      "return the calculation details when called with the tax year 2019" in new Setup {
+        authorised()
+
+        stubGetWithResponseBody(s"/itsa/income-tax/v1/18-19/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calc-id/$calculationId/calculation-details?taxYear=2019")
+          .withHttpHeaders(mtditidHeader, authorization)
+          .get()) {
+          result =>
+            result.status mustBe 200
+            result.body mustBe
+              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+        }
       }
 
       "return a INTERNAL_SERVER_ERROR when HIP returns an INTERNAL_SERVER_ERROR from get calc details" in new Setup {
