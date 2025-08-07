@@ -97,7 +97,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
           }
         }
       case Right(_) =>
-        if (appConfig.useGetCalcDetailsLegacyToHipPlatform) {
+        if (appConfig.useGetCalcDetailsHipPlatformR17) {
           hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
             case Right(value) => Right(Json.toJson(value))
             case Left(error) => Left(error)

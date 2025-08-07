@@ -40,7 +40,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
         ("feature-switch.useGetCalcListHIPlatform" -> enableHip) +:
         ("feature-switch.useGetCalcListIFPlatform" -> !enableHip) +:
         ("feature-switch.useGetCalcDetailHIPlatform" -> enableHip) +:
-        ("feature-switch.useGetCalcDetailsLegacyToHipPlatform" -> enableHip) +:
+        ("feature-switch.useGetCalcDetailsHipPlatformR17" -> enableHip) +:
         servicesToUrlConfig: _*
     )
     .build()
