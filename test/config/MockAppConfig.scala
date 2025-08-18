@@ -50,8 +50,6 @@ class MockAppConfig extends AppConfig {
 
   override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
-  override val useGetCalcListIFPlatform: Boolean = true
-
   def config(encrypt: Boolean = true): AppConfig = new AppConfig() {
 
     override val incomeTaxSubmissionStubUrl: String = "/stub"
@@ -85,8 +83,6 @@ class MockAppConfig extends AppConfig {
     override val confidenceLevel = ConfigFactory.load().getInt("microservice.services.auth.confidenceLevel")
 
     override val hipBaseUrl: String = "/hip"
-    override val useGetCalcListHiPlatform: Boolean = false
-    override val useGetCalcListIFPlatform: Boolean = true
 
     override def hipSecret(apiNumber: String): String = "secret"
     override def hipClientId(apiNumber: String): String = "clientId"
@@ -96,7 +92,6 @@ class MockAppConfig extends AppConfig {
   }
 
   override val hipBaseUrl: String = "/hip"
-  override val useGetCalcListHiPlatform: Boolean = false
   override val useGetCalcDetailsHipPlatform: Boolean = false
   override val useGetCalcDetailsHipPlatformR17: Boolean = false
   override def hipSecret(apiNumber: String): String = "secret"

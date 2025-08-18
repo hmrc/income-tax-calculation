@@ -20,7 +20,7 @@ import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationsData
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
-import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
+import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
 import org.scalamock.handlers.{CallHandler2, CallHandler3, CallHandler4}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
@@ -37,12 +37,11 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val mockSingleCalculationConnectorLegacy: CalculationDetailsConnectorLegacy = mock[CalculationDetailsConnectorLegacy]
   val mockSingleCalculationConnector: CalculationDetailsConnector = mock[CalculationDetailsConnector]
   val mockListCalculationConnector: GetCalculationListConnector = mock[GetCalculationListConnector]
-  val mockListCalculationConnectorLegacy: GetCalculationListConnectorLegacy = mock[GetCalculationListConnectorLegacy]
   val mockHipCalculationListConnectorLegacy: HipCalculationLegacyListConnector = mock[HipCalculationLegacyListConnector]
   val mockHipCalculationDetailsConnector: HipGetCalculationsDataConnector = mock[HipGetCalculationsDataConnector]
 
   val service = new GetCalculationDetailsService(mockSingleCalculationConnectorLegacy, mockSingleCalculationConnector,
-    mockListCalculationConnector, mockListCalculationConnectorLegacy, mockHipCalculationListConnectorLegacy,
+    mockListCalculationConnector, mockHipCalculationListConnectorLegacy,
     mockHipCalculationDetailsConnector, mockAppConfig)
 
   val nino = "AA123456A"
@@ -81,7 +80,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       )
 
   def listCalculationDetailsSuccessLegacy: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
-    (mockListCalculationConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
+    (mockHipCalculationListConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
         Future.successful(
@@ -95,12 +94,12 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
   def listCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
-    (mockListCalculationConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
+    (mockHipCalculationListConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
   def emptyListCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
-    (mockListCalculationConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
+    (mockHipCalculationListConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(Future.successful(Right(Seq.empty[GetCalculationListModelLegacy])))
 

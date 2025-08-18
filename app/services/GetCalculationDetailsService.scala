@@ -19,7 +19,7 @@ package services
 import config.AppConfig
 import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
-import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector, GetCalculationListConnectorLegacy}
+import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{ErrorBodyModel, ErrorModel}
 import play.api.Logging
 import play.api.http.Status.NO_CONTENT
@@ -33,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
                                              calculationDetailsConnector: CalculationDetailsConnector,
                                              listCalculationDetailsConnector: GetCalculationListConnector,
-                                             listCalculationDetailsConnectorLegacy: GetCalculationListConnectorLegacy,
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
                                              hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
                                              val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
@@ -57,14 +56,8 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
   private def getLegacyCalcListResult(nino: String, taxYear: Option[String])
                                      (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-    if (appConfig.useGetCalcListHiPlatform) {
       logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
       calcListHipLegacyConnector.calcList(nino, taxYear)
-    } else {
-      // DES or IF connection will be used instead
-      logger.info(s"[GetCalculationDetailsService][listCalculationDetailsConnectorLegacy]")
-      listCalculationDetailsConnectorLegacy.calcList(nino, taxYear)
-    }
   }
 
   private def handleLegacy(nino: String, taxYear: Option[String])

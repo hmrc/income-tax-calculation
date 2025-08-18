@@ -17,6 +17,7 @@
 package connectors
 
 import config.BackendAppConfig
+import connectors.hip.HipCalculationLegacyListConnector
 import helpers.WiremockSpec
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModelLegacy}
 import org.scalatest.matchers.must.Matchers
@@ -30,26 +31,25 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSpec with Matchers {
 
-  lazy val connector: GetCalculationListConnectorLegacy = app.injector.instanceOf[GetCalculationListConnectorLegacy]
+  lazy val connector: HipCalculationLegacyListConnector = app.injector.instanceOf[HipCalculationLegacyListConnector]
 
   lazy val httpClient: HttpClientV2 = app.injector.instanceOf[HttpClientV2]
 
-  def appConfig(desHost: String, isCalcMigratedToIF: Boolean = false): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
-    override val desBaseUrl: String = s"http://$desHost:$wireMockPort"
-    override lazy val useGetCalcListIFPlatform: Boolean = isCalcMigratedToIF
+  def appConfig(hipHost: String, isCalcMigratedToIF: Boolean = false): BackendAppConfig = new BackendAppConfig(app.injector.instanceOf[Configuration], app.injector.instanceOf[ServicesConfig]) {
+    override val hipBaseUrl: String = s"http://$hipHost:$wireMockPort"
   }
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
   val taxYear = Some("2021")
-  val url = s"/income-tax/list-of-calculation-results/$nino"
-  val taxYearUrl = s"/income-tax/list-of-calculation-results/$nino\\?taxYear=${taxYear.get}"
+  val url = s"/itsd/calculations/liability/$nino"
+  val taxYearUrl = s"/itsd/calculations/liability/$nino\\?taxYear=${taxYear.get}"
 
   "GetCalculationListConnector" should {
 
     val appConfigWithInternalHost = appConfig("localhost")
-    val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+    val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
     "return a success result" when {
       "DES returns a success with expected JSON" in {
@@ -75,7 +75,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
       "IF returns a success with expected JSON" in {
         val appConfigWithInternalHost = appConfig("localhost", isCalcMigratedToIF = true)
-        val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+        val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
         val response =
           Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
@@ -88,7 +88,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
       "IF returns a success with expected JSON with OptionalTaxYear" in {
         val appConfigWithInternalHost = appConfig("localhost", isCalcMigratedToIF = true)
-        val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+        val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
         val response =
           Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
@@ -103,7 +103,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
   "return a failure result" when {
     val appConfigWithInternalHost = appConfig("localhost")
-    val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+    val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
     "DES returns an 503 error" in {
       val response =
@@ -123,7 +123,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
     "DES returns an 500 when parsing error occurs" in {
       val appConfigWithInternalHost = appConfig("localhost")
-      val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+      val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
       val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")).toString()
 
@@ -137,7 +137,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
     "DES returns an 503 error with OptionalTaxYear" in {
       val appConfigWithInternalHost = appConfig("localhost")
-      val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+      val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
       val response =
         """
@@ -156,7 +156,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
     "DES returns an 500 when parsing error occurs with OptionalTaxYear" in {
       val appConfigWithInternalHost = appConfig("localhost")
-      val connector = new GetCalculationListConnectorLegacy(httpClient, appConfigWithInternalHost)
+      val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
       val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")).toString()
 
