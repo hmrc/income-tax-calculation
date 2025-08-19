@@ -50,8 +50,6 @@ trait AppConfig {
   val useEncryption: Boolean
   val useBusinessDetailsStub: Boolean
   def confidenceLevel: Int
-  val useGetCalcListIFPlatform: Boolean
-  val useGetCalcListHiPlatform: Boolean
   val useGetCalcDetailsHipPlatform: Boolean
   val useGetCalcDetailsHipPlatformR17: Boolean
 }
@@ -82,8 +80,6 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
 
   override val confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
 
-  lazy val useGetCalcListIFPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListIFPlatform")
-  lazy val useGetCalcListHiPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListHIPlatform")
   lazy val useGetCalcDetailsHipPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcDetailHIPlatform")
   lazy val useGetCalcDetailsHipPlatformR17: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcDetailsHipPlatformR17")
 
