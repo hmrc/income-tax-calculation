@@ -83,7 +83,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
 
       "return the calculation details when called with TYS tax year 2024" in new Setup {
         authorised()
-        val getCalcList5624 = s"/income-tax/v1/23-24/view/calculations/liability/$successNino"
+        val getCalcList5624 = s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino"
 
         stubGetWithResponseBody(getCalcList5624, 200, listCalcResponse)
         stubGetWithResponseBody(s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
@@ -99,7 +99,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return the calculation details when called with TYS tax year 2025" in new Setup {
-        val getCalcList5624 = s"/income-tax/v1/24-25/view/calculations/liability/$successNino"
+        val getCalcList5624 = s"/itsa/income-tax/v1/24-25/view/calculations/liability/$successNino"
         authorised()
 
         stubGetWithResponseBody(getCalcList5624, 200, listCalcResponse)

@@ -32,7 +32,7 @@ class HipGetCalculationListConnector @Inject()(httpClient: HttpClientV2,
 
   def getCalculationList5624(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
     val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
-    val getCalculationListUrl: String = appConfig.hipBaseUrl + s"/income-tax/v1/$taxYearRange/view/calculations/liability/$nino"
+    val getCalculationListUrl: String = appConfig.hipBaseUrl + s"/itsa/income-tax/v1/$taxYearRange/view/calculations/liability/$nino"
 
     val correlationId = CorrelationId.fromHeaderCarrier(hc)
       .getOrElse(CorrelationId())

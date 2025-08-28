@@ -42,7 +42,7 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  private def getURL5624(nino: String, taxYearRange: String): String = s"/income-tax/v1/$taxYearRange/view/calculations/liability/$nino"
+  private def getURL5624(nino: String, taxYearRange: String): String = s"/itsa/income-tax/v1/$taxYearRange/view/calculations/liability/$nino"
 
   private def getResponse5624: String = {
     Json.toJson(Seq(GetCalculationListModel(
