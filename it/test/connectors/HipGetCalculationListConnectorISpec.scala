@@ -103,13 +103,9 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
           |""".stripMargin
       stubGetWithResponseBody(getURL5624(nino, "23-24"), SERVICE_UNAVAILABLE, response)
 
-      try {
-        val result = await(connector.getCalculationList5624(nino, taxYear = "2024"))
+      val result = await(connector.getCalculationList5624(nino, taxYear = "2024"))
 
-        result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
-      } catch {
-        case e: Exception => println(s"\n\n\n\n@@@@@@@@@@@@@@@@@@\n${e.getMessage}\n@@@@@@@@@@@@@@@@@@\n\n\n\n")
-      }
+      result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
 
 

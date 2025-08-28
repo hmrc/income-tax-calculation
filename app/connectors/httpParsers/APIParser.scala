@@ -39,7 +39,6 @@ trait APIParser {
   def handleIFError[Response](response: HttpResponse, statusOverride: Option[Int] = None, apiNumber: String = ""): Either[ErrorModel, Response] = {
 
     val status = statusOverride.getOrElse(response.status)
-    println(s"\n\n\n\n@@@@@@@@@@@@@@@@@@\nHANDLING IF ERROR FOR RESPONSE: $response\n@@@@@@@@@@@@@@@@@@\n\n\n\n")
 
     try {
       val json = response.json
@@ -48,23 +47,15 @@ trait APIParser {
       lazy val apiErrors = json.asOpt[ErrorsBodyModel]
 
       (apiError, apiErrors) match {
-        case (Some(apiError), _) => {
-          println(s"\n\n\n\n@@@@@@@@@@@@@@@@@@\nSINGLE API ERROR CASE\n@@@@@@@@@@@@@@@@@@\n\n\n\n")
-          Left(ErrorModel(status, apiError))
-        }
-        case (_, Some(apiErrors)) => {
-          println(s"\n\n\n\n@@@@@@@@@@@@@@@@@@\nMULTIPLE API ERROR CASE\n@@@@@@@@@@@@@@@@@@\n\n\n\n")
-          Left(ErrorModel(status, apiErrors))
-        }
+        case (Some(apiError), _) => Left(ErrorModel(status, apiError))
+        case (_, Some(apiErrors)) => Left(ErrorModel(status, apiErrors))
         case _ =>
-          println(s"\n\n\n\n@@@@@@@@@@@@@@@@@@\nNON VALID ERROR CASE\n@@@@@@@@@@@@@@@@@@\n\n\n\n")
           pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, Some(s"[$parserName][read] Unexpected Json response."))
           Left(ErrorModel(status, ErrorBodyModel.parsingError(apiNumber)))
       }
     } catch {
       case _:
         Exception =>
-        println(s"\n\n\n\n@@@@@@@@@@@@@@@@@@\nEXCEPTION HIT WHEN ATTEMPTING ERROR HANDLING\n@@@@@@@@@@@@@@@@@@\n\n\n\n")
         pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, Some(s"[$parserName][read] Unexpected Json response."))
         Left(ErrorModel(status, ErrorBodyModel.parsingError(apiNumber)))
     }

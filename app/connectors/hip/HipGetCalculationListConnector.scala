@@ -48,10 +48,6 @@ class HipGetCalculationListConnector @Inject()(httpClient: HttpClientV2,
   private def hipCall(urlString: String, headers: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
     httpClient.get(url"$urlString")
       .setHeader(headers: _*)
-      .execute[HttpResponse]
-      .map {response =>
-        logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
-        GetCalculationListHttpReads.read("GET", urlString, response)
-      }
+      .execute[GetCalculationListResponse]
   }
 }
