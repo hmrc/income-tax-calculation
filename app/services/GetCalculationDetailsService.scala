@@ -17,7 +17,7 @@
 package services
 
 import config.AppConfig
-import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationsDataConnector}
+import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{ErrorBodyModel, ErrorModel}
@@ -35,6 +35,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              listCalculationDetailsConnector: GetCalculationListConnector,
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
                                              hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
+                                             hipGetCalculationListConnector: HipGetCalculationListConnector,
                                              val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private val specificTaxYear: Int = TaxYear.taxYear2024
@@ -43,7 +44,15 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   def getCalculationDetails(nino: String, taxYearOption: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
     taxYearOption match {
       case Some(taxYear) if taxYear.toInt >= specificTaxYear =>
-        listCalculationDetailsConnector.getCalculationList(nino, taxYear).flatMap {
+        val list = if(taxYear.toInt >= TaxYear.taxYear2026) {
+          listCalculationDetailsConnector.getCalculationList2083(nino, taxYear)
+        } else if (appConfig.useGetCalcListHip5624) {
+          hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
+        } else {
+          listCalculationDetailsConnector.getCalculationList1896(nino, taxYear)
+        }
+
+        list.flatMap {
           case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
             Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
           case Right(listOfCalculationDetails) =>

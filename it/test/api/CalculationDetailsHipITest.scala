@@ -37,10 +37,10 @@ class CalculationDetailsHipITest extends AnyWordSpec
     .configure(
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
-        ("feature-switch.useGetCalcListHIPlatform" -> enableHip) +:
         ("feature-switch.useGetCalcListIFPlatform" -> !enableHip) +:
         ("feature-switch.useGetCalcDetailHIPlatform" -> enableHip) +:
         ("feature-switch.useGetCalcDetailsHipPlatformR17" -> enableHip) +:
+        ("feature-switch.useGetCalcListHipPlatform5624" -> enableHip) +:
         servicesToUrlConfig: _*
     )
     .build()
@@ -83,9 +83,9 @@ class CalculationDetailsHipITest extends AnyWordSpec
 
       "return the calculation details when called with TYS tax year 2024" in new Setup {
         authorised()
-        val getCalcList1896 = s"/income-tax/view/calculations/liability/23-24/$successNino"
+        val getCalcList5624 = s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino"
 
-        stubGetWithResponseBody(getCalcList1896, 200, listCalcResponse)
+        stubGetWithResponseBody(getCalcList5624, 200, listCalcResponse)
         stubGetWithResponseBody(s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
@@ -99,10 +99,10 @@ class CalculationDetailsHipITest extends AnyWordSpec
       }
 
       "return the calculation details when called with TYS tax year 2025" in new Setup {
-        val getCalcList1896 = s"/income-tax/view/calculations/liability/24-25/$successNino"
+        val getCalcList5624 = s"/itsa/income-tax/v1/24-25/view/calculations/liability/$successNino"
         authorised()
 
-        stubGetWithResponseBody(getCalcList1896, 200, listCalcResponse)
+        stubGetWithResponseBody(getCalcList5624, 200, listCalcResponse)
         stubGetWithResponseBody(s"/itsa/income-tax/v1/24-25/view/calculations/liability/$successNino/$calculationId", 200, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")

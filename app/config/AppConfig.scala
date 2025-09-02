@@ -52,6 +52,7 @@ trait AppConfig {
   def confidenceLevel: Int
   val useGetCalcDetailsHipPlatform: Boolean
   val useGetCalcDetailsHipPlatformR17: Boolean
+  val useGetCalcListHip5624: Boolean
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
@@ -82,11 +83,11 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
 
   lazy val useGetCalcDetailsHipPlatform: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcDetailHIPlatform")
   lazy val useGetCalcDetailsHipPlatformR17: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcDetailsHipPlatformR17")
+  lazy val useGetCalcListHip5624: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListHipPlatform5624")
 
   lazy val useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   lazy val useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")
 
   override def hipSecret(apiNumber: String): String = config.get[String](s"microservice.services.hip.$apiNumber.secret")
   override def hipClientId(apiNumber: String): String = config.get[String](s"microservice.services.hip.$apiNumber.clientId")
-
 }

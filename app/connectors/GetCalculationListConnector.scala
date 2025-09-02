@@ -32,21 +32,13 @@ class GetCalculationListConnector @Inject()(httpClient: HttpClientV2,
 
   import uk.gov.hmrc.http.HttpReads.Implicits._
 
-  def getCalculationList(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
-    if(taxYear.toInt >= TaxYear.taxYear2026) {
-      getCalculationList2083(nino, taxYear)
-    } else {
-      getCalculationList1896(nino, taxYear)
-    }
-  }
-
-  private def getCalculationList1896(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+  def getCalculationList1896(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
     val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
     val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/view/calculations/liability/$taxYearRange/$nino"
     iFCall(getCalculationListUrl)(iFHeaderCarrier(getCalculationListUrl, "1896"))
   }
 
-  private def getCalculationList2083(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+  def getCalculationList2083(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
     val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
     val getCalculationListUrl: String = appConfig.ifBaseUrl + s"/income-tax/$taxYearRange/view/$nino/calculations-summary"
     iFCall(getCalculationListUrl)(iFHeaderCarrier(getCalculationListUrl, "2083"))
