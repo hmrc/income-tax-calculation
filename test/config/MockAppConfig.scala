@@ -88,13 +88,13 @@ class MockAppConfig extends AppConfig {
     override def hipClientId(apiNumber: String): String = "clientId"
 
     override val useGetCalcDetailsHipPlatform: Boolean = false
-    override val useGetCalcDetailsHipPlatformR17: Boolean = false
+    override val useGetCalcDetailsHipPlatform5294: Boolean = false
     override val useGetCalcListHip5624: Boolean = false
   }
 
   override val hipBaseUrl: String = "/hip"
   override val useGetCalcDetailsHipPlatform: Boolean = false
-  override val useGetCalcDetailsHipPlatformR17: Boolean = false
+  override val useGetCalcDetailsHipPlatform5294: Boolean = false
   override val useGetCalcListHip5624: Boolean = false
   override def hipSecret(apiNumber: String): String = "secret"
   override def hipClientId(apiNumber: String): String = "clientId"
