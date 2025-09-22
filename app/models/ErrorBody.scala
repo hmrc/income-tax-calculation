@@ -24,6 +24,7 @@ case class ErrorModel(status: Int, body: ErrorBody){
   def toJson: JsValue ={
     body match {
       case error: ErrorBodyModel => Json.toJson(error)
+      case unauthError: UnauthorisedErrorBodyModel => Json.toJson(unauthError)
       case errors: ErrorsBodyModel => Json.toJson(errors)
     }
   }
@@ -32,11 +33,18 @@ case class ErrorModel(status: Int, body: ErrorBody){
 /** Single Error **/
 case class ErrorBodyModel(code: String, reason: String) extends ErrorBody
 
+case class UnauthorisedErrorBodyModel(error: String, error_description: String) extends ErrorBody
+
 object ErrorBodyModel {
   implicit val formats: OFormat[ErrorBodyModel] = Json.format[ErrorBodyModel]
   def parsingError(apiNumber: String = ""): ErrorBodyModel = ErrorBodyModel("PARSING_ERROR", s"Error parsing response from API${apiNumber.trim}")
 }
 
+object UnauthorisedErrorBodyModel {
+  implicit val formats: OFormat[UnauthorisedErrorBodyModel] = Json.format[UnauthorisedErrorBodyModel]
+  def parsingError(apiNumber: String = ""): ErrorBodyModel = ErrorBodyModel("PARSING_ERROR", s"Error parsing response from API${apiNumber.trim}")
+
+}
 /** Multiple Errors **/
 case class ErrorsBodyModel(failures: Seq[ErrorBodyModel]) extends ErrorBody
 
