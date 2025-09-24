@@ -49,7 +49,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
         } else if (appConfig.useGetCalcListHip5624) {
           hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
         } else {
-          listCalculationDetailsConnector.getCalculationList1896(nino, taxYear)
+          listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
         }
 
         list.flatMap {
