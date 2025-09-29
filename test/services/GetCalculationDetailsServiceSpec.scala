@@ -82,8 +82,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
       )
 
-  def listCalculationDetailsSuccess1896: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
-    (mockListCalculationConnector.getCalculationList1896(_: String, _: String)(_: HeaderCarrier))
+  def listCalculationDetailsSuccess2150: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+    (mockListCalculationConnector.getCalculationList2150(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
         Future.successful(
@@ -159,7 +159,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     "return a Right when successful for specific tax year before 25-26 with hip disabled" in {
       getCalculationDetailsSuccess
 
-      listCalculationDetailsSuccess1896
+      listCalculationDetailsSuccess2150
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear))
 

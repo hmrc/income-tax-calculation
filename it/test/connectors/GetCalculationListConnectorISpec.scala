@@ -41,17 +41,17 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
-  private def getURL1896(nino: String, taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$nino"
+  private def getURL2150(nino: String, taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$nino"
   private def getURL2083(nino: String, taxYearRange: String): String = s"/income-tax/$taxYearRange/view/$nino/calculations-summary"
 
-  private def getResponse1896: String = {
+  private def getResponse2150: String = {
     Json.toJson(Seq(GetCalculationListModel(
       calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
       calculationTimestamp = "2019-03-17T09:22:59Z",
-      calculationType = "inYear",
-      requestedBy = Some("customer"),
-      fromDate = Some("2013-05-d1"),
-      toDate = Some("2016-05-d1")
+      calculationType = "IY",
+      requestedBy = Some("Customer"),
+      fromDate = None,
+      toDate = None
     ))).toString
   }
 
@@ -82,22 +82,32 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
         fromDate = Some("2013-05-d1"),
         toDate = Some("2016-05-d1")
       )
-      "IF 1896 returns a success with expected JSON" in {
-        val response = getResponse1896
 
-        stubGetWithResponseBody(getURL1896(nino, "23-24"), OK, response)
-        val result = await(connector.getCalculationList1896(nino, "2024"))
+      val successModel2150 = GetCalculationListModel(
+        calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+        calculationTimestamp = "2019-03-17T09:22:59Z",
+        calculationType = "IY",
+        requestedBy = Some("Customer"),
+        fromDate = None,
+        toDate = None
+      )
 
-        result mustBe Right(Seq(successModel))
+      "IF 2150 returns a success with expected JSON" in {
+        val response = getResponse2150
+
+        stubGetWithResponseBody(getURL2150(nino, "23-24"), OK, response)
+        val result = await(connector.getCalculationList2150(nino, "2024"))
+
+        result mustBe Right(Seq(successModel2150))
       }
 
-      "IF 1896 returns a success result for future tax year 24/25" in {
-        val response = getResponse1896
+      "IF 2150 returns a success result for future tax year 24/25" in {
+        val response = getResponse2150
 
-        stubGetWithResponseBody(getURL1896(nino, "24-25"), OK, response)
-        val result = await(connector.getCalculationList1896(nino, "2025"))
+        stubGetWithResponseBody(getURL2150(nino, "24-25"), OK, response)
+        val result = await(connector.getCalculationList2150(nino, "2025"))
 
-        result mustBe Right(Seq(successModel))
+        result mustBe Right(Seq(successModel2150))
       }
 
       "IF 2083 returns a success result for future tax year 25/26" in {
@@ -122,9 +132,9 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
           |  "reason": "Dependent systems are currently not responding."
           |}
           |""".stripMargin
-      stubGetWithResponseBody(getURL1896(nino, "23-24"), SERVICE_UNAVAILABLE, response)
+      stubGetWithResponseBody(getURL2150(nino, "23-24"), SERVICE_UNAVAILABLE, response)
 
-      val result = await(connector.getCalculationList1896(nino, taxYear = "2024"))
+      val result = await(connector.getCalculationList2150(nino, taxYear = "2024"))
 
       result mustBe Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")))
     }
@@ -151,5 +161,4 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
         "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
     }
   }
-
 }

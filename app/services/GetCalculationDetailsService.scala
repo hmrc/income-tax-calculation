@@ -46,10 +46,10 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
       case Some(taxYear) if taxYear.toInt >= specificTaxYear =>
         val list = if(taxYear.toInt >= TaxYear.taxYear2026) {
           listCalculationDetailsConnector.getCalculationList2083(nino, taxYear)
-        } else if (appConfig.useGetCalcListHip5624) {
+        } else if (appConfig.useGetCalcListHip5624) { //Used to switch between using HIP 5294 and IF 2150 - MISUV-10190
           hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
         } else {
-          listCalculationDetailsConnector.getCalculationList1896(nino, taxYear)
+          listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
         }
 
         list.flatMap {

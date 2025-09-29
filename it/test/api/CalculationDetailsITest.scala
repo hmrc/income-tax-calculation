@@ -87,7 +87,7 @@ class CalculationDetailsITest extends AnyWordSpec
       "return the calculation details when called with TYS tax year 23/24" in new Setup {
         authorised()
 
-        def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
+        def getCalcListURL(taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$successNino"
 
         stubGetWithResponseBody(getCalcListURL("23-24"), 200, listCalcResponse)
         stubGetWithResponseBody(ifUrlForTYS24, 200, successCalcDetailsExpectedJsonFull)
@@ -105,7 +105,7 @@ class CalculationDetailsITest extends AnyWordSpec
       "return the calculation details when called with TYS tax year 24/25" in new Setup {
         authorised()
 
-        def getCalcListURL(taxYearRange: String): String = s"/income-tax/view/calculations/liability/$taxYearRange/$successNino"
+        def getCalcListURL(taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$successNino"
 
         stubGetWithResponseBody(getCalcListURL("24-25"), 200, listCalcResponse)
         stubGetWithResponseBody(ifUrlForTYS25, 200, successCalcDetailsExpectedJsonFull)

@@ -49,10 +49,10 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     val listCalcResponse: String = Json.toJson(Seq(GetCalculationListModel(
       calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2",
       calculationTimestamp = "2019-03-17T09:22:59Z",
-      calculationType = "inYear",
-      requestedBy = Some("customer"),
-      fromDate = Some("2013-05-d1"),
-      toDate = Some("2016-05-d1")
+      calculationType = "IY",
+      requestedBy = Some("Customer"),
+      fromDate = None,
+      toDate = None
     ))).toString
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
