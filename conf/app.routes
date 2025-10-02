@@ -4,7 +4,7 @@ GET         /income-tax/nino/:nino/taxYear/:taxYear/tax-calculation             
 
 POST        /income-tax/nino/:nino/taxYear/:taxYear/:calculationId/declare-crystallisation        controllers.DeclareCrystallisationController.declareCrystallisation(nino: String, taxYear: Int, calculationId: String)
 
-GET         /income-tax/nino/:nino/calculation-details                                            controllers.CalculationDetailController.calculationDetail(nino: String, taxYear: Option[String])
+GET         /income-tax/nino/:nino/calculation-details                                            controllers.CalculationDetailController.calculationDetail(nino: String, taxYear: Option[String], calcType: Option[String])
 
 GET         /income-tax/nino/:nino/calc-id/:calcId/calculation-details                            controllers.CalculationDetailController.calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String])
 
