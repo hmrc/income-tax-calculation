@@ -50,7 +50,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
             listCalculationDetailsConnector.getCalculationList2083(nino, taxYear)
           case _ if calculationRecord.isDefined =>
             listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
-          case _ if appConfig.useGetCalcListHip5624 =>
+          case _ if appConfig.useGetCalcListHip5624 => //Used to switch between using HIP 5294 and IF 2150 - MISUV-10190
             hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
           case _ =>
             listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
