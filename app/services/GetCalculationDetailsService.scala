@@ -20,6 +20,7 @@ import config.AppConfig
 import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
+import models.calculation.CalcType.postFinalisationAllowedTypes
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import play.api.Logging
 import play.api.http.Status.NO_CONTENT
@@ -89,7 +90,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
         val sortedList = list.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
         getCalculationDetailsByCalcId(nino, sortedList.head.calculationId, taxYear)
       case Some("PREVIOUS") =>
-        val filteredList = list.filter(calc => Set("CA", "DF", "AM", "CR").contains(calc.calculationType))
+        val filteredList = list.filter(calc => postFinalisationAllowedTypes.contains(calc.calculationType))
         val sortedList = filteredList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
         getCalculationDetailsByCalcId(nino, sortedList.lift(1).map(_.calculationId).getOrElse(list.head.calculationId), taxYear)
       case _ => getCalculationDetailsByCalcId(nino, list.head.calculationId, taxYear)

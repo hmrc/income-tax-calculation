@@ -31,8 +31,8 @@ class CalculationDetailController @Inject()(getCalculationDetailsService: GetCal
                                             authorisedAction: AuthorisedAction)
                                            (implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
-  def calculationDetail(nino: String, taxYear: Option[String], calcType: Option[String]): Action[AnyContent] = authorisedAction.async { implicit user =>
-    getCalculationDetailsService.getCalculationDetails(nino, taxYear, calcType).map {
+  def calculationDetail(nino: String, taxYear: Option[String], calculationRecord: Option[String]): Action[AnyContent] = authorisedAction.async { implicit user =>
+    getCalculationDetailsService.getCalculationDetails(nino, taxYear, calculationRecord).map {
       case Right(success) =>
         logger.debug(s"[CalculationDetailController][calculationDetail] - Successful Response: $success")
         Ok(success)
