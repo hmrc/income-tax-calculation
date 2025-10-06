@@ -84,7 +84,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     }
   }
 
-  private def filterCalcList(nino: String, taxYear: Option[String], list: Seq[GetCalculationListModel], calculationRecord: Option[String])(implicit hc: HeaderCarrier) = {
+  private def filterCalcList(nino: String, taxYear: Option[String], list: Seq[GetCalculationListModel], calculationRecord: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
     calculationRecord match {
       case Some("LATEST") =>
         val sortedList = list.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
@@ -92,7 +92,10 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
       case Some("PREVIOUS") =>
         val filteredList = list.filter(calc => postFinalisationAllowedTypes.contains(calc.calculationType))
         val sortedList = filteredList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
-        getCalculationDetailsByCalcId(nino, sortedList.lift(1).map(_.calculationId).getOrElse(list.head.calculationId), taxYear)
+        sortedList.lift(1) match {
+          case Some(value) => getCalculationDetailsByCalcId(nino, value.calculationId, taxYear)
+          case None => Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
+        }
       case _ => getCalculationDetailsByCalcId(nino, list.head.calculationId, taxYear)
     }
   }

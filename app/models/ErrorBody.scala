@@ -35,6 +35,7 @@ case class ErrorBodyModel(code: String, reason: String) extends ErrorBody
 object ErrorBodyModel {
   implicit val formats: OFormat[ErrorBodyModel] = Json.format[ErrorBodyModel]
   def parsingError(apiNumber: String = ""): ErrorBodyModel = ErrorBodyModel("PARSING_ERROR", s"Error parsing response from API${apiNumber.trim}")
+  def notFoundError(apiNumber: String = ""): ErrorBodyModel = ErrorBodyModel("NOT_FOUND", s"Resource not found from API${apiNumber.trim}")
 }
 
 /** Multiple Errors **/
