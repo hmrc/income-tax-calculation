@@ -42,13 +42,13 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   private val specificTaxYear: Int = TaxYear.taxYear2024
   private type CalculationDetailAsJsonResponse = Either[ErrorModel, JsValue]
 
-  def getCalculationDetails(nino: String, taxYearOption: Option[String], calcType: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
+  def getCalculationDetails(nino: String, taxYearOption: Option[String], calculationRecord: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
     taxYearOption match {
       case Some(taxYear) if taxYear.toInt >= specificTaxYear =>
         val list = taxYear.toInt match {
           case year if year >= TaxYear.taxYear2026 =>
             listCalculationDetailsConnector.getCalculationList2083(nino, taxYear)
-          case _ if calcType.isDefined =>
+          case _ if calculationRecord.isDefined =>
             listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
           case _ if appConfig.useGetCalcListHip5624 =>
             hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
@@ -60,7 +60,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
           case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
             Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
           case Right(listOfCalculationDetails) =>
-            filterCalcList(nino, taxYearOption, listOfCalculationDetails, calcType)
+            filterCalcList(nino, taxYearOption, listOfCalculationDetails, calculationRecord)
           case Left(desError) => Future.successful(Left(desError))
         }
       case _ => handleLegacy(nino, taxYearOption)
@@ -84,8 +84,8 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     }
   }
 
-  private def filterCalcList(nino: String, taxYear: Option[String], list: Seq[GetCalculationListModel], calcType: Option[String])(implicit hc: HeaderCarrier) = {
-    calcType match {
+  private def filterCalcList(nino: String, taxYear: Option[String], list: Seq[GetCalculationListModel], calculationRecord: Option[String])(implicit hc: HeaderCarrier) = {
+    calculationRecord match {
       case Some("LATEST") =>
         val sortedList = list.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
         getCalculationDetailsByCalcId(nino, sortedList.head.calculationId, taxYear)
