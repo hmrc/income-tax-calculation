@@ -41,8 +41,8 @@ class CalculationDetailControllerSpec extends TestSuite {
   val taxYear = "2022"
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
-  def calculationResponse(nino: String, taxYearOption: Option[String])(response: CalculationDetailResponse): Unit = {
-    when(service.getCalculationDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYearOption))(ArgumentMatchers.any())) thenReturn Future (
+  def calculationResponse(nino: String, taxYearOption: Option[String], calcType: Option[String])(response: CalculationDetailResponse): Unit = {
+    when(service.getCalculationDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYearOption), ArgumentMatchers.eq(calcType))(ArgumentMatchers.any())) thenReturn Future (
       response match {
         case Right(obj) => Right(Json.toJson(obj))
         case Left(err) => Left(err)
@@ -66,9 +66,9 @@ class CalculationDetailControllerSpec extends TestSuite {
     "return a success response with a calculation model" in {
 
       mockAuth()
-      calculationResponse(nino, Some(taxYear))(Right(successModelFull))
+      calculationResponse(nino, Some(taxYear), None)(Right(successModelFull))
 
-      val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
+      val result = controller.calculationDetail(nino, Some(taxYear), None)(fakeRequestWithMtditid)
       status(result) mustBe Status.OK
       bodyOf(result) mustBe Json.toJson(successModelFull).toString()
 
@@ -78,9 +78,9 @@ class CalculationDetailControllerSpec extends TestSuite {
     "return a 500 error response with a calculation error" in {
 
       mockAuth()
-      calculationResponse(nino, Some(taxYear))(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error"))))
+      calculationResponse(nino, Some(taxYear), None)(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("INTERNAL_SERVER_ERROR", "internal server error"))))
 
-      val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
+      val result = controller.calculationDetail(nino, Some(taxYear), None)(fakeRequestWithMtditid)
       status(result) mustBe Status.INTERNAL_SERVER_ERROR
 
     }
@@ -88,9 +88,9 @@ class CalculationDetailControllerSpec extends TestSuite {
     "return a 503 error response with a calculation error" in {
 
       mockAuth()
-      calculationResponse(nino, Some(taxYear))(Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "service unavailable"))))
+      calculationResponse(nino, Some(taxYear), None)(Left(ErrorModel(SERVICE_UNAVAILABLE, ErrorBodyModel("SERVICE_UNAVAILABLE", "service unavailable"))))
 
-      val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
+      val result = controller.calculationDetail(nino, Some(taxYear), None)(fakeRequestWithMtditid)
       status(result) mustBe Status.SERVICE_UNAVAILABLE
 
     }
@@ -98,18 +98,18 @@ class CalculationDetailControllerSpec extends TestSuite {
     "return a 400 error response with a calculation error" in {
 
       mockAuth()
-      calculationResponse(nino, Some(taxYear))(Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("BAD_REQUEST", "bad request"))))
+      calculationResponse(nino, Some(taxYear), None)(Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("BAD_REQUEST", "bad request"))))
 
-      val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
+      val result = controller.calculationDetail(nino, Some(taxYear), None)(fakeRequestWithMtditid)
       status(result) mustBe Status.BAD_REQUEST
     }
 
     "return a 403 error response with a calculation error" in {
 
       mockAuth()
-      calculationResponse(nino, Some(taxYear))(Left(ErrorModel(FORBIDDEN, ErrorBodyModel("FORBIDDEN", "forbidden"))))
+      calculationResponse(nino, Some(taxYear), None)(Left(ErrorModel(FORBIDDEN, ErrorBodyModel("FORBIDDEN", "forbidden"))))
 
-      val result = controller.calculationDetail(nino, Some(taxYear))(fakeRequestWithMtditid)
+      val result = controller.calculationDetail(nino, Some(taxYear), None)(fakeRequestWithMtditid)
       status(result) mustBe Status.FORBIDDEN
 
     }
