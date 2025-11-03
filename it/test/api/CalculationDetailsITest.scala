@@ -17,6 +17,7 @@
 package api
 
 import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
+import constants.HipGetCalculationDetailsConstants.successModelJson
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
 import models.{ErrorBodyModel, GetCalculationListModel, GetCalculationListModelLegacy}
 import org.scalatest.concurrent.ScalaFutures
@@ -38,8 +39,6 @@ class CalculationDetailsITest extends AnyWordSpec
     .configure(
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
-        ("feature-switch.useGetCalcListIFPlatform" -> !enableHip) +:
-        ("feature-switch.useGetCalcDetailHIPlatform" -> !enableHip) +:
         ("feature-switch.useGetCalcListHipPlatform5624" -> !enableHip) +:
         servicesToUrlConfig: _*
     )
@@ -71,7 +70,7 @@ class CalculationDetailsITest extends AnyWordSpec
         authorised()
 
         stubGetWithResponseBody(s"/income-tax/25-26/view/$successNino/calculations-summary", 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlForTYS26, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifUrlForTYS26, 200, successModelJson)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -79,7 +78,7 @@ class CalculationDetailsITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successModelJson""")
         }
 
       }
@@ -90,7 +89,7 @@ class CalculationDetailsITest extends AnyWordSpec
         def getCalcListURL(taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$successNino"
 
         stubGetWithResponseBody(getCalcListURL("23-24"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlForTYS24, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifUrlForTYS24, 200, successModelJson)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -98,7 +97,7 @@ class CalculationDetailsITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successModelJson""")
         }
       }
 
@@ -108,7 +107,7 @@ class CalculationDetailsITest extends AnyWordSpec
         def getCalcListURL(taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$successNino"
 
         stubGetWithResponseBody(getCalcListURL("24-25"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlForTYS25, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifUrlForTYS25, 200, successModelJson)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -116,7 +115,7 @@ class CalculationDetailsITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successModelJson""")
         }
       }
 

@@ -16,7 +16,7 @@
 
 package connectors
 
-import assets.GetCalculationDetailsConstants.{successCalcDetailsExpectedJsonFull, successModelFull}
+import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import config.BackendAppConfig
 import helpers.WiremockSpec
@@ -25,6 +25,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
 import play.api.http.Status._
+import testConstants.GetCalculationDetailsConstants.successModelFull
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
