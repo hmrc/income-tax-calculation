@@ -174,11 +174,11 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
     "return a Right when successful" in {
       // taxYear = Some("2022") -> legacy list, HIP details
-      getCalculationDetailsSuccessHip
+      getCalculationDetailsSuccessLegacy
       listCalculationDetailsSuccessLegacy
 
       val result = await(service().getCalculationDetails(nino, taxYear, None))
-      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
+      result mustBe Right(Json.toJson(successModelFull))
     }
 
     "return a Right when successful for specific tax year before 25-26 with hip disabled and no calculationRecord" in {
@@ -239,7 +239,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
     "return a Left when calling list calculations succeeds however calling get calculations returns a DES error" in {
       listCalculationDetailsSuccessLegacy
-      getCalculationDetailsFailureHip
+      getCalculationDetailsFailureLegacy
 
       val result = await(service().getCalculationDetails(nino, taxYear, None))
 
@@ -280,14 +280,14 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     }
 
     "return a Right when successful and tax year is 22-23 or prior" in {
-      getCalculationDetailsSuccessHip
+      getCalculationDetailsSuccessLegacy
 
       val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, taxYear))
-      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
+      result mustBe Right(Json.toJson(successModelFull))
     }
 
     "return a Left when calling get calculations returns an error" in {
-      getCalculationDetailsFailureHip
+      getCalculationDetailsFailureLegacy
 
       val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, taxYear))
 

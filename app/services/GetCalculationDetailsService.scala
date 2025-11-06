@@ -111,9 +111,16 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
           case Left(error) => Left(error)
         }
       case Right(_) =>
-        hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
-          case Right(value) => Right(Json.toJson(value))
-          case Left(error) => Left(error)
+        if (appConfig.useGetCalcDetailsHipPlatform5294) {
+          hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
+            case Right(value) => Right(Json.toJson(value))
+            case Left(error) => Left(error)
+          }
+        } else {
+          calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
+            case Right(value) => Right(Json.toJson(value))
+            case Left(error) => Left(error)
+          }
         }
       case Left(error) => throw new RuntimeException(error)
     }
