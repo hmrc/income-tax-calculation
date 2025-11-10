@@ -37,8 +37,6 @@ class CalculationDetailsHipITest extends AnyWordSpec
     .configure(
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
-        ("feature-switch.useGetCalcListIFPlatform" -> !enableHip) +:
-        ("feature-switch.useGetCalcDetailHIPlatform" -> enableHip) +:
         ("feature-switch.useGetCalcDetailsHipPlatform5294" -> enableHip) +:
         ("feature-switch.useGetCalcListHipPlatform5624" -> enableHip) +:
         servicesToUrlConfig: _*

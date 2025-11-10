@@ -17,14 +17,14 @@
 package api
 
 import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
+import constants.HipGetCalculationDetailsConstants.successModelJson
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
-import models.{ErrorBodyModel, GetCalculationListModel, GetCalculationListModelLegacy}
+import models.ErrorBodyModel
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
-import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 
@@ -38,8 +38,7 @@ class CalculationDetailsITest extends AnyWordSpec
     .configure(
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
-        ("feature-switch.useGetCalcListIFPlatform" -> !enableHip) +:
-        ("feature-switch.useGetCalcDetailHIPlatform" -> !enableHip) +:
+        ("feature-switch.useGetCalcDetailsHipPlatform5294" -> !enableHip) +:
         ("feature-switch.useGetCalcListHipPlatform5624" -> !enableHip) +:
         servicesToUrlConfig: _*
     )
@@ -67,13 +66,13 @@ class CalculationDetailsITest extends AnyWordSpec
         }
       }
 
-      "return the calculation details when called with tax year" in new Setup {
+      "return the calculation details by calling the IF endpoint when called with the tax year 22/23" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(s"/income-tax/25-26/view/$successNino/calculations-summary", 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlForTYS26, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(ifUrlListCalcLegacy("2023"), 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(ifUrl2023, 200, successCalcDetailsExpectedJsonFull)
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=$taxYear")
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2023")
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
@@ -84,13 +83,14 @@ class CalculationDetailsITest extends AnyWordSpec
 
       }
 
-      "return the calculation details when called with TYS tax year 23/24" in new Setup {
+      "return the calculation details by calling the HIP endpoint when called with tax year 23/24" in new Setup {
         authorised()
 
-        def getCalcListURL(taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$successNino"
+        val calcList2150 = s"/income-tax/23-24/view/calculations-summary/$successNino"
+        val hipUrlForCalcDetails24 = s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId"
 
-        stubGetWithResponseBody(getCalcListURL("23-24"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlForTYS24, 200, successCalcDetailsExpectedJsonFull)
+        stubGetWithResponseBody(calcList2150, 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalcDetails24, 200, successModelJson)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
           .withHttpHeaders(mtditidHeader, authorization)
@@ -98,25 +98,28 @@ class CalculationDetailsITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successModelJson""")
         }
       }
 
-      "return the calculation details when called with TYS tax year 24/25" in new Setup {
+      "return the calculation details by calling the HIP endpoint when called with tax year 25/26" in new Setup {
         authorised()
 
         def getCalcListURL(taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$successNino"
 
-        stubGetWithResponseBody(getCalcListURL("24-25"), 200, listCalcResponse)
-        stubGetWithResponseBody(ifUrlForTYS25, 200, successCalcDetailsExpectedJsonFull)
+        val calcList2083 = s"/income-tax/25-26/view/$successNino/calculations-summary"
+        val hipUrlForCalcDetails26 = s"/itsa/income-tax/v1/25-26/view/calculations/liability/$successNino/$calculationId"
 
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2025")
+        stubGetWithResponseBody(calcList2083, 200, listCalcResponse)
+        stubGetWithResponseBody(hipUrlForCalcDetails26, 200, successModelJson)
+
+        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2026")
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successModelJson""")
         }
       }
 
