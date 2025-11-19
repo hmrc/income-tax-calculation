@@ -40,7 +40,8 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     val hipUrlForCalculationDetails = s"/itsa/income-tax/v1/$taxYearUpdated/view/calculations/liability/$successNino/$calculationId"
     val ifUrlForTYS24 = s"/income-tax/view/calculations/liability/23-24/$successNino/$calculationId"
     val ifUrlForTYS25 = s"/income-tax/view/calculations/liability/24-25/$successNino/$calculationId"
-    val ifUrlForTYS26 = s"/income-tax/view/calculations/liability/25-26/$successNino/$calculationId"
+    val ifUrl2023 = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
+    def ifUrlListCalcLegacy(taxYear: String): String = s"/itsd/calculations/liability/$successNino\\?taxYear=$taxYear"
     val ifUrlForCalculationList = s"/income-tax/view/calculations/liability/23-24/$successNino"
     val listCalcResponseLegacy: String = Json.toJson(Seq(GetCalculationListModelLegacy(calculationId, "2019-03-17T09:22:59Z"))).toString()
 

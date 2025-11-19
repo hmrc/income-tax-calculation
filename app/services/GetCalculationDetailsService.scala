@@ -19,7 +19,7 @@ package services
 import config.AppConfig
 import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
-import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
+import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.calculation.CalcType.postFinalisationAllowedTypes
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import play.api.Logging
@@ -32,7 +32,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
-                                             calculationDetailsConnector: CalculationDetailsConnector,
                                              listCalculationDetailsConnector: GetCalculationListConnector,
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
                                              hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
@@ -122,17 +121,10 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
         case Left(error) => Left(error)
       }
       case Right(year) if year >= specificTaxYear =>
-        if (appConfig.useGetCalcDetailsHipPlatform) {
           hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
             case Right(value) => Right(Json.toJson(value))
             case Left(error) => Left(error)
           }
-        } else {
-          calculationDetailsConnector.getCalculationDetails(TaxYear.updatedFormat(year.toString), nino, calcId).collect {
-            case Right(value) => Right(Json.toJson(value))
-            case Left(error) => Left(error)
-          }
-        }
       case Right(_) =>
         if (appConfig.useGetCalcDetailsHipPlatform5294) {
           hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {

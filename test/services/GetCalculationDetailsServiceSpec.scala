@@ -21,12 +21,14 @@ import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListC
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
-import connectors.{CalculationDetailsConnector, CalculationDetailsConnectorLegacy, GetCalculationListConnector}
+import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser.HipGetCalculationDetailsResponse
+import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
 import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 import play.api.libs.json.Json
 import testConstants.GetCalculationDetailsConstants.successModelFull
+import testConstants.hip.GetCalculationDetailsTestConstants.successFullModelGetCalculationDetailsHip
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TaxYear
@@ -36,13 +38,12 @@ import scala.concurrent.Future
 class GetCalculationDetailsServiceSpec extends TestSuite {
 
   val mockSingleCalculationConnectorLegacy: CalculationDetailsConnectorLegacy = mock[CalculationDetailsConnectorLegacy]
-  val mockSingleCalculationConnector: CalculationDetailsConnector = mock[CalculationDetailsConnector]
   val mockListCalculationConnector: GetCalculationListConnector = mock[GetCalculationListConnector]
   val mockHipCalculationListConnectorLegacy: HipCalculationLegacyListConnector = mock[HipCalculationLegacyListConnector]
   val mockHipCalculationDetailsConnector: HipGetCalculationsDataConnector = mock[HipGetCalculationsDataConnector]
   val mockHipCalculationListConnector: HipGetCalculationListConnector = mock[HipGetCalculationListConnector]
 
-  def service(appConfig: AppConfig = mockAppConfig) = new GetCalculationDetailsService(mockSingleCalculationConnectorLegacy, mockSingleCalculationConnector,
+  def service(appConfig: AppConfig = mockAppConfig) = new GetCalculationDetailsService(mockSingleCalculationConnectorLegacy,
     mockListCalculationConnector, mockHipCalculationListConnectorLegacy,
     mockHipCalculationDetailsConnector, mockHipCalculationListConnector, appConfig)
 
@@ -61,10 +62,10 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(Future.successful(Right(successModelFull)))
 
-  def getCalculationDetailsSuccess: CallHandler4[String, String, String, HeaderCarrier, Future[CalculationDetailResponse]] =
-    (mockSingleCalculationConnector.getCalculationDetails(_: String, _: String, _: String)(_: HeaderCarrier))
+  def getHipCalculationDetailsSuccess: CallHandler4[String, String, String, HeaderCarrier, Future[HipGetCalculationDetailsResponse]] =
+    (mockHipCalculationDetailsConnector.getCalculationsData(_: String, _: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *, *)
-      .returning(Future.successful(Right(successModelFull)))
+      .returning(Future.successful(Right(successFullModelGetCalculationDetailsHip)))
 
   def listCalculationDetailsSuccess2083: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
     (mockListCalculationConnector.getCalculationList2083(_: String, _: String)(_: HeaderCarrier))
@@ -236,53 +237,53 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     }
 
     "return a Right when successful for specific tax year before 25-26 with hip disabled and no calculationRecord" in {
-      getCalculationDetailsSuccess
+      getHipCalculationDetailsSuccess
 
       listCalculationDetailsSuccess2150
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear, None))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
     "return a Right when successful for specific tax year before 25-26 with hip disabled and a latest calculationRecord" in {
-      getCalculationDetailsSuccess
+      getHipCalculationDetailsSuccess
 
       listCalculationDetailsSuccess2150
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear, Some("LATEST")))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
     "return a Right when successful for specific tax year before 25-26 with hip disabled and a previous calculationRecord" in {
-      getCalculationDetailsSuccess
+      getHipCalculationDetailsSuccess
 
       listCalculationDetailsSuccess2150
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear, Some("PREVIOUS")))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
     "return a Right when successful for specific tax year before 25-26 with hip enabled and no calculationRecord" in {
-      getCalculationDetailsSuccess
+      getHipCalculationDetailsSuccess
 
       listCalculationDetailsSuccess5624
 
       val result = await(service(setHipEnabledFeatureSwitchConfig()).getCalculationDetails(nino, specificTaxYear, None))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
     "return a Right when successful for specific tax year for 25-26 onwards and no calculationRecord" in {
-      getCalculationDetailsSuccess
+      getHipCalculationDetailsSuccess
 
       listCalculationDetailsSuccess2083
 
       val result = await(service().getCalculationDetails(nino, taxYear2026, None))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
     "return a Left(DesError) when calling list calculations returns an empty calculation and no calcType" in {
@@ -343,19 +344,19 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     }
 
     "return a Right when successful for specific tax year" in {
-      getCalculationDetailsSuccess
+      getHipCalculationDetailsSuccess
 
       val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, specificTaxYear))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
     "return a Right when successful for specific tax year plus one" in {
-      getCalculationDetailsSuccess
+      getHipCalculationDetailsSuccess
 
       val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, specificTaxYearPlusOne))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
     "return a Right when successful and tax year is 22-23 or prior" in {
