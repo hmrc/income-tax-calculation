@@ -24,7 +24,8 @@ case class GetCalculationListModel(calculationId: String,
                                    calculationType: String,
                                    requestedBy: Option[String],
                                    fromDate: Option[String],
-                                   toDate: Option[String]
+                                   toDate: Option[String],
+                                   calculationOutcome: Option[String] = None
                                    )
 
 
@@ -36,7 +37,8 @@ object GetCalculationListModel{
       (JsPath \ "calculationType").read[String] and
       (JsPath \ "requestedBy").readNullable[String] and
       (JsPath \ "fromDate").readNullable[String] and
-      (JsPath \ "toDate").readNullable[String]
+      (JsPath \ "toDate").readNullable[String] and
+      (JsPath \ "calculationOutcome").readNullable[String]
       ) (GetCalculationListModel.apply _)
 
 }

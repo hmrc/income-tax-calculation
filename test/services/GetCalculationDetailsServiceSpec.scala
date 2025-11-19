@@ -94,7 +94,52 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationType = "AM",
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1")
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          ),
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
+              calculationTimestamp = "2019-02-17T09:22:59Z",
+              calculationType = "DF",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = Some("ERROR")
+            ),
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
+              calculationTimestamp = "2019-04-17T09:22:59Z",
+              calculationType = "AM",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = Some("REJECTED")
+            ),
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
+              calculationTimestamp = "2019-03-17T09:22:59Z",
+              calculationType = "DF",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = Some("PROCESSED")
+            )))
+        )
+      )
+
+  def listCalculationDetailsSuccess2150ErrorAndRejected: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+    (mockListCalculationConnector.getCalculationList2150(_: String, _: String)(_: HeaderCarrier))
+      .expects(*, *, *)
+      .returning(
+        Future.successful(
+          Right(Seq(GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "AM",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("REJECTED")
           ),
             GetCalculationListModel(
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
@@ -102,8 +147,18 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationType = "DF",
               requestedBy = Some("customer"),
               fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1")
-            )))
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = Some("ERROR")
+            ),
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1a",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "DF",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = None
+          )))
         )
       )
 
@@ -267,6 +322,15 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
     }
+
+    "return a Left(DesError) when calling list calculations and it returns only errors and rejected outcomes" in {
+      listCalculationDetailsSuccess2150ErrorAndRejected
+
+      val result = await(service().getCalculationDetails(nino, specificTaxYear, Some("PREVIOUS")))
+
+      result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+    }
+
   }
 
   ".getCalculationDetailsByCalcId" should {
