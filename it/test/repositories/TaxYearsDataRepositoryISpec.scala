@@ -28,7 +28,7 @@ import play.api.Configuration
 import uk.gov.hmrc.mongo.MongoUtils
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.SecureGCMCipher
-
+import org.mongodb.scala.ObservableFuture
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
@@ -43,9 +43,9 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
   private val repoWithInvalidEncryption = appWithInvalidEncryptionKey.injector.instanceOf[TaxYearsDataRepositoryImpl]
   private implicit val secureGCMCipher: SecureGCMCipher = app.injector.instanceOf[SecureGCMCipher]
 
-  private def count: Long = await(underTest.collection.countDocuments().toFuture())
+  private def count: Long = await(underTest.collection.countDocuments().head())
 
-  private def countFromOtherDatabase: Long = await(underTest.collection.countDocuments().toFuture())
+  private def countFromOtherDatabase: Long = await(underTest.collection.countDocuments().head())
 
   private val underTest: TaxYearsDataRepositoryImpl = app.injector.instanceOf[TaxYearsDataRepositoryImpl]
 
@@ -53,7 +53,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
 
   class EmptyDatabase {
     await(underTest.collection.drop().toFuture())
-    await(underTest.ensureIndexes)
+    await(underTest.ensureIndexes())
   }
 
   "update with invalid encryption" should {
@@ -99,7 +99,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
       count mustBe 1
 
       private val res2 = await(underTest.createOrUpdate(taxYearsData.copy(nino = "AA234567A")))
-      res2.left.toOption.get.message must include("Command failed with error 11000 (DuplicateKey)")
+      res2.left.toOption.get.message must include("Command execution failed on MongoDB server with error 11000 (DuplicateKey)")
       count mustBe 1
     }
 

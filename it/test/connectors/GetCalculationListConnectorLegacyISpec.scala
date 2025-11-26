@@ -132,7 +132,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
       val result = await(connector.calcList(nino, None))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
-        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),ArraySeq()))))")))
     }
 
     "DES returns an 503 error with OptionalTaxYear" in {
@@ -165,7 +165,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
       val result = await(connector.calcList(nino, taxYear))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR,
-        ErrorBodyModel("PARSING_ERROR", "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+        ErrorBodyModel("PARSING_ERROR", "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),ArraySeq()))))")))
     }
   }
 

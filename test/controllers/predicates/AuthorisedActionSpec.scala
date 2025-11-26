@@ -29,6 +29,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -87,9 +88,10 @@ class AuthorisedActionSpec extends TestSuite {
 
         lazy val result: Future[Result] = {
           (() => mockedAppConfig.confidenceLevel).expects().returning(250)
-          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[Enrolments ~ ConfidenceLevel])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-            .returning(Future.successful(enrolments and ConfidenceLevel.L250))
+            .returning(Future.successful(new ~(enrolments, ConfidenceLevel.L250)
+            ))
           auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
         }
 
@@ -112,7 +114,7 @@ class AuthorisedActionSpec extends TestSuite {
         val enrolments = Enrolments(Set(Enrolment("notAnIndividualOops", Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtditid)), "Activated")))
 
         lazy val result: Future[Result] = {
-          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[Enrolments ~ ConfidenceLevel])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
             .returning(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
@@ -136,7 +138,7 @@ class AuthorisedActionSpec extends TestSuite {
       ))
 
       lazy val result: Future[Result] = {
-        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuthConnector.authorise(_: Predicate, _:  Retrieval[Enrolments ~ ConfidenceLevel])(_: HeaderCarrier, _: ExecutionContext))
           .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
           .returning(Future.successful(enrolments and ConfidenceLevel.L250))
         auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
@@ -159,7 +161,7 @@ class AuthorisedActionSpec extends TestSuite {
 
       lazy val result: Future[Result] = {
         (() => mockedAppConfig.confidenceLevel).expects().returning(50)
-        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[Enrolments ~ ConfidenceLevel])(_: HeaderCarrier, _: ExecutionContext))
           .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
           .returning(Future.successful(enrolments and ConfidenceLevel.L50))
         auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
@@ -179,7 +181,7 @@ class AuthorisedActionSpec extends TestSuite {
       ))
 
       lazy val result: Future[Result] = {
-        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[Enrolments ~ ConfidenceLevel])(_: HeaderCarrier, _: ExecutionContext))
           .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
           .returning(Future.successful(enrolments and ConfidenceLevel.L250))
         auth.individualAuthentication(block, mtditid)(fakeRequest, emptyHeaderCarrier)
@@ -198,7 +200,7 @@ class AuthorisedActionSpec extends TestSuite {
       ))
 
       lazy val result: Future[Result] = {
-        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuthConnector.authorise(_: Predicate, _: Retrieval[Enrolments ~ ConfidenceLevel])(_: HeaderCarrier, _: ExecutionContext))
           .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
           .returning(Future.successful(enrolments and ConfidenceLevel.L250))
         auth.individualAuthentication(block, id)(fakeRequest, emptyHeaderCarrier)
@@ -224,7 +226,7 @@ class AuthorisedActionSpec extends TestSuite {
         ))
 
         lazy val result = {
-          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[Enrolments])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, Retrievals.allEnrolments, *, *)
             .returning(Future.successful(enrolments))
 
@@ -271,7 +273,7 @@ class AuthorisedActionSpec extends TestSuite {
         ))
 
         lazy val result = {
-          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+          (mockAuthConnector.authorise(_: Predicate, _: Retrieval[Enrolments])(_: HeaderCarrier, _: ExecutionContext))
             .expects(*, Retrievals.allEnrolments, *, *)
             .returning(Future.successful(enrolments))
           auth.agentAuthentication(block, "1234567890")(fakeRequestWithMtditid, emptyHeaderCarrier)

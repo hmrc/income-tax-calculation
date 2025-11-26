@@ -158,7 +158,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
       val result = await(connector.getCalculationList2083(nino, taxYear = "2026"))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
-        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),ArraySeq()))))")))
     }
   }
 }

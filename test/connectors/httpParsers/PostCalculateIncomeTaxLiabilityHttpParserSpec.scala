@@ -129,7 +129,7 @@ class PostCalculateIncomeTaxLiabilityHttpParserSpec extends TestSuite {
 
         parser.CreateIncomeSourcesHttpReads.read("POST", "url", HttpResponse(ACCEPTED, response)) mustBe
           Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
-            "Error parsing response from API - List((/id,List(JsonValidationError(List(error.path.missing),List()))))")))
+            "Error parsing response from API - List((/id,List(JsonValidationError(List(error.path.missing),ArraySeq()))))")))
       }
 
       "IF returns a bad json body" in {

@@ -149,7 +149,7 @@ class CalculationDetailsHttpParserSpec extends TestSuite {
             |""".stripMargin
 
         parser.CalculationDetailsHttpReads.read("GET", "url", HttpResponse(OK, response)) mustBe
-          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API - List((/metadata,List(JsonValidationError(List(error.path.missing),List()))), (/inputs,List(JsonValidationError(List(error.path.missing),List()))))")))
+          Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API - List((/metadata,List(JsonValidationError(List(error.path.missing),ArraySeq()))), (/inputs,List(JsonValidationError(List(error.path.missing),ArraySeq()))))")))
       }
 
       "DES returns a bad json body" in {
