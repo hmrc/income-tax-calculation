@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import testUtils.TestSuite

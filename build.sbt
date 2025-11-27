@@ -42,6 +42,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9314)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(coverageSettings: _*)
+  .settings(ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
+
 
 lazy val it = project
   .dependsOn(microservice % "test->test")

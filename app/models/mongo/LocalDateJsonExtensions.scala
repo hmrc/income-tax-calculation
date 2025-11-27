@@ -18,7 +18,7 @@ package models.mongo
 
 import play.api.libs.json.{Reads, Writes, __}
 
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 object LocalDateJsonExtensions {
 

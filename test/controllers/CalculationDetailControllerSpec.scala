@@ -18,16 +18,14 @@ package controllers
 
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import models.{ErrorBodyModel, ErrorModel}
+import org.mockito.Mockito.when
 import org.mockito.{ArgumentMatchers, Mockito}
-import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
-import play.api.libs.json.{JsValue, Json}
-import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout}
+import play.api.http.Status.*
+import play.api.libs.json.Json
 import services.GetCalculationDetailsService
 import testConstants.GetCalculationDetailsConstants.successModelFull
 import testUtils.TestSuite
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 

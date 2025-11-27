@@ -23,7 +23,6 @@ import models.mongo.LocalDateJsonExtensions.dateTimeWrites
 import models.mongo._
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
 import play.api.Logging
-import play.api.libs.json.Writes
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -32,7 +31,7 @@ import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_TAX_YEARS_DA
 import utils.PagerDutyHelper.pagerDutyLog
 import utils.SecureGCMCipher
 
-import java.time.{LocalDate, LocalDateTime, ZoneOffset}
+import java.time.{LocalDateTime, ZoneOffset}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try

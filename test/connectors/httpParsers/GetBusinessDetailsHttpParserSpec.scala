@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{ErrorBodyModel, ErrorModel, ErrorsBodyModel}
+import models.{ErrorBodyModel, ErrorModel}
 import play.api.http.Status._
 import testConstants.IncomeSourceDetailsTestConstants.{successResponse, testIncomeSourceDetailsModel}
 import testUtils.TestSuite
@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 class GetBusinessDetailsHttpParserSpec extends TestSuite {
 
-  val parser = GetBusinessDetailsHttpParser
+  val parser: GetBusinessDetailsHttpParser.type = GetBusinessDetailsHttpParser
 
   "GetBusinessDetailsHttpReads" should {
     "return a income sources details model" when {
