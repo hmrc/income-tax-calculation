@@ -136,7 +136,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -155,7 +155,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -173,7 +173,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -192,7 +192,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -274,7 +274,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -293,7 +293,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -311,7 +311,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -330,7 +330,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -385,7 +385,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -402,7 +402,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -455,7 +455,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -473,7 +473,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }

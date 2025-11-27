@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapPlay30Version = "8.6.0"
-  private val mongoPlay30Version = "2.6.0"
-  private val scalaTestVersion = "3.2.9"
-  private val scalaTestPlusVersion = "7.0.0"
+  private val bootstrapPlay30Version = "10.2.0"
+  private val mongoPlay30Version = "2.10.0"
+  private val scalaTestVersion = "3.2.19"
   private val pegdownVersion = "1.6.0"
-  private val jacksonModuleScalaVersion = "2.16.1"
-  private val wiremockVersion = "2.7.1"
+  private val jacksonModuleScalaVersion = "2.20.1"
+  private val wiremockVersion = "3.0.1"
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30"  % bootstrapPlay30Version,
@@ -37,9 +36,8 @@ object AppDependencies {
     "org.scalatest"           %% "scalatest"                % scalaTestVersion       % "test",
     "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapPlay30Version % "test",
     "org.pegdown"             %  "pegdown"                  % pegdownVersion         % "test",
-    "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8"               % "test",
-    "org.scalatestplus.play"  %% "scalatestplus-play"       % scalaTestPlusVersion   % "test",
+    "com.vladsch.flexmark"    %  "flexmark-all"             % "0.64.8"               % "test",
     "com.github.tomakehurst"  %  "wiremock"                 % wiremockVersion        % "test",
-    "org.scalamock"           %% "scalamock"                % "5.2.0"                % "test"
+    "org.scalamock"           %% "scalamock"                % "7.5.2"                % "test"
   )
 }

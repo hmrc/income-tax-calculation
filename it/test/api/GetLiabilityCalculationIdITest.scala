@@ -56,7 +56,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 200
-            result.body mustBe
+            result.body.toString mustBe
               """{"id":"00000000-0000-1000-8000-000000000000"}"""
         }
 
@@ -74,7 +74,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -91,7 +91,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -108,7 +108,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 404
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"NOT_FOUND","reason":"not found"}"""
         }
       }
@@ -128,7 +128,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 200
-            result.body mustBe
+            result.body.toString mustBe
               """{"id":"00000000-0000-1000-8000-000000000000"}"""
         }
 
@@ -146,7 +146,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -163,7 +163,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -180,7 +180,7 @@ class GetLiabilityCalculationIdITest extends AnyWordSpec with WiremockSpec with 
           .get()) {
           result =>
             result.status mustBe 404
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"NOT_FOUND","reason":"not found"}"""
         }
       }

@@ -16,7 +16,6 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSuite
 
@@ -58,13 +57,13 @@ class GetCalculationsListResponseSpec extends TestSuite {
 
   "Json writes" must {
     "have the same output as the frontend" in {
-      Json.toJson(response) shouldBe mtdJson
+      Json.toJson(response) mustBe mtdJson
     }
   }
 
   "Json reads" must {
     "align with the API 1404 des spec" in {
-      desJson.as[CalculationsListResponseLegacy] shouldBe response
+      desJson.as[CalculationsListResponseLegacy] mustBe response
 
     }
   }

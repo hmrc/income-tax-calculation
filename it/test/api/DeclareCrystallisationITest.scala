@@ -26,7 +26,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.HeaderNames
 import play.api.http.Status._
 import play.api.libs.json.{JsString, Json}
-
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_String
 class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with ScalaFutures with Matchers {
 
   def toTaxYearParam(taxYear: Int): String = {
@@ -76,7 +76,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 500
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -91,7 +91,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 503
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -106,7 +106,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 404
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -121,7 +121,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 409
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -136,7 +136,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 400
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -151,7 +151,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 422
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
     }
@@ -184,7 +184,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 500
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -199,7 +199,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 503
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -214,7 +214,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 409
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -229,7 +229,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 404
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -244,7 +244,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 400
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
 
@@ -259,7 +259,7 @@ class DeclareCrystallisationITest extends AnyWordSpec with WiremockSpec with Sca
           .post("""{}""")) {
           result =>
             result.status mustBe 422
-            result.body mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
+            result.body.toString mustBe """{"code":"DES_ERROR","reason":"DES_ERROR"}"""
         }
       }
     }

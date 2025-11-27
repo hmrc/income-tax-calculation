@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{ErrorBodyModel, ErrorModel, ErrorsBodyModel}
+import models.{ErrorBodyModel, ErrorModel}
 import play.api.http.Status._
 import testConstants.IncomeSourceDetailsTestConstants.{successResponse, testIncomeSourceDetailsModel}
 import testUtils.TestSuite
@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 class GetBusinessDetailsHttpParserSpec extends TestSuite {
 
-  val parser = GetBusinessDetailsHttpParser
+  val parser: GetBusinessDetailsHttpParser.type = GetBusinessDetailsHttpParser
 
   "GetBusinessDetailsHttpReads" should {
     "return a income sources details model" when {
@@ -148,7 +148,7 @@ class GetBusinessDetailsHttpParserSpec extends TestSuite {
 
         parser.GetBusinessDetailsHttpReads.read("GET", "url", HttpResponse(OK, response)) mustBe
           Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
-            "Error parsing response from API - List((/processingDate,List(JsonValidationError(List(error.path.missing),List()))), (/taxPayerDisplayResponse,List(JsonValidationError(List(error.path.missing),List()))))")))
+            "Error parsing response from API - List((/processingDate,List(JsonValidationError(List(error.path.missing),ArraySeq()))), (/taxPayerDisplayResponse,List(JsonValidationError(List(error.path.missing),ArraySeq()))))")))
       }
 
       "DES returns a bad json body" in {

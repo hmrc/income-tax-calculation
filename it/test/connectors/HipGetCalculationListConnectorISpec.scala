@@ -127,7 +127,7 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
       val result = await(connector.getCalculationList5624(nino, taxYear = "2026"))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
-        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+        "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),ArraySeq()))))")))
     }
   }
 

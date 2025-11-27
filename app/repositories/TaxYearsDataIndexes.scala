@@ -25,7 +25,7 @@ private[repositories] object TaxYearsDataIndexes {
   def indexes(appConfig: AppConfig): Seq[IndexModel] = {
     Seq(
       IndexModel(ascending("nino"), IndexOptions().unique(true).name("TaxYearDataLookupIndex")),
-      IndexModel(ascending("lastUpdated"), IndexOptions().expireAfter(appConfig.mongoTTL, TimeUnit.MINUTES).name("TaxYearDataTTL"))
+      IndexModel(ascending("lastUpdated"), IndexOptions().expireAfter(appConfig.mongoTTL.toLong, TimeUnit.MINUTES).name("TaxYearDataTTL"))
     )
   }
 }

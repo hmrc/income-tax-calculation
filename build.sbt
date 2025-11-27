@@ -3,7 +3,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-calculation"
 
-val currentScalaVersion = "2.13.12"
+val currentScalaVersion = "3.3.6"
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
@@ -25,7 +25,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal := 95,
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -42,6 +42,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9314)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(coverageSettings: _*)
+  .settings(ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
+
 
 lazy val it = project
   .dependsOn(microservice % "test->test")

@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import testUtils.TestSuite
@@ -164,7 +164,7 @@ class GetCalculationListHttpParserSpec extends TestSuite {
 
         parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
           Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR",
-            "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),List()))))")))
+            "Error parsing response from API - List((,List(JsonValidationError(List(error.expected.jsarray),ArraySeq()))))")))
       }
 
       "DES returns a bad json body" in {

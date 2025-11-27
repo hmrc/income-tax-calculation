@@ -16,6 +16,7 @@
 
 package api
 
+import play.api.libs.ws.WSBodyReadables.readableAsJson
 import constants.HipGetCalculationDetailsConstants._
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
 import models.ErrorBodyModel
@@ -59,7 +60,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -75,7 +76,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -92,7 +93,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -109,7 +110,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -126,7 +127,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -144,7 +145,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -162,7 +163,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -180,7 +181,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -247,7 +248,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -263,7 +264,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -281,7 +282,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -301,7 +302,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -319,7 +320,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -337,7 +338,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -389,7 +390,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -406,7 +407,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -423,7 +424,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -458,7 +459,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
 
       }
@@ -474,7 +475,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             result.body mustBe
-              Json.toJson(successFullModelGetCalculationDetailsHip).toString()
+              Json.toJson(successFullModelGetCalculationDetailsHip)
         }
       }
 
@@ -491,7 +492,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 500
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }
@@ -509,7 +510,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .get()) {
           result =>
             result.status mustBe 503
-            result.body mustBe
+            result.body.toString mustBe
               """{"code":"ERROR","reason":"error"}"""
         }
       }

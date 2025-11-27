@@ -56,7 +56,7 @@ class APIParserSpec extends TestSuite {
       val result = FakeParser.badSuccessJsonFromAPI(Seq(((__ \ "some" \ "path"), Seq(JsonValidationError(
         messages = Seq("err msg1", "err msg2"))))))
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR,
-        ErrorBodyModel("PARSING_ERROR","Error parsing response from API - List((/some/path,List(JsonValidationError(List(err msg1, err msg2),List()))))")))
+        ErrorBodyModel("PARSING_ERROR","Error parsing response from API - List((/some/path,List(JsonValidationError(List(err msg1, err msg2),ArraySeq()))))")))
     }
     "handle multiple errors" in {
       val result = FakeParser.handleIFError(httpResponse())

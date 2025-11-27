@@ -25,7 +25,7 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.intEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
-import java.time.{LocalDate, LocalDateTime, ZoneOffset}
+import java.time.{LocalDateTime, ZoneOffset}
 
 case class TaxYearsData(nino: String,
                         taxYears: Seq[Int],
