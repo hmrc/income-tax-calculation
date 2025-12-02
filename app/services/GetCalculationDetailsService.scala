@@ -58,11 +58,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
         list.flatMap {
           case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
             Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
-          case Right(listOfCalculationDetails) =>
-            calculationRecord match {
-              case Some(calcRecord) => filterCalcList(nino, taxYearOption, listOfCalculationDetails, calcRecord)
-              case None => getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, Some(taxYear))
-            }
+          case Right(listOfCalculationDetails) => filterCalcList(nino, taxYearOption, listOfCalculationDetails, calculationRecord)
           case Left(desError) => Future.successful(Left(desError))
         }
       case _ => handleLegacy(nino, taxYearOption)
@@ -86,31 +82,34 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     }
   }
 
-  private def filterCalcList(nino: String, taxYear: Option[String], list: Seq[GetCalculationListModel], calculationRecord: String)(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
-    val processedList = list.filter(calc => calc.calculationOutcome match {
-      case Some(outcome) if outcome.equalsIgnoreCase("PROCESSED") => true
-      case _ => false
-    })
+  protected[services] def filterCalcList(nino: String, taxYear: Option[String], list: Seq[GetCalculationListModel], calculationRecord: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
+
+    val processedList = if (list.forall(_.calculationOutcome.isEmpty)) {
+      list
+    } else {
+      list.filter(_.calculationOutcome.exists(_.equalsIgnoreCase("PROCESSED")))
+    }
 
     if (processedList.isEmpty) {
       logger.error(s"[CalculationDetailController][filterCalcList] - NO_CONTENT: No calculations found after filtering by outcome")
-      return Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
-    }
-
-    calculationRecord match {
-      case "LATEST" =>
-        val sortedList = processedList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
-        getCalculationDetailsByCalcId(nino, sortedList.head.calculationId, taxYear)
-      case "PREVIOUS" =>
-        val filteredList = processedList.filter(calc => postFinalisationAllowedTypes.contains(calc.calculationType))
-        val sortedList = filteredList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
-        sortedList.lift(1) match {
-          case Some(value) => getCalculationDetailsByCalcId(nino, value.calculationId, taxYear)
-          case None => Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
-        }
-      case _ =>
-        logger.error(s"[CalculationDetailController][filterCalcList] - INVALID_CALCULATION_RECORD: The provided calculation record is invalid")
-        Future.successful(Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_CALCULATION_RECORD", "The provided calculation record is invalid"))))
+      Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
+    } else {
+      calculationRecord match {
+        case Some("LATEST") =>
+          val sortedList = processedList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
+          getCalculationDetailsByCalcId(nino, sortedList.head.calculationId, taxYear)
+        case Some("PREVIOUS") =>
+          val filteredList = processedList.filter(calc => postFinalisationAllowedTypes.contains(calc.calculationType))
+          val sortedList = filteredList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
+          sortedList.lift(1) match {
+            case Some(value) => getCalculationDetailsByCalcId(nino, value.calculationId, taxYear)
+            case None => Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
+          }
+        case Some(_) =>
+          logger.error(s"[CalculationDetailController][filterCalcList] - INVALID_CALCULATION_RECORD: The provided calculation record is invalid")
+          Future.successful(Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_CALCULATION_RECORD", "The provided calculation record is invalid"))))
+        case None => getCalculationDetailsByCalcId(nino, processedList.head.calculationId, taxYear)
+      }
     }
   }
 

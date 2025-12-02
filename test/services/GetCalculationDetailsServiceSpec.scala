@@ -375,4 +375,205 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
   }
+
+  ".filterCalcList" should {
+    "return a successful future response" when {
+      "calculationRecord is None and there is a valid calculation with no outcome field" in {
+        getCalculationDetailsSuccessLegacy
+
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "IY",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1")
+          )
+        )
+
+        val result = await(service().filterCalcList(nino, taxYear, calcList, None))
+
+        result mustBe Right(Json.toJson(successModelFull))
+      }
+      "calculationRecord is LATEST and there is a valid calculation" in {
+        getCalculationDetailsSuccessLegacy
+
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "AM",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          ),
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
+            calculationTimestamp = "2019-02-17T09:22:59Z",
+            calculationType = "DF",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("ERROR")
+          )
+        )
+
+        val result = await(service().filterCalcList(nino, taxYear, calcList, Some("LATEST")))
+
+        result mustBe Right(Json.toJson(successModelFull))
+      }
+      "calculationRecord is PREVIOUS and there is a valid calculation" in {
+        getCalculationDetailsSuccessLegacy
+
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "AM",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          ),
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
+            calculationTimestamp = "2019-02-17T09:22:59Z",
+            calculationType = "DF",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          )
+        )
+
+        val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
+
+        result mustBe Right(Json.toJson(successModelFull))
+      }
+    }
+
+    "return an left error" when {
+      "calculationRecord is None and no calculation is found" in {
+        val result = await(service().filterCalcList(nino, taxYear, Seq.empty, None))
+
+        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      }
+      "calculationRecord is LATEST and there are no processed outcomes" in {
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
+            calculationTimestamp = "2019-02-17T09:22:59Z",
+            calculationType = "DF",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("ERROR")
+          ),
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
+            calculationTimestamp = "2019-04-17T09:22:59Z",
+            calculationType = "AM",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("REJECTED")
+          )
+        )
+
+        val result = await(service().filterCalcList(nino, taxYear, calcList, Some("LATEST")))
+
+        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      }
+
+      "calculationRecord is PREVIOUS and there are no post finalisation calculation types" in {
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
+            calculationTimestamp = "2019-02-17T09:22:59Z",
+            calculationType = "IY",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          ),
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
+            calculationTimestamp = "2019-04-17T09:22:59Z",
+            calculationType = "IY",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          )
+        )
+        val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
+
+        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      }
+      "calculationRecord is PREVIOUS and there is only a latest calculation" in {
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "DF",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          )
+        )
+
+        val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
+
+        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      }
+
+      "calculationRecord is PREVIOUS and there are no processed outcomes" in {
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
+            calculationTimestamp = "2019-02-17T09:22:59Z",
+            calculationType = "DF",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("ERROR")
+          ),
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
+            calculationTimestamp = "2019-04-17T09:22:59Z",
+            calculationType = "AM",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("REJECTED")
+          )
+        )
+
+        val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
+
+        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      }
+
+      "calculationRecord is an invalid value" in {
+        val calcList = Seq(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "AM",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationOutcome = Some("PROCESSED")
+          )
+        )
+
+        val result = await(service().filterCalcList(nino, taxYear, calcList, Some("INVALID")))
+
+        result mustBe Left(ErrorModel(400, ErrorBodyModel("INVALID_CALCULATION_RECORD", "The provided calculation record is invalid")))
+      }
+    }
+  }
 }
