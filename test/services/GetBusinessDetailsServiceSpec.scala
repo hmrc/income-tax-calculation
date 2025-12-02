@@ -67,7 +67,7 @@ class GetBusinessDetailsServiceSpec extends TestSuite {
   def getBusinessDetailsSuccess: CallHandler2[String, HeaderCarrier, Future[GetBusinessDetailsResponse]] =
     (mockGetBusinessDetailsConnector.getBusinessDetails(_: String)(_: HeaderCarrier))
       .expects(*, *)
-      .returning(Future.successful(Right((successModel))))
+      .returning(Future.successful(Right(successModel)))
 
   def getBusinessDetails404: CallHandler2[String, HeaderCarrier, Future[GetBusinessDetailsResponse]] =
     (mockGetBusinessDetailsConnector.getBusinessDetails(_: String)(_: HeaderCarrier))
