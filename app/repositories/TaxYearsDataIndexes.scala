@@ -18,7 +18,7 @@ package repositories
 
 import java.util.concurrent.TimeUnit
 import config.AppConfig
-import org.mongodb.scala.model.Indexes.{ascending}
+import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
 
 private[repositories] object TaxYearsDataIndexes {

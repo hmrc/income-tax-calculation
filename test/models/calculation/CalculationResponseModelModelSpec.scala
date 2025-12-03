@@ -99,12 +99,12 @@ class CalculationResponseModelModelSpec extends TestSuite {
       }
       "be translated into Json correctly" in {
         Json.prettyPrint(Json.toJson(errorModel)) mustBe
-          (s"""
+          s"""
               |{
               |  "status" : $errorStatus,
               |  "message" : "$errorMessage"
               |}
-           """.stripMargin.trim)
+           """.stripMargin.trim
       }
     }
   }

@@ -53,7 +53,7 @@ class APIParserSpec extends TestSuite {
           |} CorrelationId: 1234645654645""".stripMargin)
     }
     "return the the correct error" in {
-      val result = FakeParser.badSuccessJsonFromAPI(Seq(((__ \ "some" \ "path"), Seq(JsonValidationError(
+      val result = FakeParser.badSuccessJsonFromAPI(Seq((__ \ "some" \ "path", Seq(JsonValidationError(
         messages = Seq("err msg1", "err msg2"))))))
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR,
         ErrorBodyModel("PARSING_ERROR","Error parsing response from API - List((/some/path,List(JsonValidationError(List(err msg1, err msg2),ArraySeq()))))")))

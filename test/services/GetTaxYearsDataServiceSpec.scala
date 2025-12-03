@@ -91,7 +91,7 @@ class GetTaxYearsDataServiceSpec extends TestSuite {
   def getBusinessDetailsFailure: CallHandler3[String, String, HeaderCarrier, Future[Either[ErrorModel, IncomeSourceDetailsModel]]] =
     (mockGetBusinessDetailsService.getBusinessDetails(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Left((errorModel))))
+      .returning(Future.successful(Left(errorModel)))
 
   def findSuccess: CallHandler1[String, Future[Either[DatabaseError, Option[TaxYearsData]]]] =
     (mockTaxYearsDataRepository.find(_: String))

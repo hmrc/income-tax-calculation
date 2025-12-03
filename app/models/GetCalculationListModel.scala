@@ -42,13 +42,3 @@ object GetCalculationListModel{
       ) (GetCalculationListModel.apply _)
 
 }
-
-case class CalculationsListResponse(calculations: Seq[GetCalculationListModel])
-
-object CalculationsListResponse {
-  implicit val writes: Writes[CalculationsListResponse] = Json.writes[CalculationsListResponse]
-  implicit val reads: Reads[CalculationsListResponse] = {
-    implicitly[Reads[Seq[GetCalculationListModel]]].map(CalculationsListResponse(_))
-  }
-
-}

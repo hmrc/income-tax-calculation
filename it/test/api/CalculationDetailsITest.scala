@@ -105,7 +105,6 @@ class CalculationDetailsITest extends AnyWordSpec
       "return the calculation details by calling the HIP endpoint when called with tax year 25/26" in new Setup {
         authorised()
 
-        def getCalcListURL(taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$successNino"
 
         val calcList2083 = s"/income-tax/25-26/view/$successNino/calculations-summary"
         val hipUrlForCalcDetails26 = s"/itsa/income-tax/v1/25-26/view/calculations/liability/$successNino/$calculationId"

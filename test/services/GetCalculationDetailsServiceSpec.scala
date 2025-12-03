@@ -52,7 +52,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val taxYear2016: Int = 2016
   val specificTaxYear: Option[String] = Some(TaxYear.taxYear2024.toString)
   val specificTaxYearPlusOne: Option[String] = Some((TaxYear.taxYear2024 + 1).toString)
-  val taxYear2026: Option[String] = Some((TaxYear.taxYear2026).toString)
+  val taxYear2026: Option[String] = Some(TaxYear.taxYear2026.toString)
   val optionalTaxYear = false
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
