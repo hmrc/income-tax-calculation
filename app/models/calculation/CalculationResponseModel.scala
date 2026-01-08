@@ -16,7 +16,8 @@
 
 package models.calculation
 
-import play.api.libs.json._
+import enums.{CalculationTrigger, CesaSAReturn}
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
@@ -45,7 +46,9 @@ case class Metadata(
                      crystallised: Option[Boolean],
                      calculationReason: Option[String],
                      periodFrom: Option[LocalDate],
-                     periodTo: Option[LocalDate])
+                     periodTo: Option[LocalDate],
+                     calculationTrigger: Option[CalculationTrigger] = Some(CesaSAReturn)
+                   )
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]

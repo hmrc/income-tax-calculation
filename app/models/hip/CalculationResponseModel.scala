@@ -16,6 +16,7 @@
 
 package models.hip
 
+import enums._
 import models.hip.calculation.Calculation
 import play.api.libs.json.{Json, OFormat}
 
@@ -29,10 +30,12 @@ object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-case class CalculationHipResponseModel(metadata: Metadata,
-                                       inputs: Inputs,
-                                       calculation: Option[Calculation],
-                                       messages: Option[Messages])
+case class CalculationHipResponseModel(
+                                        metadata: Metadata,
+                                        inputs: Inputs,
+                                        calculation: Option[Calculation],
+                                        messages: Option[Messages]
+                                      )
 
 object CalculationHipResponseModel {
   implicit val format: OFormat[CalculationHipResponseModel] = Json.format[CalculationHipResponseModel]
@@ -41,11 +44,14 @@ object CalculationHipResponseModel {
 /*
   "crystallised" boolean has been removed from the metadata object in new API
  */
-case class Metadata(calculationTimestamp: Option[String],
-                    calculationType: String,
-                    calculationReason: String,
-                    periodFrom: LocalDate,
-                    periodTo: LocalDate)
+case class Metadata(
+                     calculationTimestamp: Option[String],
+                     calculationType: String,
+                     calculationReason: String,
+                     periodFrom: LocalDate,
+                     periodTo: LocalDate,
+                     calculationTrigger: Option[CalculationTrigger] = Some(CesaSAReturn)
+                   )
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]

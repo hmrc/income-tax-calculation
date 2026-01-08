@@ -296,7 +296,8 @@ object HipGetCalculationDetailsConstants {
                            |    "calculationType" : "IY",
                            |    "calculationReason" : "Calculation reason",
                            |    "periodFrom" : "2023-03-02",
-                           |    "periodTo" : "2023-03-10"
+                           |    "periodTo" : "2023-03-10",
+                           |    "calculationTrigger": "CesaSAReturn"
                            |  },
                            |  "inputs" : {
                            |    "personalInformation" : {

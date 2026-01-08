@@ -16,9 +16,10 @@
 
 package models.calculation
 
+import enums.CesaSAReturn
 import play.api.http.Status
-import play.api.libs.json._
-import testConstants.GetCalculationDetailsConstants._
+import play.api.libs.json.*
+import testConstants.GetCalculationDetailsConstants.*
 import testUtils.TestSuite
 
 import java.time.LocalDate
@@ -26,34 +27,41 @@ import java.time.LocalDate
 class CalculationResponseModelModelSpec extends TestSuite {
 
   "LastTaxCalculationResponseMode model" when {
-    "successful successModelMinimal" should {
-      val taxYear = 2020
-      val successModelMinimal = CalculationResponseModel(
-        inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
-        messages = None,
-        calculation = None,
-        metadata = Metadata(
-          calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-          calculationType = "crystallisation",
-          crystallised = Some(true),
-          calculationReason = Some("customerRequest"),
-          periodFrom = Some(LocalDate.of(taxYear-1,1,1)),
-          periodTo = Some(LocalDate.of(taxYear,1,1)))
-      )
 
-      val expectedJson = s"""
-                            |{
-                            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
-                            |  "metadata" : {
-                            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-                            |    "calculationType" : "crystallisation",
-                            |    "crystallised" : true,
-                            |    "calculationReason": "customerRequest",
-                            |    "periodFrom": "2019-01-01",
-                            |    "periodTo": "2020-01-01"
-                            |  }
-                            |}
-                            |""".stripMargin.trim
+    "successful successModelMinimal" should {
+
+      val taxYear = 2020
+      val successModelMinimal =
+        CalculationResponseModel(
+          inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+          messages = None,
+          calculation = None,
+          metadata = Metadata(
+            calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+            calculationType = "crystallisation",
+            crystallised = Some(true),
+            calculationReason = Some("customerRequest"),
+            periodFrom = Some(LocalDate.of(taxYear - 1, 1, 1)),
+            periodTo = Some(LocalDate.of(taxYear, 1, 1)),
+            calculationTrigger = Some(CesaSAReturn)
+          )
+        )
+
+      val expectedJson =
+        s"""
+           |{
+           |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
+           |  "metadata" : {
+           |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+           |    "calculationType" : "crystallisation",
+           |    "crystallised" : true,
+           |    "calculationReason": "customerRequest",
+           |    "periodFrom": "2019-01-01",
+           |    "periodTo": "2020-01-01",
+           |    "calculationTrigger": "CesaSAReturn"
+           |  }
+           |}
+           |""".stripMargin.trim
 
       "be translated to Json correctly" in {
         Json.toJson(successModelMinimal) mustBe Json.parse(expectedJson)
@@ -100,10 +108,10 @@ class CalculationResponseModelModelSpec extends TestSuite {
       "be translated into Json correctly" in {
         Json.prettyPrint(Json.toJson(errorModel)) mustBe
           s"""
-              |{
-              |  "status" : $errorStatus,
-              |  "message" : "$errorMessage"
-              |}
+             |{
+             |  "status" : $errorStatus,
+             |  "message" : "$errorMessage"
+             |}
            """.stripMargin.trim
       }
     }

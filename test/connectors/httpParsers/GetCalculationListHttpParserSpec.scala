@@ -37,7 +37,8 @@ class GetCalculationListHttpParserSpec extends TestSuite {
           "CA",
           None,
           None,
-          None))).toString()
+          None
+        ))).toString()
 
         parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
           Right(Seq(GetCalculationListModel(
@@ -46,7 +47,8 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             "CA",
             None,
             None,
-            None)))
+            None
+          )))
       }
     }
 

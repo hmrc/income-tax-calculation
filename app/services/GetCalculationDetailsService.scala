@@ -31,17 +31,71 @@ import utils.TaxYear
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
-                                             listCalculationDetailsConnector: GetCalculationListConnector,
-                                             calcListHipLegacyConnector: HipCalculationLegacyListConnector,
-                                             hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
-                                             hipGetCalculationListConnector: HipGetCalculationListConnector,
-                                             val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
+//noinspection ScalaStyle
+class GetCalculationDetailsService @Inject()(
+                                              calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
+                                              listCalculationDetailsConnector: GetCalculationListConnector,
+                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
+                                              hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
+                                              hipGetCalculationListConnector: HipGetCalculationListConnector,
+                                              val appConfig: AppConfig
+                                            )(implicit ec: ExecutionContext) extends Logging {
 
   private val specificTaxYear: Int = TaxYear.taxYear2024
   private type CalculationDetailAsJsonResponse = Either[ErrorModel, JsValue]
 
-  def getCalculationDetails(nino: String, taxYearOption: Option[String], calculationRecord: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
+  def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
+    TaxYear.convert(taxYear) match {
+      case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
+        case Right(value) => Right(Json.toJson(value))
+        case Left(error) => Left(error)
+      }
+      case Right(year) if year >= specificTaxYear =>
+        hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
+          case Right(value) => Right(Json.toJson(value))
+          case Left(error) => Left(error)
+        }
+      case Right(_) =>
+        if (appConfig.useGetCalcDetailsHipPlatform5294) {
+          hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
+            case Right(value) => Right(Json.toJson(value))
+            case Left(error) => Left(error)
+          }
+        }
+        else {
+          calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
+            case Right(value) => Right(Json.toJson(value))
+            case Left(error) => Left(error)
+          }
+        }
+      case Left(error) =>
+        throw new RuntimeException(error)
+    }
+  }
+
+  private def getLegacyCalcListResult(nino: String,
+                                      taxYear: Option[String]
+                                     )(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+    logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
+    calcListHipLegacyConnector.calcList(nino, taxYear)
+  }
+
+  private def handleLegacy(nino: String, taxYear: Option[String])
+                          (implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
+    getLegacyCalcListResult(nino, taxYear).flatMap {
+      case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
+        Future(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
+      case Right(listOfCalculationDetails) =>
+        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
+      case Left(desError) => Future(Left(desError))
+    }
+  }
+
+  def getCalculationDetails(
+                             nino: String,
+                             taxYearOption: Option[String],
+                             calculationRecord: Option[String]
+                           )(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
     taxYearOption match {
       case Some(taxYear) if taxYear.toInt >= specificTaxYear =>
         val list = taxYear.toInt match {
@@ -57,32 +111,23 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
         list.flatMap {
           case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
-            Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
-          case Right(listOfCalculationDetails) => filterCalcList(nino, taxYearOption, listOfCalculationDetails, calculationRecord)
-          case Left(desError) => Future.successful(Left(desError))
+            Future(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
+          case Right(listOfCalculationDetails) =>
+            filterCalcList(nino, taxYearOption, listOfCalculationDetails, calculationRecord)
+          case Left(desError) =>
+            Future(Left(desError))
         }
       case _ => handleLegacy(nino, taxYearOption)
     }
   }
 
-  private def getLegacyCalcListResult(nino: String, taxYear: Option[String])
-                                     (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
-      logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
-      calcListHipLegacyConnector.calcList(nino, taxYear)
-  }
 
-  private def handleLegacy(nino: String, taxYear: Option[String])
-                          (implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
-    getLegacyCalcListResult(nino, taxYear).flatMap {
-      case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
-        Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.parsingError())))
-      case Right(listOfCalculationDetails) =>
-        getCalculationDetailsByCalcId(nino, listOfCalculationDetails.head.calculationId, taxYear)
-      case Left(desError) => Future.successful(Left(desError))
-    }
-  }
-
-  protected[services] def filterCalcList(nino: String, taxYear: Option[String], list: Seq[GetCalculationListModel], calculationRecord: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
+  def filterCalcList(
+                      nino: String,
+                      taxYear: Option[String],
+                      list: Seq[GetCalculationListModel],
+                      calculationRecord: Option[String]
+                    )(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
 
     val processedList = if (list.forall(_.calculationOutcome.isEmpty)) {
       list
@@ -92,7 +137,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
     if (processedList.isEmpty) {
       logger.error(s"[CalculationDetailController][filterCalcList] - NO_CONTENT: No calculations found after filtering by outcome")
-      Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
+      Future(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
     } else {
       calculationRecord match {
         case Some("LATEST") =>
@@ -103,41 +148,13 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
           val sortedList = filteredList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
           sortedList.lift(1) match {
             case Some(value) => getCalculationDetailsByCalcId(nino, value.calculationId, taxYear)
-            case None => Future.successful(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
+            case None => Future(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
           }
         case Some(_) =>
           logger.error(s"[CalculationDetailController][filterCalcList] - INVALID_CALCULATION_RECORD: The provided calculation record is invalid")
-          Future.successful(Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_CALCULATION_RECORD", "The provided calculation record is invalid"))))
+          Future(Left(ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_CALCULATION_RECORD", "The provided calculation record is invalid"))))
         case None => getCalculationDetailsByCalcId(nino, processedList.head.calculationId, taxYear)
       }
-    }
-  }
-
-  def getCalculationDetailsByCalcId(nino: String, calcId: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
-    TaxYear.convert(taxYear) match {
-      case _ if taxYear.isEmpty => calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
-        case Right(value) => Right(Json.toJson(value))
-        case Left(error) => Left(error)
-      }
-      case Right(year) if year >= specificTaxYear =>
-          hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
-            case Right(value) => Right(Json.toJson(value))
-            case Left(error) => Left(error)
-          }
-      case Right(_) =>
-        if (appConfig.useGetCalcDetailsHipPlatform5294) {
-          hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
-            case Right(value) => Right(Json.toJson(value))
-            case Left(error) => Left(error)
-          }
-        }
-        else {
-          calculationDetailsConnectorLegacy.getCalculationDetails(nino, calcId).collect {
-            case Right(value) => Right(Json.toJson(value))
-            case Left(error) => Left(error)
-          }
-        }
-      case Left(error) => throw new RuntimeException(error)
     }
   }
 }

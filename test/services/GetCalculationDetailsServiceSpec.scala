@@ -32,6 +32,7 @@ import testConstants.hip.GetCalculationDetailsTestConstants.successFullModelGetC
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TaxYear
+import enums._
 
 import scala.concurrent.Future
 
@@ -72,14 +73,15 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(
         Future.successful(
-          Right(Seq(GetCalculationListModel(
-            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-            calculationTimestamp = "2019-03-17T09:22:59Z",
-            calculationType = "inYear",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1")
-          )))
+          Right(Seq(
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+              calculationTimestamp = "2019-03-17T09:22:59Z",
+              calculationType = "inYear",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1")
+            )))
         )
       )
 
@@ -150,15 +152,15 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               toDate = Some("2016-05-d1"),
               calculationOutcome = Some("ERROR")
             ),
-          GetCalculationListModel(
-            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1a",
-            calculationTimestamp = "2019-03-17T09:22:59Z",
-            calculationType = "DF",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
-            calculationOutcome = None
-          )))
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1a",
+              calculationTimestamp = "2019-03-17T09:22:59Z",
+              calculationType = "DF",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = None
+            )))
         )
       )
 

@@ -313,7 +313,8 @@ object GetCalculationDetailsConstants {
        |    "calculationType" : "crystallisation",
        |    "calculationReason": "customerRequest",
        |    "periodFrom": "2019-01-01",
-       |    "periodTo": "2020-01-01"
+       |    "periodTo": "2020-01-01",
+       |    "calculationTrigger": "CesaSAReturn"
        |  },
        |  "calculation" : {
        |    "allowancesAndDeductions" : {
