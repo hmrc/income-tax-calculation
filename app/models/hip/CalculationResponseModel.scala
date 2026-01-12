@@ -50,7 +50,7 @@ case class Metadata(
                      calculationReason: String,
                      periodFrom: LocalDate,
                      periodTo: LocalDate,
-                     calculationTrigger: Option[CalculationTrigger] = Some(CesaSAReturn)
+                     calculationTrigger: Option[CalculationTrigger]
                    )
 
 object Metadata {
