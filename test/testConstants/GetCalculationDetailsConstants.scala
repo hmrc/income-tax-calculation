@@ -16,6 +16,7 @@
 
 package testConstants
 
+import enums.CesaSAReturn
 import models.calculation.*
 import models.calculation.taxcalculation.*
 
@@ -277,7 +278,9 @@ object GetCalculationDetailsConstants {
         crystallised = Some(true),
         calculationReason = Some("customerRequest"),
         periodFrom = Some(LocalDate.of(2019, 1, 1)),
-        periodTo = Some(LocalDate.of(2020, 1, 1)))
+        periodTo = Some(LocalDate.of(2020, 1, 1)),
+        calculationTrigger = Some(CesaSAReturn)
+      )
     )
 
   val arrayTestFull = CalculationResponseModel(
@@ -441,7 +444,8 @@ object GetCalculationDetailsConstants {
       crystallised = Some(true),
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2019, 1, 1)),
-      periodTo = Some(LocalDate.of(2020, 1, 1))
+      periodTo = Some(LocalDate.of(2020, 1, 1)),
+      calculationTrigger = Some(CesaSAReturn)
     )
   )
 

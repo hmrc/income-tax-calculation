@@ -16,8 +16,9 @@
 
 package assets
 
-import models.calculation._
-import models.calculation.taxcalculation._
+import enums.CesaSAReturn
+import models.calculation.*
+import models.calculation.taxcalculation.*
 
 import java.time.LocalDate
 
@@ -275,7 +276,9 @@ object GetCalculationDetailsConstants {
       calculationType = "crystallisation",
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2019, 1, 1)),
-      periodTo = Some(LocalDate.of(2020, 1, 1)))
+      periodTo = Some(LocalDate.of(2020, 1, 1)),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
 
   val successCalcDetailsExpectedJsonFull =
