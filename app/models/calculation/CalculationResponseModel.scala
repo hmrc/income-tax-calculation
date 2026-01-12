@@ -16,7 +16,7 @@
 
 package models.calculation
 
-import enums.{CalculationTrigger, CesaSAReturn}
+import enums.CalculationTrigger
 import play.api.libs.json.*
 
 import java.time.LocalDate
@@ -30,11 +30,11 @@ object LiabilityCalculationError {
 }
 
 case class CalculationResponseModel(
-                                         inputs: Inputs,
-                                         metadata: Metadata,
-                                         messages: Option[Messages],
-                                         calculation: Option[Calculation]
-                                       ) extends LiabilityCalculationResponseModel
+                                     inputs: Inputs,
+                                     metadata: Metadata,
+                                     messages: Option[Messages],
+                                     calculation: Option[Calculation]
+                                   ) extends LiabilityCalculationResponseModel
 
 object CalculationResponseModel {
   implicit val format: OFormat[CalculationResponseModel] = Json.format[CalculationResponseModel]
@@ -47,7 +47,7 @@ case class Metadata(
                      calculationReason: Option[String],
                      periodFrom: Option[LocalDate],
                      periodTo: Option[LocalDate],
-                     calculationTrigger: Option[CalculationTrigger] = Some(CesaSAReturn)
+                     calculationTrigger: Option[CalculationTrigger]
                    )
 
 object Metadata {
