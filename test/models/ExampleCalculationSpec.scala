@@ -160,7 +160,9 @@ class ExampleCalculationSpec extends TestSuite {
             |			"incomeSourceName": "ABC Pvt Ltd",
             |			"totalExpenses": 0,
             |			"taxableProfit": 60000,
-            |			"incomeSourceId": "XHIS00000007697"
+            |			"incomeSourceId": "XHIS00000007697",
+            |     "adjustedProfit": 2100.99,
+            |     "outstandingBusinessIncome": 4000.99
             |		}]
             |	}
             |}""".stripMargin

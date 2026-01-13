@@ -86,7 +86,6 @@
               "amountClaimed": 5000.99,
               "uniqueInvestmentRef": "string",
               "name": "string",
-              "socialEnterpriseName": "string",
               "companyName": "string",
               "deficiencyReliefType": "lifeInsurance",
               "customerReference": "string"
@@ -104,7 +103,6 @@
               "amountClaimed": 5000.99,
               "uniqueInvestmentRef": "string",
               "name": "string",
-              "socialEnterpriseName": "string",
               "companyName": "string",
               "deficiencyReliefType": "lifeInsurance",
               "customerReference": "string"
@@ -329,7 +327,9 @@
         "totalBroughtForwardClass4Losses": 12500,
         "broughtForwardClass4LossesUsed": 12500,
         "carrySidewaysClass4LossesUsed": 12500,
-        "totalClass4LossesCarriedForward": 12500
+        "totalClass4LossesCarriedForward": 12500,
+        "adjustedProfit": 2100.99,
+        "outstandingBusinessIncome": 4000.99
       }
     ],
     "employmentAndPensionsIncome": {
