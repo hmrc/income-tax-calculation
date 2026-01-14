@@ -22,19 +22,48 @@ sealed trait CalculationTrigger {
   def asString: String
 }
 
-case object Attended extends CalculationTrigger {
+sealed trait CalculationTrigger2083 extends CalculationTrigger
+
+sealed trait CalculationTrigger2150 extends CalculationTrigger
+
+case object Attended2083 extends CalculationTrigger2083 {
+  val asString = "attended"
+}
+
+case object Class2NicEvent2083 extends CalculationTrigger2083 {
+  val asString = "class2NICEvent"
+}
+
+case object Unattended2083 extends CalculationTrigger2083 {
+  val asString = "unattended"
+}
+
+case object CesaSAReturn2083 extends CalculationTrigger2083 {
+  val asString = "cesaSAReturn"
+}
+
+case object NewLossEvent2083 extends CalculationTrigger2083 {
+  val asString = "newLossEvent"
+}
+
+case object UpdatedLossEvent2083 extends CalculationTrigger2083 {
+  val asString = "updatedLossEvent"
+}
+
+
+case object Attended2150 extends CalculationTrigger2150 {
   val asString = "Attended"
 }
 
-case object Class2NicEvent extends CalculationTrigger {
+case object Class2NicEvent2150 extends CalculationTrigger2150 {
   val asString = "Class2NicEvent"
 }
 
-case object Unattended extends CalculationTrigger {
+case object Unattended2150 extends CalculationTrigger2150 {
   val asString = "Unattended"
 }
 
-case object CesaSAReturn extends CalculationTrigger {
+case object CesaSAReturn2150 extends CalculationTrigger2150 {
   val asString = "CesaSAReturn"
 }
 
@@ -43,10 +72,16 @@ object CalculationTrigger {
 
   val all: List[CalculationTrigger] =
     List(
-      Attended,
-      Class2NicEvent,
-      Unattended,
-      CesaSAReturn
+      Attended2083,
+      Class2NicEvent2083,
+      Unattended2083,
+      CesaSAReturn2083,
+      NewLossEvent2083,
+      UpdatedLossEvent2083,
+      Attended2150,
+      Class2NicEvent2150,
+      Unattended2150,
+      CesaSAReturn2150
     )
 
   private val byString: Map[String, CalculationTrigger] =

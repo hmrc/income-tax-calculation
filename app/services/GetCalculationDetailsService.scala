@@ -98,14 +98,14 @@ class GetCalculationDetailsService @Inject()(
   def getCalculationDetailsByCalcIdHip(
                                         nino: String,
                                         calcId: String,
-                                        taxYear: Option[String]
+                                        taxYearOpt: Option[String]
                                       )(implicit hc: HeaderCarrier): Future[Either[ErrorModel, CalculationHipResponseModel]] = {
 
-    TaxYear.convert(taxYear) match {
+    TaxYear.convert(taxYearOpt) match {
       case Right(year) if year >= specificTaxYear =>
-        hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId)
+        hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYearOpt.head), nino, calcId)
       case Right(_) =>
-        hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId)
+        hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYearOpt.head), nino, calcId)
       case Left(error) =>
         throw new RuntimeException(error)
     }
@@ -172,18 +172,20 @@ class GetCalculationDetailsService @Inject()(
         list.filter(_.calculationOutcome.exists(_.equalsIgnoreCase("PROCESSED")))
       }
 
+    lazy val sortedList = processedList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
+
+    lazy val filteredPreviousList = processedList.filter(calc => postFinalisationAllowedTypes.contains(calc.calculationType))
+    lazy val sortedPreviousList = filteredPreviousList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
+
     if (processedList.isEmpty) {
       logger.error(s"[GetCalculationDetailsService][filterCalcListHip] - NO_CONTENT: No calculations found after filtering by outcome")
       Future(Left(ErrorModel(NO_CONTENT, ErrorBodyModel.notFoundError())))
     } else {
       calculationRecord match {
         case Some("LATEST") =>
-          val sortedList = processedList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
           getCalculationDetailsByCalcIdHip(nino, sortedList.head.calculationId, taxYear)
         case Some("PREVIOUS") =>
-          val filteredList = processedList.filter(calc => postFinalisationAllowedTypes.contains(calc.calculationType))
-          val sortedList = filteredList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
-          sortedList.lift(1) match {
+          sortedPreviousList.lift(1) match {
             case Some(value) =>
               getCalculationDetailsByCalcIdHip(nino, value.calculationId, taxYear)
             case None =>
@@ -232,7 +234,8 @@ class GetCalculationDetailsService @Inject()(
     taxYearOption match {
       case Some(taxYear) if taxYear.toInt >= specificTaxYear && appConfig.useGetCalcListHip5624 =>
 
-        val hipCalculationList: Future[GetCalculationListResponse] = hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
+        val hipCalculationList: Future[GetCalculationListResponse] =
+          hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
 
         hipCalculationList.flatMap {
           case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
