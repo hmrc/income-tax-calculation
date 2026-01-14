@@ -28,8 +28,8 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CalculationDetailController @Inject()(
-                                             authorisedAction: AuthorisedAction,
                                              appConfig: AppConfig,
+                                             authorisedAction: AuthorisedAction,
                                              cc: ControllerComponents,
                                              getCalculationDetailsService: GetCalculationDetailsService
                                            )(implicit ec: ExecutionContext) extends BackendController(cc) with Logging {

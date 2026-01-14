@@ -31,26 +31,28 @@ import scala.concurrent.Future
 
 class CalculationDetailControllerSpec extends TestSuite {
 
-  val service: GetCalculationDetailsService = Mockito.mock(classOf[GetCalculationDetailsService])
-  val controller = new CalculationDetailController(service, mockControllerComponents,authorisedAction)
+  val mockGetCalculationDetailsService: GetCalculationDetailsService =
+    Mockito.mock(classOf[GetCalculationDetailsService])
 
+  val controller =
+    new CalculationDetailController(mockAppConfig, authorisedAction, mockControllerComponents, mockGetCalculationDetailsService)
 
   val nino = "AA123456A"
   val taxYear = "2022"
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
   def calculationResponse(nino: String, taxYearOption: Option[String], calcType: Option[String])(response: CalculationDetailResponse): Unit = {
-    when(service.getCalculationDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYearOption), ArgumentMatchers.eq(calcType))(ArgumentMatchers.any())) thenReturn Future (
+    when(mockGetCalculationDetailsService.getCalculationDetailsLegacy(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYearOption), ArgumentMatchers.eq(calcType))(ArgumentMatchers.any())) thenReturn Future(
       response match {
         case Right(obj) => Right(Json.toJson(obj))
         case Left(err) => Left(err)
       }
-      )
+    )
   }
 
   def calculationResponseByCalcId(nino: String, calculationId: String, taxYearOption: Option[String])(response: CalculationDetailResponse): Unit = {
-    when(service.getCalculationDetailsByCalcId(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(calculationId), ArgumentMatchers.eq(taxYearOption))
-    (ArgumentMatchers.any()))thenReturn Future (
+    when(mockGetCalculationDetailsService.getCalculationDetailsByCalcIdLegacy(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(calculationId), ArgumentMatchers.eq(taxYearOption))
+      (ArgumentMatchers.any())) thenReturn Future(
       response match {
         case Right(obj) => Right(Json.toJson(obj))
         case Left(err) => Left(err)
@@ -59,7 +61,7 @@ class CalculationDetailControllerSpec extends TestSuite {
   }
 
 
-    "CalculationDetailController.calculationDetail" should {
+  "CalculationDetailController.calculationDetail" should {
 
     "return a success response with a calculation model" in {
 

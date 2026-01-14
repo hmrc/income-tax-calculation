@@ -24,6 +24,7 @@ import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
 object GetCalculationListHttpParserLegacy extends APIParser with Logging {
+  
   type GetCalculationListResponseLegacy = Either[ErrorModel, Seq[GetCalculationListModelLegacy]]
 
   override val parserName: String = "GetCalculationListHttpParserLegacy"
