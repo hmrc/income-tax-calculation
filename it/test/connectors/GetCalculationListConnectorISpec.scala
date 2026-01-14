@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers{
+class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec with Matchers {
 
   lazy val connector: GetCalculationListConnector = app.injector.instanceOf[GetCalculationListConnector]
 
@@ -41,7 +41,9 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val nino = "nino"
+
   private def getURL2150(nino: String, taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$nino"
+
   private def getURL2083(nino: String, taxYearRange: String): String = s"/income-tax/$taxYearRange/view/$nino/calculations-summary"
 
   private def getResponse2150: String = {
@@ -51,7 +53,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
       calculationType = "IY",
       requestedBy = Some("Customer"),
       fromDate = None,
-      toDate = None
+      toDate = None,
+      calculationTrigger = None
     ))).toString
   }
 
@@ -63,7 +66,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
         calculationType = "inYear",
         requestedBy = Some("customer"),
         fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1")
+        toDate = Some("2016-05-d1"),
+        calculationTrigger = None
       )))
     ).toString
   }
@@ -80,7 +84,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
         calculationType = "inYear",
         requestedBy = Some("customer"),
         fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1")
+        toDate = Some("2016-05-d1"),
+        calculationTrigger = None
       )
 
       val successModel2150 = GetCalculationListModel(
@@ -89,7 +94,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
         calculationType = "IY",
         requestedBy = Some("Customer"),
         fromDate = None,
-        toDate = None
+        toDate = None,
+        calculationTrigger = None
       )
 
       "IF 2150 returns a success with expected JSON" in {
@@ -144,14 +150,17 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
       val appConfigWithInternalHost = appConfig("localhost")
       val connector = new GetCalculationListConnector(httpClient, appConfigWithInternalHost)
 
-      val response = Json.toJson(GetCalculationListModel(
-        calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-        calculationTimestamp = "2019-03-17T09:22:59Z",
-        calculationType = "inYear",
-        requestedBy = Some("customer"),
-        fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1")
-      )).toString()
+      val response =
+        Json.toJson(
+          GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "inYear",
+            requestedBy = Some("customer"),
+            fromDate = Some("2013-05-d1"),
+            toDate = Some("2016-05-d1"),
+            calculationTrigger = None
+          )).toString()
 
       stubGetWithResponseBody(getURL2083(nino, "25-26"), OK, response)
 

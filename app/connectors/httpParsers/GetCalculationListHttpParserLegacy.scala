@@ -24,11 +24,13 @@ import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
 object GetCalculationListHttpParserLegacy extends APIParser with Logging {
+  
   type GetCalculationListResponseLegacy = Either[ErrorModel, Seq[GetCalculationListModelLegacy]]
 
   override val parserName: String = "GetCalculationListHttpParserLegacy"
 
   implicit object GetCalculationListHttpReadsLegacy extends HttpReads[GetCalculationListResponseLegacy] {
+    
     override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponseLegacy = {
       response.status match {
         case OK => response.json.validate[Seq[GetCalculationListModelLegacy]].fold[GetCalculationListResponseLegacy](
@@ -36,8 +38,8 @@ object GetCalculationListHttpParserLegacy extends APIParser with Logging {
           parsedModel => Right(parsedModel)
         )
         case NOT_FOUND =>
-          logger.info(s"[GetCalculationListHttpParserLegacy]: $NOT_FOUND converted to $NO_CONTENT")
-          Left(ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
+          logger.info(s"[GetCalculationListHttpParserLegacy][read]: $NOT_FOUND")
+          Left(ErrorModel(NOT_FOUND, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
         case INTERNAL_SERVER_ERROR =>
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleIFError(response)

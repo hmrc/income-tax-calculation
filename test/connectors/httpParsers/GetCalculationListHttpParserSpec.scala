@@ -17,7 +17,7 @@
 package connectors.httpParsers
 
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HttpResponse
@@ -31,22 +31,31 @@ class GetCalculationListHttpParserSpec extends TestSuite {
     "return a GetCalculationsList model" when {
       "DES returns 200" in {
 
-        val response = Json.toJson(Seq(GetCalculationListModel(
-          "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-          "2019-03-17T09:22:59Z",
-          "CA",
-          None,
-          None,
-          None))).toString()
+        val response =
+          Json.toJson(Seq(GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "CA",
+            requestedBy = None,
+            fromDate = None,
+            toDate = None,
+            calculationOutcome = None,
+            calculationTrigger = None,
+          ))).toString()
 
         parser.GetCalculationListHttpReads.read("POST", "url", HttpResponse(OK, response)) mustBe
-          Right(Seq(GetCalculationListModel(
-            "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-            "2019-03-17T09:22:59Z",
-            "CA",
-            None,
-            None,
-            None)))
+          Right(Seq(
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+              calculationTimestamp = "2019-03-17T09:22:59Z",
+              calculationType = "CA",
+              requestedBy = None,
+              fromDate = None,
+              toDate = None,
+              calculationOutcome = None,
+              calculationTrigger = None,
+            )
+          ))
       }
     }
 
