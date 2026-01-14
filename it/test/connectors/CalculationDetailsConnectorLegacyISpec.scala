@@ -80,8 +80,8 @@ class CalculationDetailsConnectorLegacyISpec extends AnyWordSpec with WiremockSp
         }
       }
 
-      s"DES returns $NOT_FOUND" in {
-        val desError = ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND"))
+      s"DES returns 404" in {
+        val desError = ErrorModel(NOT_FOUND, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND"))
         implicit val hc: HeaderCarrier = HeaderCarrier()
 
         stubGetWithResponseBody(url, NOT_FOUND, desError.toJson.toString)

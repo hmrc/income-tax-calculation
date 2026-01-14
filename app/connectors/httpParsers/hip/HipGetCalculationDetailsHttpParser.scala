@@ -26,11 +26,13 @@ import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper.pagerDutyLog
 
 object HipGetCalculationDetailsHttpParser extends APIParser with Logging {
+  
   type HipGetCalculationDetailsResponse = Either[ErrorModel, CalculationHipResponseModel]
 
   override val parserName: String = "CalculationDetailsHttpParser"
 
   implicit object GetCalculationDetailsHttpReads extends HttpReads[HipGetCalculationDetailsResponse] {
+    
     override def read(method: String, url: String, response: HttpResponse): HipGetCalculationDetailsResponse = {
       response.status match {
         case OK => response.json.validate[CalculationHipResponseModel].fold[HipGetCalculationDetailsResponse](
@@ -38,8 +40,8 @@ object HipGetCalculationDetailsHttpParser extends APIParser with Logging {
           parsedModel => Right(parsedModel)
         )
         case NOT_FOUND =>
-          logger.info(s"[CalculationDetailsHttpReads]: $NOT_FOUND converted to $NO_CONTENT")
-          Left(ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
+          logger.info(s"[HipGetCalculationDetailsHttpParser][read]: $NOT_FOUND")
+          Left(ErrorModel(NOT_FOUND, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
         case INTERNAL_SERVER_ERROR =>
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleIFError(response)

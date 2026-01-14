@@ -23,9 +23,10 @@ import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListRes
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
 import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser.HipGetCalculationDetailsResponse
 import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
+import enums.*
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
 import org.scalamock.handlers.{CallHandler3, CallHandler4}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import testConstants.GetCalculationDetailsConstants.successModelFull
 import testConstants.hip.GetCalculationDetailsTestConstants.successFullModelGetCalculationDetailsHip
@@ -78,7 +79,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationType = "inYear",
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1")
+            toDate = Some("2016-05-d1"),
+            calculationTrigger = None
           )))
         )
       )
@@ -95,7 +97,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           ),
             GetCalculationListModel(
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
@@ -104,7 +107,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               requestedBy = Some("customer"),
               fromDate = Some("2013-05-d1"),
               toDate = Some("2016-05-d1"),
-              calculationOutcome = Some("ERROR")
+              calculationOutcome = Some("ERROR"),
+              calculationTrigger = None
             ),
             GetCalculationListModel(
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
@@ -113,7 +117,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               requestedBy = Some("customer"),
               fromDate = Some("2013-05-d1"),
               toDate = Some("2016-05-d1"),
-              calculationOutcome = Some("REJECTED")
+              calculationOutcome = Some("REJECTED"),
+              calculationTrigger = None
             ),
             GetCalculationListModel(
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
@@ -122,7 +127,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               requestedBy = Some("customer"),
               fromDate = Some("2013-05-d1"),
               toDate = Some("2016-05-d1"),
-              calculationOutcome = Some("PROCESSED")
+              calculationOutcome = Some("PROCESSED"),
+              calculationTrigger = None
             )))
         )
       )
@@ -139,7 +145,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("REJECTED")
+            calculationOutcome = Some("REJECTED"),
+            calculationTrigger = None
           ),
             GetCalculationListModel(
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
@@ -148,17 +155,19 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               requestedBy = Some("customer"),
               fromDate = Some("2013-05-d1"),
               toDate = Some("2016-05-d1"),
-              calculationOutcome = Some("ERROR")
+              calculationOutcome = Some("ERROR"),
+              calculationTrigger = None
             ),
-          GetCalculationListModel(
-            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1a",
-            calculationTimestamp = "2019-03-17T09:22:59Z",
-            calculationType = "DF",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
-            calculationOutcome = None
-          )))
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1a",
+              calculationTimestamp = "2019-03-17T09:22:59Z",
+              calculationType = "DF",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = None,
+              calculationTrigger = None
+            )))
         )
       )
 
@@ -173,7 +182,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationType = "IY",
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1")
+            toDate = Some("2016-05-d1"),
+            calculationTrigger = None
           )))
         )
       )
@@ -189,7 +199,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationType = "inYear",
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1")
+            toDate = Some("2016-05-d1"),
+            calculationTrigger = None
           )))
         )
       )
@@ -227,13 +238,13 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   ".getCalculationDetails" should {
 
     "return a Right when successful" in {
-      getCalculationDetailsSuccessLegacy
 
+      getCalculationDetailsSuccessLegacy
       listCalculationDetailsSuccessLegacy
 
       val result = await(service().getCalculationDetails(nino, taxYear, None))
 
-      result mustBe Right(Json.toJson(successModelFull))
+      result mustBe Right(Json.toJson(successModelFull.copy(submissionChannel = None)))
     }
 
     "return a Right when successful for specific tax year before 25-26 with hip disabled and no calculationRecord" in {
@@ -286,13 +297,12 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
-    "return a Left(DesError) when calling list calculations returns an empty calculation and no calcType" in {
+    "return a Left(500) when calling list calculations returns an empty calculation and no calcType" in {
 
       emptyListCalculationDetailsFailure
 
       val result = await(service().getCalculationDetails(nino, taxYear, None))
-
-      result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
+      result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
     }
 
     "return a Left(DesError) when calling list calculations and not call get calculations" in {
@@ -319,8 +329,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       listCalculationDetailsEmpty2150
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear, Some("PREVIOUS")))
-
-      result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      result mustBe Left(ErrorModel(NOT_FOUND, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
     }
 
     "return a Left(DesError) when calling list calculations and it returns only errors and rejected outcomes" in {
@@ -328,7 +337,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear, Some("PREVIOUS")))
 
-      result mustBe Left(ErrorModel(NO_CONTENT, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
     }
 
   }
@@ -338,7 +347,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     "return a Right when there is no tax year given" in {
       getCalculationDetailsSuccessLegacy
 
-      val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, None))
+      val result = await(service().getCalculationDetailsByCalcId(nino, Some(calculationId), None, None))
 
       result mustBe Right(Json.toJson(successModelFull))
     }
@@ -346,7 +355,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     "return a Right when successful for specific tax year" in {
       getHipCalculationDetailsSuccess
 
-      val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, specificTaxYear))
+      val result = await(service().getCalculationDetailsByCalcId(nino, Some(calculationId), specificTaxYear, None))
 
       result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
@@ -354,7 +363,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     "return a Right when successful for specific tax year plus one" in {
       getHipCalculationDetailsSuccess
 
-      val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, specificTaxYearPlusOne))
+      val result = await(service().getCalculationDetailsByCalcId(nino, Some(calculationId), specificTaxYearPlusOne, None))
 
       result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
@@ -362,7 +371,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     "return a Right when successful and tax year is 22-23 or prior" in {
       getCalculationDetailsSuccessLegacy
 
-      val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, taxYear))
+      val result = await(service().getCalculationDetailsByCalcId(nino, Some(calculationId), taxYear, None))
 
       result mustBe Right(Json.toJson(successModelFull))
     }
@@ -370,7 +379,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
     "return a Left(DesError) when calling get calculations returns a DES error" in {
       getCalculationDetailsFailureLegacy
 
-      val result = await(service().getCalculationDetailsByCalcId(nino, calculationId, taxYear))
+      val result = await(service().getCalculationDetailsByCalcId(nino, Some(calculationId), taxYear, None))
 
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))
     }
@@ -388,7 +397,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationType = "IY",
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1")
+            toDate = Some("2016-05-d1"),
+            calculationTrigger = None
           )
         )
 
@@ -407,7 +417,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           ),
           GetCalculationListModel(
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
@@ -416,7 +427,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("ERROR")
+            calculationOutcome = Some("ERROR"),
+            calculationTrigger = None
           )
         )
 
@@ -435,7 +447,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           ),
           GetCalculationListModel(
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
@@ -444,21 +457,29 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           )
         )
 
         val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
 
-        result mustBe Right(Json.toJson(successModelFull))
+        result match {
+          case Right(json) =>
+            json mustBe Json.toJson(successModelFull)
+
+          case Left(error) =>
+            fail(s"Expected Right but got Left($error)")
+        }
       }
     }
 
     "return an left error" when {
-      "calculationRecord is None and no calculation is found" in {
-        val result = await(service().filterCalcList(nino, taxYear, Seq.empty, None))
 
-        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+      "calculationRecord is None and no calculation is found" in {
+
+        val result = await(service().filterCalcList(nino = nino, taxYear = taxYear, calcSummaryList = Seq.empty, calculationRecord = None))
+        result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
       }
       "calculationRecord is LATEST and there are no processed outcomes" in {
         val calcList = Seq(
@@ -469,7 +490,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("ERROR")
+            calculationOutcome = Some("ERROR"),
+            calculationTrigger = None
           ),
           GetCalculationListModel(
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
@@ -478,13 +500,13 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("REJECTED")
+            calculationOutcome = Some("REJECTED"),
+            calculationTrigger = None
           )
         )
 
         val result = await(service().filterCalcList(nino, taxYear, calcList, Some("LATEST")))
-
-        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+        result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
       }
 
       "calculationRecord is PREVIOUS and there are no post finalisation calculation types" in {
@@ -496,7 +518,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           ),
           GetCalculationListModel(
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
@@ -505,12 +528,12 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           )
         )
         val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
-
-        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+        result mustBe Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
       }
       "calculationRecord is PREVIOUS and there is only a latest calculation" in {
         val calcList = Seq(
@@ -521,40 +544,44 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           )
         )
 
         val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
 
-        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+        result mustBe Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
       }
 
       "calculationRecord is PREVIOUS and there are no processed outcomes" in {
-        val calcList = Seq(
-          GetCalculationListModel(
-            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
-            calculationTimestamp = "2019-02-17T09:22:59Z",
-            calculationType = "DF",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("ERROR")
-          ),
-          GetCalculationListModel(
-            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
-            calculationTimestamp = "2019-04-17T09:22:59Z",
-            calculationType = "AM",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("REJECTED")
+
+        val calcList =
+          Seq(
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
+              calculationTimestamp = "2019-02-17T09:22:59Z",
+              calculationType = "DF",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = Some("ERROR"),
+              calculationTrigger = None
+            ),
+            GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
+              calculationTimestamp = "2019-04-17T09:22:59Z",
+              calculationType = "AM",
+              requestedBy = Some("customer"),
+              fromDate = Some("2013-05-d1"),
+              toDate = Some("2016-05-d1"),
+              calculationOutcome = Some("REJECTED"),
+              calculationTrigger = None
+            )
           )
-        )
 
         val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
-
-        result mustBe Left(ErrorModel(204, ErrorBodyModel("NOT_FOUND", "Resource not found from API")))
+        result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
       }
 
       "calculationRecord is an invalid value" in {
@@ -566,7 +593,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             requestedBy = Some("customer"),
             fromDate = Some("2013-05-d1"),
             toDate = Some("2016-05-d1"),
-            calculationOutcome = Some("PROCESSED")
+            calculationOutcome = Some("PROCESSED"),
+            calculationTrigger = None
           )
         )
 
