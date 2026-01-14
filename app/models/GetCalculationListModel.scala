@@ -16,6 +16,7 @@
 
 package models
 
+import enums.CalculationTrigger
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 
@@ -26,11 +27,14 @@ case class GetCalculationListModel(
                                     requestedBy: Option[String],
                                     fromDate: Option[String],
                                     toDate: Option[String],
-                                    calculationOutcome: Option[String] = None
+                                    calculationOutcome: Option[String] = None,
+                                    calculationTrigger: Option[CalculationTrigger] = None
                                   )
 
 object GetCalculationListModel {
+  
   implicit val writes: Writes[GetCalculationListModel] = Json.writes[GetCalculationListModel]
+  
   implicit val reads: Reads[GetCalculationListModel] =
     ((JsPath \ "calculationId").read[String] and
       (JsPath \ "calculationTimestamp").read[String] and
@@ -38,7 +42,8 @@ object GetCalculationListModel {
       (JsPath \ "requestedBy").readNullable[String] and
       (JsPath \ "fromDate").readNullable[String] and
       (JsPath \ "toDate").readNullable[String] and
-      (JsPath \ "calculationOutcome").readNullable[String]
+      (JsPath \ "calculationOutcome").readNullable[String] and
+      (JsPath \ "calculationTrigger").readNullable[CalculationTrigger]
       )(GetCalculationListModel.apply _)
 
 }
