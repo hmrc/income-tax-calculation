@@ -35,21 +35,21 @@ import scala.concurrent.{ExecutionContext, Future}
 //noinspection ScalaStyle
 class GetCalculationDetailsService @Inject()(
                                               calculationDetailsConnectorLegacy: CalculationDetailsConnectorLegacy,
-                                              listCalculationDetailsConnector: GetCalculationListConnector,
-                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
+                                              getCalculationListConnector: GetCalculationListConnector,
+                                              hipCalculationLegacyListConnector: HipCalculationLegacyListConnector,
                                               hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
                                               hipGetCalculationListConnector: HipGetCalculationListConnector,
                                               val appConfig: AppConfig
                                             )(implicit ec: ExecutionContext) extends Logging {
 
-  private val specificTaxYear: Int = TaxYear.taxYear2024
+  private val taxYear2024: Int = TaxYear.taxYear2024
 
   private[services] def getCalcListDetails[A](nino: String, taxYearOpt: Option[String])
                                              (result: (String, String, Option[String]) => Future[Either[ErrorModel, A]])
                                              (implicit hc: HeaderCarrier): Future[Either[ErrorModel, A]] = {
 
-    logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
-    calcListHipLegacyConnector
+    logger.info(s"[GetCalculationDetailsService][getCalcListDetails] - calling HipCalculationLegacyListConnector")
+    hipCalculationLegacyListConnector
       .calcList(nino, taxYearOpt)
       .flatMap {
         case Right(listOfCalculationDetails) if listOfCalculationDetails.isEmpty =>
@@ -68,13 +68,13 @@ class GetCalculationDetailsService @Inject()(
                                                        )(implicit hc: HeaderCarrier) = {
     taxYearString.toInt match {
       case taxYear if taxYear >= TaxYear.taxYear2026 =>
-        listCalculationDetailsConnector.getCalculationList2083(nino, taxYear.toString)
+        getCalculationListConnector.getCalculationList2083(nino, taxYear.toString)
       case taxYear if calculationRecord.isDefined =>
-        listCalculationDetailsConnector.getCalculationList2150(nino, taxYear.toString)
+        getCalculationListConnector.getCalculationList2150(nino, taxYear.toString)
       case taxYear if appConfig.useGetCalcListHip5624 => // Used to switch between using HIP 5294 and IF 2150 - MISUV-10190
         hipGetCalculationListConnector.getCalculationList5624(nino, taxYear.toString)
       case taxYear =>
-        listCalculationDetailsConnector.getCalculationList2150(nino, taxYear.toString)
+        getCalculationListConnector.getCalculationList2150(nino, taxYear.toString)
     }
   }
 
@@ -102,7 +102,7 @@ class GetCalculationDetailsService @Inject()(
                                       )(implicit hc: HeaderCarrier): Future[Either[ErrorModel, CalculationHipResponseModel]] = {
 
     TaxYear.convert(taxYearOpt) match {
-      case Right(year) if year >= specificTaxYear =>
+      case Right(year) if year >= taxYear2024 =>
         hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYearOpt.head), nino, calcId)
       case Right(_) =>
         hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYearOpt.head), nino, calcId)
@@ -207,7 +207,7 @@ class GetCalculationDetailsService @Inject()(
                                  )(implicit hc: HeaderCarrier): Future[Either[ErrorModel, CalculationResponseModel]] = {
 
     taxYearOption match {
-      case Some(taxYear) if taxYear.toInt >= specificTaxYear =>
+      case Some(taxYear) if taxYear.toInt >= taxYear2024 =>
 
         val legacyCalculationSummaryList =
           getLegacyCalculationSummaryList(taxYear, nino, calculationRecord)
@@ -232,7 +232,7 @@ class GetCalculationDetailsService @Inject()(
                               )(implicit hc: HeaderCarrier): Future[Either[ErrorModel, CalculationHipResponseModel]] = {
 
     taxYearOption match {
-      case Some(taxYear) if taxYear.toInt >= specificTaxYear && appConfig.useGetCalcListHip5624 =>
+      case Some(taxYear) if taxYear.toInt >= taxYear2024 && appConfig.useGetCalcListHip5624 =>
 
         val hipCalculationList: Future[GetCalculationListResponse] =
           hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
