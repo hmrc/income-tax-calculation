@@ -104,7 +104,10 @@ class AuthorisedAction @Inject()()(implicit val authConnector: AuthConnector,
   private[predicates] def agentAuthPredicate(mtdId: String): Predicate =
     Enrolment(EnrolmentKeys.Individual)
       .withIdentifier(EnrolmentIdentifiers.individualId, mtdId)
-      .withDelegatedAuthRule(DelegatedAuthRules.agentDelegatedAuthRule)
+      .withDelegatedAuthRule(DelegatedAuthRules.agentDelegatedAuthRule) or
+      Enrolment("HMRC-MTD-IT-SUPP")
+        .withIdentifier(EnrolmentIdentifiers.individualId, mtdId)
+        .withDelegatedAuthRule("mtd-it-auth-supp")
 
   private[predicates] def agentAuthentication[A](block: User[A] => Future[Result], mtdItId: String)
                                                 (implicit request: Request[A], hc: HeaderCarrier): Future[Result] = {
