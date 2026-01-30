@@ -38,8 +38,6 @@ class HipGetCalculationsDataConnector @Inject()(http: HttpClientV2,
 
     logger.debug(s"[HipGetCalculationsDataConnector][getCalculationsData] - URL: ${url} - ${hipHeaders} ")
 
-    println(Console.MAGENTA + s"[HipGetCalculationsDataConnector][getCalculationsData] - URL: ${url} - ${hipHeaders} " + Console.RESET)
-
     http
       .get(url"$url")
       .setHeader(hipHeaders: _*)
