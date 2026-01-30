@@ -128,6 +128,7 @@ object HipGetCalculationDetailsConstants {
         chargeableForeignSavingsAndGains = Some(10)
       )),
       dividendsIncome = Some(DividendsIncome(
+        totalUkDividends = Some(1000),
         chargeableForeignDividends = Some(500)
       )),
       incomeSummaryTotals = Some(IncomeSummaryTotals(
