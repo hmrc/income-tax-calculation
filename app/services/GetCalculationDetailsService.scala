@@ -121,7 +121,9 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
       }
       case Right(year) if year >= specificTaxYear =>
           hipGetCalculationsDataConnector.getCalculationsData(TaxYear.updatedFormat(taxYear.head), nino, calcId).collect {
-            case Right(value) => Right(Json.toJson(value))
+            case Right(value) =>
+              println(Console.GREEN + Json.toJson(value) + Console.RESET)
+              Right(Json.toJson(value))
             case Left(error) => Left(error)
           }
       case Right(_) =>
