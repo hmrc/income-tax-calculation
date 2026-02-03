@@ -337,7 +337,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear, Some("PREVIOUS")))
 
-      result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
+      result mustBe Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", "No calculations found after filtering by outcome - processedList.isEmpty")))
     }
 
   }
@@ -479,7 +479,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       "calculationRecord is None and no calculation is found" in {
 
         val result = await(service().filterCalcList(nino = nino, taxYear = taxYear, calcSummaryList = Seq.empty, calculationRecord = None))
-        result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
+        result mustBe Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", "No calculations found after filtering by outcome - processedList.isEmpty")))
       }
       "calculationRecord is LATEST and there are no processed outcomes" in {
         val calcList = Seq(
@@ -506,7 +506,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
 
         val result = await(service().filterCalcList(nino, taxYear, calcList, Some("LATEST")))
-        result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
+        result mustBe Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", "No calculations found after filtering by outcome - processedList.isEmpty")))
       }
 
       "calculationRecord is PREVIOUS and there are no post finalisation calculation types" in {
@@ -581,7 +581,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
           )
 
         val result = await(service().filterCalcList(nino, taxYear, calcList, Some("PREVIOUS")))
-        result mustBe Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error")))
+        result mustBe Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", "No calculations found after filtering by outcome - processedList.isEmpty")))
       }
 
       "calculationRecord is an invalid value" in {

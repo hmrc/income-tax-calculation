@@ -58,7 +58,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
       case _ => IsMTD
     }
   }
-  
+
   def getCalculationDetailsByCalcId(
                                      nino: String,
                                      calcIdOpt: Option[String],
@@ -138,12 +138,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
     if (processedList.isEmpty) {
       logger.info(s"[CalculationDetailController][filterCalcList] - NOT_FOUND: No calculations found after filtering by outcome")
-      getCalculationDetailsByCalcId(
-        nino = nino,
-        calcIdOpt = latestSortedList.headOption.map(_.calculationId),
-        taxYear = taxYear,
-        submissionChannel = determineSubmissionChannel(latestSortedList.headOption.flatMap(_.calculationTrigger))
-      )
+      Future(Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", s"No calculations found after filtering by outcome - processedList.isEmpty"))))
     } else {
       calculationRecord match {
         case Some("LATEST") =>
@@ -187,7 +182,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                              taxYearOption: Option[String],
                              calculationRecord: Option[String]
                            )(implicit hc: HeaderCarrier): Future[CalculationDetailAsJsonResponse] = {
-    
+
     taxYearOption match {
       case Some(taxYear) if taxYear.toInt >= taxYear2024 =>
 
