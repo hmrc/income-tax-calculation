@@ -16,9 +16,8 @@
 
 package api
 
-import play.api.libs.ws.WSBodyReadables.readableAsJson
 import constants.HipGetCalculationDetailsConstants.*
-import enums.{IsLegacy, IsLegacyWithCesa}
+import enums.IsLegacyWithCesa
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
 import models.ErrorBodyModel
 import org.scalatest.concurrent.ScalaFutures
@@ -28,6 +27,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.libs.ws.WSBodyReadables.readableAsJson
 
 class CalculationDetailsHipITest extends AnyWordSpec
   with WiremockSpec with ScalaFutures with Matchers with CalculationDetailsITestHelper {

@@ -16,7 +16,6 @@
 
 package assets
 
-import enums.IsLegacy
 import models.calculation.*
 import models.calculation.taxcalculation.*
 
