@@ -16,7 +16,8 @@
 
 package models.calculation
 
-import play.api.libs.json._
+import enums.*
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
@@ -29,11 +30,12 @@ object LiabilityCalculationError {
 }
 
 case class CalculationResponseModel(
-                                         inputs: Inputs,
-                                         metadata: Metadata,
-                                         messages: Option[Messages],
-                                         calculation: Option[Calculation]
-                                       ) extends LiabilityCalculationResponseModel
+                                     inputs: Inputs,
+                                     metadata: Metadata,
+                                     messages: Option[Messages],
+                                     calculation: Option[Calculation],
+                                     submissionChannel: Option[SubmissionChannel]
+                                   ) extends LiabilityCalculationResponseModel
 
 object CalculationResponseModel {
   implicit val format: OFormat[CalculationResponseModel] = Json.format[CalculationResponseModel]
@@ -45,7 +47,8 @@ case class Metadata(
                      crystallised: Option[Boolean],
                      calculationReason: Option[String],
                      periodFrom: Option[LocalDate],
-                     periodTo: Option[LocalDate])
+                     periodTo: Option[LocalDate]
+                   )
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]

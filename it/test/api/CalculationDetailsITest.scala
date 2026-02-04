@@ -16,7 +16,7 @@
 
 package api
 
-import assets.GetCalculationDetailsConstants.successCalcDetailsExpectedJsonFull
+import assets.GetCalculationDetailsConstants.*
 import constants.HipGetCalculationDetailsConstants.successModelJson
 import helpers.{CalculationDetailsITestHelper, WiremockSpec}
 import models.ErrorBodyModel
@@ -62,7 +62,7 @@ class CalculationDetailsITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successCalcDetailsLegacySubmissionChannelJson""")
         }
       }
 
@@ -78,7 +78,7 @@ class CalculationDetailsITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successCalcDetailsLegacySubmissionChannelJson""")
         }
 
       }
@@ -224,7 +224,7 @@ class CalculationDetailsITest extends AnyWordSpec
         }
       }
 
-      "return a 204 when des returns an 404" in new Setup {
+      "return a 404 when des returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -235,7 +235,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 204
+            result.status mustBe 404
         }
       }
     }
@@ -255,7 +255,7 @@ class CalculationDetailsITest extends AnyWordSpec
           result =>
             result.status mustBe 200
             Json.parse(result.body) mustBe
-              Json.parse(s"""$successCalcDetailsExpectedJsonFull""")
+              Json.parse(s"""$successCalcDetailsLegacySubmissionChannelJson""")
         }
 
       }
@@ -334,7 +334,7 @@ class CalculationDetailsITest extends AnyWordSpec
         }
       }
 
-      "return a 204 when des returns an 404" in new Setup {
+      "return a 404 when des returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -345,7 +345,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 204
+            result.status mustBe 404
         }
       }
 
@@ -406,7 +406,7 @@ class CalculationDetailsITest extends AnyWordSpec
         }
       }
 
-      "return a 204 when IF returns an 404" in new Setup {
+      "return a 404 when IF returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -417,7 +417,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 204
+            result.status mustBe 404
         }
       }
     }
@@ -477,7 +477,7 @@ class CalculationDetailsITest extends AnyWordSpec
         }
       }
 
-      "return a 204 when des returns an 404" in new Setup {
+      "return a 404 when des returns an 404" in new Setup {
         val response = Json.toJson(ErrorBodyModel("NOT_FOUND", "not found")).toString()
 
         authorised()
@@ -489,7 +489,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .withHttpHeaders(mtditidHeader, authorization)
           .get()) {
           result =>
-            result.status mustBe 204
+            result.status mustBe 404
         }
       }
 

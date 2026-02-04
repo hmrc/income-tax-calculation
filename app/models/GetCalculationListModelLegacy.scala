@@ -16,19 +16,21 @@
 
 package models
 
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
-case class GetCalculationListModelLegacy(calculationId: String,
-                                         calculationTimestamp: String)
+case class GetCalculationListModelLegacy(
+                                          calculationId: String,
+                                          calculationTimestamp: String
+                                        )
 
 
-object GetCalculationListModelLegacy{
+object GetCalculationListModelLegacy {
   implicit val writes: Writes[GetCalculationListModelLegacy] = Json.writes[GetCalculationListModelLegacy]
   implicit val reads: Reads[GetCalculationListModelLegacy] =
     ((JsPath \ "calculationId").read[String] and
       (JsPath \ "calculationTimestamp").read[String]
-      ) (GetCalculationListModelLegacy.apply _)
+      )(GetCalculationListModelLegacy.apply _)
 
 }
 

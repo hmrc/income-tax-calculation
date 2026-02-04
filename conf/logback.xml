@@ -21,9 +21,9 @@
         </encoder>
     </appender>
 
-    <logger name="com.google.inject" level="INFO"/>
+    <logger name="com.google.inject" level="DEBUG"/>
 
-    <logger name="uk.gov" level="INFO"/>
+    <logger name="uk.gov" level="DEBUG"/>
 
     <logger name="application" level="DEBUG"/>
 
@@ -34,7 +34,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

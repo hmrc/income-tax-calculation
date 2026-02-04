@@ -51,7 +51,8 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
       calculationType = "inYear",
       requestedBy = Some("customer"),
       fromDate = Some("2013-05-d1"),
-      toDate = Some("2016-05-d1")
+      toDate = Some("2016-05-d1"),
+      calculationTrigger = None
     ))).toString
   }
 
@@ -67,7 +68,8 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
         calculationType = "inYear",
         requestedBy = Some("customer"),
         fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1")
+        toDate = Some("2016-05-d1"),
+        calculationTrigger = None
       )
       "Hip 5624 returns a success with expected JSON" in {
         val response = getResponse5624
@@ -119,7 +121,8 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
         calculationType = "inYear",
         requestedBy = Some("customer"),
         fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1")
+        toDate = Some("2016-05-d1"),
+        calculationTrigger = None
       )).toString()
 
       stubGetWithResponseBody(getURL5624(nino, "25-26"), OK, response)

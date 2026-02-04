@@ -17,42 +17,46 @@
 package controllers
 
 import controllers.predicates.AuthorisedAction
+import enums.*
+import models.*
 import play.api.Logging
-
-import javax.inject.Inject
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.GetCalculationDetailsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CalculationDetailController @Inject()(getCalculationDetailsService: GetCalculationDetailsService,
                                             cc: ControllerComponents,
-                                            authorisedAction: AuthorisedAction)
-                                           (implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
+                                            authorisedAction: AuthorisedAction
+                                           )(implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
-  def calculationDetail(nino: String, taxYear: Option[String], calculationRecord: Option[String]): Action[AnyContent] = authorisedAction.async { implicit user =>
-    getCalculationDetailsService.getCalculationDetails(nino, taxYear, calculationRecord).map {
-      case Right(success) =>
-        logger.debug(s"[CalculationDetailController][calculationDetail] - Successful Response: $success")
-        Ok(success)
-      case Left(error) =>
-        logger.error(s"[CalculationDetailController][calculationDetail] - Error Response: $error")
-        Status(error.status)(error.toJson)
+  def calculationDetail(nino: String, taxYear: Option[String], calculationRecord: Option[String]): Action[AnyContent] =
+    authorisedAction.async { implicit user =>
+      getCalculationDetailsService.getCalculationDetails(nino, taxYear, calculationRecord).map {
+        case Right(success) =>
+          logger.info(s"[CalculationDetailController][calculationDetail] - Successful Response: OK 200 - $success")
+          Ok(success)
+        case Left(error) =>
+          logger.error(s"[CalculationDetailController][calculationDetail] - Error Response: $error")
+          Status(error.status)(error.toJson)
+      }
     }
-  }
 
-  def calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String]): Action[AnyContent] = authorisedAction.async { implicit user =>
-    getCalculationDetailsService.getCalculationDetailsByCalcId(nino, calcId, taxYear).map {
-      case Right(success) =>
-        logger.debug(s"[CalculationDetailController][calculationDetailByCalcId] - Successful Response: $success")
-        Ok(success)
-      case Left(error) =>
-        logger.error(s"[CalculationDetailController][calculationDetailByCalcId] - Error Response: $error")
-        Status(error.status)(error.toJson)
-
+  def calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String]): Action[AnyContent] =
+    authorisedAction.async { implicit user =>
+      getCalculationDetailsService.getCalculationDetailsByCalcId(nino, Some(calcId), taxYear, None).map {
+        case Right(success) =>
+          logger.info(s"[CalculationDetailController][calculationDetailByCalcId] - Successful Response: OK 200 - $success")
+          Ok(success)
+        case Left(error) =>
+          logger.error(s"[CalculationDetailController][calculationDetailByCalcId] - Error Response: $error")
+          Status(error.status)(error.toJson)
+      }
     }
-  }
+
 
 }
 
