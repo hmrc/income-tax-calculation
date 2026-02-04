@@ -196,7 +196,7 @@ class CalculationDetailsITest extends AnyWordSpec
         }
       }
 
-      "return a NOT_FOUND when if returns an NOT_FOUND from get calc details" in new Setup {
+      "return a NO_CONTENT when if returns an NOT_FOUND from get calc details" in new Setup {
         val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
         authorised()
         stubGetWithResponseBody(ifUrlForCalculationList, 404, response)
@@ -206,11 +206,11 @@ class CalculationDetailsITest extends AnyWordSpec
           .withQueryStringParameters(("taxYear","2024"))
           .get()) {
           result =>
-            result.status mustBe 404
+            result.status mustBe 204
         }
       }
 
-      "return a NOT_FOUND when des returns an NOT_FOUND from get calc details legacy" in new Setup {
+      "return a NO_CONTENT when des returns an NOT_FOUND from get calc details legacy" in new Setup {
         val response = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
         authorised()
         stubGetWithResponseBody(desUrlForListCalcWithTaxYear, 404, response)
@@ -220,7 +220,7 @@ class CalculationDetailsITest extends AnyWordSpec
           .withQueryStringParameters(("taxYear", taxYear))
           .get()) {
           result =>
-            result.status mustBe 404
+            result.status mustBe 204
         }
       }
 

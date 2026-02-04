@@ -138,7 +138,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
     if (processedList.isEmpty) {
       logger.info(s"[CalculationDetailController][filterCalcList] - NOT_FOUND: No calculations found after filtering by outcome")
-      Future(Left(ErrorModel(404, ErrorBodyModel("NOT_FOUND", s"No calculations found after filtering by outcome - processedList.isEmpty"))))
+      Future(Left(ErrorModel(204, ErrorBodyModel("NO_CONTENT", s"No calculations found after filtering by outcome - processedList.isEmpty"))))
     } else {
       calculationRecord match {
         case Some("LATEST") =>

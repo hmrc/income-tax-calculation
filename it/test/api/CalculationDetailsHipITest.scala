@@ -203,7 +203,8 @@ class CalculationDetailsHipITest extends AnyWordSpec
         }
       }
 
-      "return a NOT_FOUND when des returns an NOT_FOUND from get calc details legacy" in new Setup {
+      "return a NO_CONTENT when des returns an NOT_FOUND from get calc details legacy" in new Setup {
+        
         val response: String = Json.toJson(ErrorBodyModel("ERROR", "error")).toString()
 
         authorised()
@@ -215,7 +216,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
           .withQueryStringParameters(("taxYear", taxYear))
           .get()) {
           result =>
-            result.status mustBe 404
+            result.status mustBe 204
         }
       }
 

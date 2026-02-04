@@ -16,15 +16,15 @@
 
 package connectors.httpParsers
 
-import models._
+import models.*
 import play.api.Logging
-import play.api.http.Status._
+import play.api.http.Status.*
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.PagerDutyHelper.PagerDutyKeys._
-import utils.PagerDutyHelper._
+import utils.PagerDutyHelper.*
+import utils.PagerDutyHelper.PagerDutyKeys.*
 
 object GetCalculationListHttpParser extends APIParser with Logging {
-  
+
   type GetCalculationListResponse = Either[ErrorModel, Seq[GetCalculationListModel]]
 
   override val parserName: String = "GetCalculationListHttpParser"
@@ -35,14 +35,14 @@ object GetCalculationListHttpParser extends APIParser with Logging {
         case OK =>
           val jsonArray = (response.json \ "calculationsSummary").getOrElse(response.json)
           jsonArray.validate[Seq[GetCalculationListModel]].fold[GetCalculationListResponse](
-          validationErrors => badSuccessJsonFromAPI(validationErrors),
-          parsedModel => {
-            Right(parsedModel)
-          }
-        )
+            validationErrors => badSuccessJsonFromAPI(validationErrors),
+            parsedModel => {
+              Right(parsedModel)
+            }
+          )
         case NOT_FOUND =>
-          logger.info(s"[GetCalculationListHttpReads][read]: $NOT_FOUND")
-          Left(ErrorModel(NOT_FOUND, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
+          logger.info(s"[GetCalculationListHttpReads]: $NOT_FOUND converted to $NO_CONTENT")
+          Left(ErrorModel(NO_CONTENT, ErrorBodyModel(NOT_FOUND.toString, "NOT FOUND")))
         case INTERNAL_SERVER_ERROR =>
           logger.error(s"[GetCalculationListHttpReads]:=>ERROR")
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
