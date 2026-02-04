@@ -16,7 +16,7 @@
 
 package testConstants.hip
 
-import enums.{IsLegacy, IsMTD}
+import enums.IsMTD
 import models.hip.calculation.*
 import models.hip.calculation.taxCalculation.*
 import models.hip.{CalculationHipResponseModel, Inputs, Metadata, PersonalInformation}
@@ -131,7 +131,7 @@ object GetCalculationDetailsTestConstants {
           chargeableForeignSavingsAndGains = Some(10)
         )),
         dividendsIncome = Some(DividendsIncome(
-          totalUkDividends = Some(1000),chargeableForeignDividends = Some(500)
+          totalUkDividends = Some(1000), chargeableForeignDividends = Some(500)
         )),
         incomeSummaryTotals = Some(IncomeSummaryTotals(
           totalSelfEmploymentProfit = Some(50),

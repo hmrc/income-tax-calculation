@@ -30,10 +30,6 @@ case object IsLegacyWithCesa extends SubmissionChannel {
   val asString = "IsLegacyWithCesa"
 }
 
-case object IsLegacy extends SubmissionChannel {
-  val asString = "IsLegacy"
-}
-
 case object UnableToDetermineSubmissionChannel extends SubmissionChannel {
   val asString = "UnableToDetermineSubmissionChannel"
 }
