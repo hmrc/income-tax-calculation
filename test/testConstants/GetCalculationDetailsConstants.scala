@@ -42,6 +42,7 @@ object GetCalculationDetailsConstants {
           transferredOutAmount = 5000.99)),
         pensionContributions = Some(5000.99),
         lossesAppliedToGeneralIncome = Some(12500),
+        totalPartnershipLossesBroughtForward = Some(5000.99),
         giftOfInvestmentsAndPropertyToCharity = Some(12500),
         grossAnnuityPayments = Some(5000.99),
         qualifyingLoanInterestFromInvestments = Some(5000.99),
@@ -51,6 +52,7 @@ object GetCalculationDetailsConstants {
         totalOfAllGains = 12500
       )),
       dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+      partnerIncome = Some(PartnerIncome(totalPartnerIncome = Some(BigDecimal("5000.99")))),
       employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
         totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
         totalBenefitsInKind = Some(5000.99),
@@ -293,6 +295,7 @@ object GetCalculationDetailsConstants {
           transferredOutAmount = 5000.99)),
         pensionContributions = Some(5000.99),
         lossesAppliedToGeneralIncome = Some(12500),
+        totalPartnershipLossesBroughtForward = Some(5000.99),
         giftOfInvestmentsAndPropertyToCharity = Some(12500),
         grossAnnuityPayments = Some(5000.99),
         qualifyingLoanInterestFromInvestments = Some(5000.99),
@@ -302,6 +305,7 @@ object GetCalculationDetailsConstants {
         totalOfAllGains = 12500
       )),
       dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+      partnerIncome = Some(PartnerIncome(totalPartnerIncome = Some(BigDecimal("5000.99")))),
       employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
         totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
         totalBenefitsInKind = Some(5000.99),

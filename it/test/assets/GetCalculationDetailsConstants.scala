@@ -41,6 +41,7 @@ object GetCalculationDetailsConstants {
           transferredOutAmount = 5000.99)),
         pensionContributions = Some(5000.99),
         lossesAppliedToGeneralIncome = Some(12500),
+        totalPartnershipLossesBroughtForward = Some(5000.99),
         giftOfInvestmentsAndPropertyToCharity = Some(12500),
         grossAnnuityPayments = Some(5000.99),
         qualifyingLoanInterestFromInvestments = Some(5000.99),
@@ -50,6 +51,7 @@ object GetCalculationDetailsConstants {
         totalOfAllGains = 12500
       )),
       dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+      partnerIncome = Some(PartnerIncome(totalPartnerIncome = Some(5000.99))),
       employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
         totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
         totalBenefitsInKind = Some(5000.99),
@@ -325,6 +327,7 @@ object GetCalculationDetailsConstants {
        |      "reducedPersonalAllowance" : 12500,
        |      "giftOfInvestmentsAndPropertyToCharity" : 12500,
        |      "lossesAppliedToGeneralIncome" : 12500,
+       |      "totalPartnershipLossesBroughtForward" : 5000.99,
        |      "qualifyingLoanInterestFromInvestments" : 5000.99,
        |      "post-cessationTradeReceipts" : 5000.99,
        |      "paymentsToTradeUnionsForDeathBenefits" : 5000.99,
@@ -415,6 +418,9 @@ object GetCalculationDetailsConstants {
        |    },
        |    "dividendsIncome" : {
        |      "chargeableForeignDividends" : 12500
+       |    },
+       |    "partnerIncome" : {
+       |      "totalPartnerIncome" : 5000.99
        |    },
        |    "incomeSummaryTotals" : {
        |      "totalSelfEmploymentProfit" : 12500,

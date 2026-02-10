@@ -25,6 +25,7 @@ case class AllowancesAndDeductions(
                                     reducedPersonalAllowance: Option[Int] = None,
                                     giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
                                     lossesAppliedToGeneralIncome: Option[Int] = None,
+                                    totalPartnershipLossesBroughtForward: Option[BigDecimal] = None,
                                     qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
                                     postCessationTradeReceipts: Option[BigDecimal] = None,
                                     paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
@@ -39,6 +40,7 @@ object AllowancesAndDeductions {
       (JsPath \ "reducedPersonalAllowance").writeNullable[Int] and
       (JsPath \ "giftOfInvestmentsAndPropertyToCharity").writeNullable[Int] and
       (JsPath \ "lossesAppliedToGeneralIncome").writeNullable[Int] and
+      (JsPath \ "totalPartnershipLossesBroughtForward").writeNullable[BigDecimal] and
       (JsPath \ "qualifyingLoanInterestFromInvestments").writeNullable[BigDecimal] and
       (JsPath \ "post-cessationTradeReceipts").writeNullable[BigDecimal] and
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").writeNullable[BigDecimal] and
@@ -51,6 +53,7 @@ object AllowancesAndDeductions {
       aad.reducedPersonalAllowance,
       aad.giftOfInvestmentsAndPropertyToCharity,
       aad.lossesAppliedToGeneralIncome,
+      aad.totalPartnershipLossesBroughtForward,
       aad.qualifyingLoanInterestFromInvestments,
       aad.postCessationTradeReceipts,
       aad.paymentsToTradeUnionsForDeathBenefits,
@@ -66,6 +69,7 @@ object AllowancesAndDeductions {
       (JsPath \ "reducedPersonalAllowance").readNullable[Int] and
       (JsPath \ "giftOfInvestmentsAndPropertyToCharity").readNullable[Int] and
       (JsPath \ "lossesAppliedToGeneralIncome").readNullable[Int] and
+      (JsPath \ "totalPartnershipLossesBroughtForward").readNullable[BigDecimal] and
       (JsPath \ "qualifyingLoanInterestFromInvestments").readNullable[BigDecimal] and
       (JsPath \ "post-cessationTradeReceipts").readNullable[BigDecimal] and
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal] and

@@ -17,7 +17,7 @@
 package testConstants.hip
 
 import models.hip.{CalculationHipResponseModel, Inputs, Metadata, PersonalInformation}
-import models.hip.calculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, EndOfYearEstimate, ForeignIncome, ForeignTaxCreditRelief, GiftAid, GiftAidTaxReductionWhereBasicRateDiffers, IncomeSource, IncomeSummaryTotals, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, OtherIncome, OverseasIncomeAndGains, PensionSavingsTaxCharges, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, StudentLoan, TaxDeductedAtSource, TopSlicingRelief, TransitionProfit}
+import models.hip.calculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, EndOfYearEstimate, ForeignIncome, ForeignTaxCreditRelief, GiftAid, GiftAidTaxReductionWhereBasicRateDiffers, IncomeSource, IncomeSummaryTotals, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, OtherIncome, OverseasIncomeAndGains, PartnerIncome, PensionSavingsTaxCharges, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, StudentLoan, TaxDeductedAtSource, TopSlicingRelief, TransitionProfit}
 import models.hip.calculation.taxCalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, OtherGains, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
 
 import java.time.LocalDate
@@ -130,6 +130,9 @@ object GetCalculationDetailsTestConstants {
       dividendsIncome = Some(DividendsIncome(
         totalUkDividends = Some(1000),
         chargeableForeignDividends = Some(500)
+      )),
+      partnerIncome = Some(PartnerIncome(
+        totalPartnerIncome = BigDecimal("5000.99")
       )),
       incomeSummaryTotals = Some(IncomeSummaryTotals(
         totalSelfEmploymentProfit = Some(50),

@@ -40,6 +40,7 @@ case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        chargeableEventGainsIncome: Option[ChargeableEventGainsIncome],
                        savingsAndGainsIncome: Option[SavingsAndGainsIncome],
                        dividendsIncome: Option[DividendsIncome],
+                       partnerIncome: Option[PartnerIncome],
                        incomeSummaryTotals: Option[IncomeSummaryTotals],
                        taxCalculation: Option[TaxCalculation],
                        endOfYearEstimate: Option[EndOfYearEstimate],
@@ -166,6 +167,11 @@ object DividendsIncome {
   implicit val format: OFormat[DividendsIncome] = Json.format[DividendsIncome]
 }
 
+case class PartnerIncome(totalPartnerIncome: BigDecimal)
+
+object PartnerIncome {
+  implicit val format: OFormat[PartnerIncome] = Json.format[PartnerIncome]
+}
 
 case class IncomeSummaryTotals(
                                 totalSelfEmploymentProfit: Option[Int] = None,
