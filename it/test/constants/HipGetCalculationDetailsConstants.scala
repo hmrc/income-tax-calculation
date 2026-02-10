@@ -131,7 +131,9 @@ object HipGetCalculationDetailsConstants {
         totalUkDividends = Some(1000),
         chargeableForeignDividends = Some(500)
       )),
-      partnerIncome = None,
+      partnerIncome = Some(PartnerIncome(
+        totalPartnerIncome = BigDecimal("5000.99")
+      )),
       incomeSummaryTotals = Some(IncomeSummaryTotals(
         totalSelfEmploymentProfit = Some(50),
         totalPropertyProfit = Some(50),
