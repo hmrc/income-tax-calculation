@@ -24,7 +24,6 @@
       "giftOfInvestmentsAndPropertyToCharity": 12500,
       "blindPersonsAllowance": 12500,
       "lossesAppliedToGeneralIncome": 12500,
-      "totalPartnershipLossesBroughtForward": 5000.99,
       "cgtLossSetAgainstInYearGeneralIncome": 12500,
       "qualifyingLoanInterestFromInvestments": 5000.99,
       "post-cessationTradeReceipts": 5000.99,
@@ -641,9 +640,6 @@
           "foreignTaxCreditRelief": true
         }
       ]
-    },
-    "partnerIncome": {
-      "totalPartnerIncome": 5000.99
     },
     "incomeSummaryTotals": {
       "totalSelfEmploymentProfit": 12500,
