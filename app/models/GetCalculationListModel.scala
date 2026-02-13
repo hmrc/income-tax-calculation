@@ -16,20 +16,23 @@
 
 package models
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import enums.CalculationTrigger
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
-case class GetCalculationListModel(calculationId: String,
-                                   calculationTimestamp: String,
-                                   calculationType: String,
-                                   requestedBy: Option[String],
-                                   fromDate: Option[String],
-                                   toDate: Option[String],
-                                   calculationOutcome: Option[String] = None
-                                   )
+case class GetCalculationListModel(
+                                    calculationId: String,
+                                    calculationTimestamp: String,
+                                    calculationType: String,
+                                    requestedBy: Option[String],
+                                    fromDate: Option[String],
+                                    toDate: Option[String],
+                                    calculationOutcome: Option[String] = None,
+                                    calculationTrigger: Option[CalculationTrigger]
+                                  )
 
 
-object GetCalculationListModel{
+object GetCalculationListModel {
   implicit val writes: Writes[GetCalculationListModel] = Json.writes[GetCalculationListModel]
   implicit val reads: Reads[GetCalculationListModel] =
     ((JsPath \ "calculationId").read[String] and
@@ -38,7 +41,8 @@ object GetCalculationListModel{
       (JsPath \ "requestedBy").readNullable[String] and
       (JsPath \ "fromDate").readNullable[String] and
       (JsPath \ "toDate").readNullable[String] and
-      (JsPath \ "calculationOutcome").readNullable[String]
-      ) (GetCalculationListModel.apply _)
+      (JsPath \ "calculationOutcome").readNullable[String] and
+      (JsPath \ "calculationTrigger").readNullable[CalculationTrigger]
+      )(GetCalculationListModel.apply _)
 
 }

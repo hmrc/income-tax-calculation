@@ -18,7 +18,7 @@ package connectors.hip
 
 import config.AppConfig
 import connectors.core.CorrelationId
-import connectors.httpParsers.GetCalculationListHttpParserLegacy._
+import connectors.httpParsers.GetCalculationListHttpParserLegacy.*
 import play.api.Logging
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, StringContextOps}
@@ -34,15 +34,16 @@ class HipCalculationLegacyListConnector @Inject()(http: HttpClientV2, val appCon
     val endpointUrl: String =
       s"${appConfig.hipBaseUrl}/itsd/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
 
-    val correlationId = CorrelationId.fromHeaderCarrier(hc)
-      .getOrElse(CorrelationId())
+    val correlationId =
+      CorrelationId.fromHeaderCarrier(hc)
+        .getOrElse(CorrelationId())
 
-    val hipHeaders =  Seq(
+    val hipHeaders = Seq(
       (HeaderNames.authorisation, getBasicAuthValue("1404")),
       correlationId.asHeader()
     )
 
-      logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl} - ${hipHeaders} ")
+    logger.debug(s"[HipCalculationLegacyListConnector][calcList] - URL: ${endpointUrl} - ${hipHeaders} ")
 
     http
       .get(url"$endpointUrl")
