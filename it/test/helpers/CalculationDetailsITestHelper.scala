@@ -41,7 +41,9 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     val ifUrlForTYS24 = s"/income-tax/view/calculations/liability/23-24/$successNino/$calculationId"
     val ifUrlForTYS25 = s"/income-tax/view/calculations/liability/24-25/$successNino/$calculationId"
     val ifUrl2023 = s"/income-tax/view/calculations/liability/$successNino/$calculationId"
+
     def ifUrlListCalcLegacy(taxYear: String): String = s"/itsd/calculations/liability/$successNino\\?taxYear=$taxYear"
+
     val ifUrlForCalculationList = s"/income-tax/view/calculations/liability/23-24/$successNino"
     val listCalcResponseLegacy: String = Json.toJson(Seq(GetCalculationListModelLegacy(calculationId, "2019-03-17T09:22:59Z"))).toString()
 
@@ -53,7 +55,8 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
       calculationType = "IY",
       requestedBy = Some("Customer"),
       fromDate = None,
-      toDate = None
+      toDate = None,
+      calculationTrigger = None
     ))).toString
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")
     val authorization: (String, String) = HeaderNames.AUTHORIZATION -> "mock-bearer-token"
