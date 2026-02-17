@@ -24,6 +24,7 @@ case class AllowancesAndDeductions(personalAllowance: Option[Int] = None,
                                    reducedPersonalAllowance: Option[Int] = None,
                                    giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
                                    lossesAppliedToGeneralIncome: Option[Int] = None,
+                                   totalPartnershipLossesBroughtForward: Option[BigDecimal] = None,
                                    qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
                                    postCessationTradeReceipts: Option[BigDecimal] = None,
                                    paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
@@ -37,6 +38,7 @@ object AllowancesAndDeductions {
       (__ \ "reducedPersonalAllowance").readNullable[Int] and
       (__ \ "giftOfInvestmentsAndPropertyToCharity").readNullable[Int] and
       (__ \ "lossesAppliedToGeneralIncome").readNullable[Int] and
+      (__ \ "totalPartnershipLossesBroughtForward").readNullable[BigDecimal] and
       (__ \ "qualifyingLoanInterestFromInvestments").readNullable[BigDecimal] and
       (__ \ "post-cessationTradeReceipts").readNullable[BigDecimal] and
       (__ \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal] and
@@ -49,6 +51,7 @@ object AllowancesAndDeductions {
       (JsPath \ "reducedPersonalAllowance").writeNullable[Int] and
       (JsPath \ "giftOfInvestmentsAndPropertyToCharity").writeNullable[Int] and
       (JsPath \ "lossesAppliedToGeneralIncome").writeNullable[Int] and
+      (JsPath \ "totalPartnershipLossesBroughtForward").writeNullable[BigDecimal] and
       (JsPath \ "qualifyingLoanInterestFromInvestments").writeNullable[BigDecimal] and
       (JsPath \ "post-cessationTradeReceipts").writeNullable[BigDecimal] and
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").writeNullable[BigDecimal] and
@@ -61,6 +64,7 @@ object AllowancesAndDeductions {
       aad.reducedPersonalAllowance,
       aad.giftOfInvestmentsAndPropertyToCharity,
       aad.lossesAppliedToGeneralIncome,
+      aad.totalPartnershipLossesBroughtForward,
       aad.qualifyingLoanInterestFromInvestments,
       aad.postCessationTradeReceipts,
       aad.paymentsToTradeUnionsForDeathBenefits,
