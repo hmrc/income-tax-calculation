@@ -320,14 +320,6 @@
         "lossForCSFHL": 12500,
         "broughtForwardIncomeTaxLossesUsed": 12500,
         "taxableProfitAfterIncomeTaxLossesDeduction": 12500,
-        "carrySidewaysIncomeTaxLossesUsed": 12500,
-        "broughtForwardCarrySidewaysIncomeTaxLossesUsed": 12500,
-        "totalIncomeTaxLossesCarriedForward": 12500,
-        "class4Loss": 12500,
-        "totalBroughtForwardClass4Losses": 12500,
-        "broughtForwardClass4LossesUsed": 12500,
-        "carrySidewaysClass4LossesUsed": 12500,
-        "totalClass4LossesCarriedForward": 12500,
         "adjustedProfit": 2100.99,
         "outstandingBusinessIncome": 4000.99
       }
@@ -759,9 +751,6 @@
         },
         "class4Nics": {
           "totalIncomeLiableToClass4Charge": 12500,
-          "totalClass4LossesAvailable": 12500,
-          "totalClass4LossesUsed": 12500,
-          "totalClass4LossesCarriedForward": 12500,
           "totalIncomeChargeableToClass4": 12500,
           "totalAmount": 5000.99,
           "nic4Bands": [
@@ -775,7 +764,6 @@
             }
           ]
         },
-        "nic2NetOfDeductions": -99999999999.99,
         "nic4NetOfDeductions": -99999999999.99,
         "totalNic": -99999999999.99
       },
@@ -793,7 +781,6 @@
         "totalTaxableGains": 5000.99,
         "businessAssetsDisposalsAndInvestorsRel": {
           "gainsIncome": 5000.99,
-          "lossesBroughtForward": 5000.99,
           "lossesArisingThisYear": 5000.99,
           "gainsAfterLosses": 5000.99,
           "annualExemptionAmount": 5000.99,
@@ -803,7 +790,6 @@
         },
         "residentialPropertyAndCarriedInterest": {
           "gainsIncome": 5000.99,
-          "lossesBroughtForward": 5000.99,
           "lossesArisingThisYear": 5000.99,
           "gainsAfterLosses": 5000.99,
           "annualExemptionAmount": 5000.99,
@@ -820,7 +806,6 @@
         },
         "otherGains": {
           "gainsIncome": 5000.99,
-          "lossesBroughtForward": 5000.99,
           "lossesArisingThisYear": 5000.99,
           "gainsAfterLosses": 5000.99,
           "attributedGains": 5000.99,
@@ -882,62 +867,6 @@
       "incomeTaxNicAmount": -99999999999.99,
       "cgtAmount": 5000.99,
       "incomeTaxNicAndCgtAmount": 5000.99
-    },
-    "lossesAndClaims": {
-      "resultOfClaimsApplied": [
-        {
-          "claimId": "0vayS9JrW2jTa6n",
-          "originatingClaimId": "0vayS9JrW2jTa6n",
-          "incomeSourceId": "000000000000210",
-          "incomeSourceType": "01",
-          "taxYearClaimMade": 2018,
-          "claimType": "CF",
-          "mtdLoss": true,
-          "taxYearLossIncurred": 2018,
-          "lossAmountUsed": 12500,
-          "remainingLossValue": 12500,
-          "lossType": "income"
-        }
-      ],
-      "unclaimedLosses": [
-        {
-          "incomeSourceId": "000000000000210",
-          "incomeSourceType": "01",
-          "taxYearLossIncurred": 2018,
-          "currentLossValue": 12500,
-          "lossType": "income"
-        }
-      ],
-      "carriedForwardLosses": [
-        {
-          "claimId": "0vayS9JrW2jTa6n",
-          "originatingClaimId": "0vayS9JrW2jTa6n",
-          "incomeSourceId": "000000000000210",
-          "incomeSourceType": "01",
-          "claimType": "CF",
-          "taxYearClaimMade": 2018,
-          "taxYearLossIncurred": 2018,
-          "currentLossValue": 12500,
-          "lossType": "income"
-        }
-      ],
-      "defaultCarriedForwardLosses": [
-        {
-          "incomeSourceId": "000000000000210",
-          "incomeSourceType": "01",
-          "taxYearLossIncurred": 2018,
-          "currentLossValue": 12500
-        }
-      ],
-      "claimsNotApplied": [
-        {
-          "claimId": "0vayS9JrW2jTa6n",
-          "incomeSourceId": "000000000000210",
-          "incomeSourceType": "01",
-          "taxYearClaimMade": 2018,
-          "claimType": "CF"
-        }
-      ]
     }
   }
 }
