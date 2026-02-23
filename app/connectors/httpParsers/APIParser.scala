@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{ErrorBodyModel, ErrorModel, ErrorsBodyModel}
+import models.{ErrorBodyModel, ErrorModel, ErrorsBodyModel, UnauthorisedErrorBodyModel}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsPath, JsonValidationError}
 import uk.gov.hmrc.http.HttpResponse
@@ -44,11 +44,13 @@ trait APIParser {
       val json = response.json
 
       lazy val apiError = json.asOpt[ErrorBodyModel]
+      lazy val unauthorisedApiError = json.asOpt[UnauthorisedErrorBodyModel]
       lazy val apiErrors = json.asOpt[ErrorsBodyModel]
 
-      (apiError, apiErrors) match {
-        case (Some(apiError), _) => Left(ErrorModel(status, apiError))
-        case (_, Some(apiErrors)) => Left(ErrorModel(status, apiErrors))
+      (apiError, apiErrors, unauthorisedApiError) match {
+        case (Some(apiError), _, _) => Left(ErrorModel(status, apiError))
+        case (_, Some(apiErrors), _) => Left(ErrorModel(status, apiErrors))
+        case (_, _, Some(apiAuthError)) => Left(ErrorModel(status, apiAuthError))
         case _ =>
           pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, Some(s"[$parserName][read] Unexpected Json response."))
           Left(ErrorModel(status, ErrorBodyModel.parsingError(apiNumber)))
