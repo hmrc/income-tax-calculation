@@ -19,8 +19,7 @@ package services
 import config.{AppConfig, MockAppConfig}
 import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import connectors.httpParsers.GetCalculationListHttpParser.GetCalculationListResponse
-import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
+import connectors.httpParsers.GetCalculationListHttpParser.HttpGetResult
 import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser.HipGetCalculationDetailsResponse
 import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import enums.*
@@ -68,7 +67,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *, *)
       .returning(Future.successful(Right(successFullModelGetCalculationDetailsHip)))
 
-  def listCalculationDetailsSuccess2083: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+  def listCalculationDetailsSuccess2083: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockListCalculationConnector.getCalculationList2083(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
@@ -82,7 +81,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
       )
 
-  def listCalculationDetailsSuccess2150: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+  def listCalculationDetailsSuccess2150: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockListCalculationConnector.getCalculationList2150(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
@@ -118,7 +117,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
       )
 
-  def listCalculationDetailsSuccess2150ErrorAndRejected: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+  def listCalculationDetailsSuccess2150ErrorAndRejected: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockListCalculationConnector.getCalculationList2150(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
@@ -147,7 +146,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
       )
 
-  def listCalculationDetailsEmpty2150: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+  def listCalculationDetailsEmpty2150: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockListCalculationConnector.getCalculationList2150(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
@@ -161,7 +160,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
       )
 
-  def listCalculationDetailsSuccess5624: CallHandler3[String, String, HeaderCarrier, Future[GetCalculationListResponse]] =
+  def listCalculationDetailsSuccess5624: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockHipCalculationListConnector.getCalculationList5624(_: String, _: String)(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
@@ -175,7 +174,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
         )
       )
 
-  def listCalculationDetailsSuccessLegacy: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
+  def listCalculationDetailsSuccessLegacy: CallHandler3[String, Option[String], HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockHipCalculationListConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(
@@ -189,15 +188,15 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
-  def listCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
+  def listCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockHipCalculationListConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(*, *, *)
       .returning(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("error", "error")))))
 
-  def emptyListCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[GetCalculationListResponseLegacy]] =
+  def emptyListCalculationDetailsFailure: CallHandler3[String, Option[String], HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockHipCalculationListConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
       .expects(*, *, *)
-      .returning(Future.successful(Right(Seq.empty[GetCalculationListModelLegacy])))
+      .returning(Future.successful(Right(Seq.empty[GetCalculationListModel])))
 
   def setHipEnabledFeatureSwitchConfig(): MockAppConfig = {
     new MockAppConfig {

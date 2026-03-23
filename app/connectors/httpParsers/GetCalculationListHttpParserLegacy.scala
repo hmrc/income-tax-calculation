@@ -24,16 +24,14 @@ import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper._
 
 object GetCalculationListHttpParserLegacy extends APIParser with Logging {
-  
-  type GetCalculationListResponseLegacy = Either[ErrorModel, Seq[GetCalculationListModelLegacy]]
 
   override val parserName: String = "GetCalculationListHttpParserLegacy"
 
-  implicit object GetCalculationListHttpReadsLegacy extends HttpReads[GetCalculationListResponseLegacy] {
+  implicit object GetCalculationListHttpReadsLegacy extends HttpReads[HttpGetResult[Seq[GetCalculationListModel]]] {
     
-    override def read(method: String, url: String, response: HttpResponse): GetCalculationListResponseLegacy = {
+    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[Seq[GetCalculationListModel]] = {
       response.status match {
-        case OK => response.json.validate[Seq[GetCalculationListModelLegacy]].fold[GetCalculationListResponseLegacy](
+        case OK => response.json.validate[Seq[GetCalculationListModel]].fold[HttpGetResult[Seq[GetCalculationListModel]]](
           validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )
