@@ -18,7 +18,6 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.GetCalculationListHttpParser.*
-import models.*
 import play.api.Logging
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}

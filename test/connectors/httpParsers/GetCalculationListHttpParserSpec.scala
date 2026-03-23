@@ -36,9 +36,6 @@ class GetCalculationListHttpParserSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "CA",
-            requestedBy = None,
-            fromDate = None,
-            toDate = None,
             calculationOutcome = None,
             calculationTrigger = None,
           ))).toString()
@@ -49,9 +46,6 @@ class GetCalculationListHttpParserSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
               calculationTimestamp = "2019-03-17T09:22:59Z",
               calculationType = "CA",
-              requestedBy = None,
-              fromDate = None,
-              toDate = None,
               calculationOutcome = None,
               calculationTrigger = None,
             )

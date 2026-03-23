@@ -16,7 +16,7 @@
 
 package models.hip
 
-import enums.{CalculationTrigger, SubmissionChannel}
+import enums.SubmissionChannel
 import models.hip.calculation.Calculation
 import play.api.libs.json.{Json, OFormat}
 

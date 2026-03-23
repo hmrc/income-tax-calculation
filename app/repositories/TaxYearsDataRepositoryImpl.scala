@@ -26,7 +26,7 @@ import play.api.Logging
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.play.http.logging.Mdc
+import uk.gov.hmrc.mdc.Mdc
 import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_TAX_YEARS_DATA, FAILED_TO_FIND_TAX_YEARS_DATA}
 import utils.PagerDutyHelper.pagerDutyLog
 import utils.SecureGCMCipher

@@ -21,14 +21,21 @@
         </encoder>
     </appender>
 
-    <logger name="com.google.inject" level="DEBUG"/>
+    <logger name="com.google.inject" level="INFO"/>
 
-    <logger name="uk.gov" level="DEBUG"/>
+    <logger name="uk.gov" level="INFO"/>
 
-    <logger name="application" level="DEBUG"/>
+    <logger name="application" level="WARN"/>
 
-    <logger name="controllers.CalculationDetailController" level="DEBUG" />
-    <logger name="controllers.TaxYearsDataController" level="DEBUG" />
+    <logger name="controllers.CalculationDetailController" level="WARN" />
+    <logger name="controllers.TaxYearsDataController" level="WARN" />
+
+    <logger name="org.asynchttpclient.netty" level="WARN"/>
+    <logger name="play.shaded.ahc.org.asynchttpclient.netty" level="WARN"/>
+
+    <logger name="org.eclipse.jetty" level="WARN"/>
+
+    <logger name="org.apache.http" level="WARN"/>
 
     <logger name="connector" level="TRACE">
         <appender-ref ref="STDOUT"/>

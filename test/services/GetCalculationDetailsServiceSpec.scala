@@ -77,9 +77,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "inYear",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationTrigger = None
           )))
         )
@@ -94,9 +91,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "AM",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           ),
@@ -104,9 +98,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
               calculationTimestamp = "2019-02-17T09:22:59Z",
               calculationType = "DF",
-              requestedBy = Some("customer"),
-              fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1"),
               calculationOutcome = Some("ERROR"),
               calculationTrigger = None
             ),
@@ -114,9 +105,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
               calculationTimestamp = "2019-04-17T09:22:59Z",
               calculationType = "AM",
-              requestedBy = Some("customer"),
-              fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1"),
               calculationOutcome = Some("REJECTED"),
               calculationTrigger = None
             ),
@@ -124,9 +112,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
               calculationTimestamp = "2019-03-17T09:22:59Z",
               calculationType = "DF",
-              requestedBy = Some("customer"),
-              fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1"),
               calculationOutcome = Some("PROCESSED"),
               calculationTrigger = None
             )))
@@ -142,9 +127,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "AM",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("REJECTED"),
             calculationTrigger = None
           ),
@@ -152,9 +134,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
               calculationTimestamp = "2019-03-17T09:22:59Z",
               calculationType = "DF",
-              requestedBy = Some("customer"),
-              fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1"),
               calculationOutcome = Some("ERROR"),
               calculationTrigger = None
             ),
@@ -162,9 +141,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1a",
               calculationTimestamp = "2019-03-17T09:22:59Z",
               calculationType = "DF",
-              requestedBy = Some("customer"),
-              fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1"),
               calculationOutcome = None,
               calculationTrigger = None
             )))
@@ -180,9 +156,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "IY",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationTrigger = None
           )))
         )
@@ -197,9 +170,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "inYear",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationTrigger = None
           )))
         )
@@ -395,9 +365,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "IY",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationTrigger = None
           )
         )
@@ -414,9 +381,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "AM",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           ),
@@ -424,9 +388,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
             calculationTimestamp = "2019-02-17T09:22:59Z",
             calculationType = "DF",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("ERROR"),
             calculationTrigger = None
           )
@@ -444,9 +405,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "AM",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           ),
@@ -454,9 +412,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
             calculationTimestamp = "2019-02-17T09:22:59Z",
             calculationType = "DF",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           )
@@ -487,9 +442,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
             calculationTimestamp = "2019-02-17T09:22:59Z",
             calculationType = "DF",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("ERROR"),
             calculationTrigger = None
           ),
@@ -497,9 +449,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
             calculationTimestamp = "2019-04-17T09:22:59Z",
             calculationType = "AM",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("REJECTED"),
             calculationTrigger = None
           )
@@ -515,9 +464,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
             calculationTimestamp = "2019-02-17T09:22:59Z",
             calculationType = "IY",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           ),
@@ -525,9 +471,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
             calculationTimestamp = "2019-04-17T09:22:59Z",
             calculationType = "IY",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           )
@@ -541,9 +484,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1b",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "DF",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           )
@@ -562,9 +502,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1e",
               calculationTimestamp = "2019-02-17T09:22:59Z",
               calculationType = "DF",
-              requestedBy = Some("customer"),
-              fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1"),
               calculationOutcome = Some("ERROR"),
               calculationTrigger = None
             ),
@@ -572,9 +509,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
               calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1f",
               calculationTimestamp = "2019-04-17T09:22:59Z",
               calculationType = "AM",
-              requestedBy = Some("customer"),
-              fromDate = Some("2013-05-d1"),
-              toDate = Some("2016-05-d1"),
               calculationOutcome = Some("REJECTED"),
               calculationTrigger = None
             )
@@ -590,9 +524,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "AM",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationOutcome = Some("PROCESSED"),
             calculationTrigger = None
           )

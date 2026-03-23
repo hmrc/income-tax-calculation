@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
@@ -42,7 +58,11 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9314)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(coverageSettings: _*)
-  .settings(ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
+  .settings(ThisBuild / scalacOptions ++= Seq(
+    "-Wconf:msg=Flag.*repeatedly:s",
+    "-Wconf:src=routes/.*:s"
+  ))
+
 
 
 lazy val it = project
@@ -54,7 +74,7 @@ lazy val it = project
   )
   .settings(scalaVersion := currentScalaVersion)
   .settings(majorVersion := 1)
-  //.settings(scalacOptions += "-Xfatal-warnings") -> TODO: fix it:test warnings && re-enable
+  .settings(scalacOptions += "-Xfatal-warnings")
   .settings(
     testForkedParallel := true
   )

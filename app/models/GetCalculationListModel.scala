@@ -24,12 +24,19 @@ case class GetCalculationListModel(
                                     calculationId: String,
                                     calculationTimestamp: String,
                                     calculationType: String,
-                                    requestedBy: Option[String],
-                                    fromDate: Option[String],
-                                    toDate: Option[String],
                                     calculationOutcome: Option[String] = None,
-                                    calculationTrigger: Option[CalculationTrigger]
-                                  )
+                                    calculationTrigger: Option[CalculationTrigger],
+                                    crystallised: Option[Boolean] = None) {
+
+  def updateCalcTypeAndCrystallisedIfReq(): GetCalculationListModel = {
+    calculationType match {
+      case "IY" => copy(calculationType = "inYear")
+      case "DF" => copy(calculationType = "crystallisation", crystallised = Some(true))
+      case _ => this
+    }
+  }
+}
+
 
 
 object GetCalculationListModel {
@@ -38,11 +45,9 @@ object GetCalculationListModel {
     ((JsPath \ "calculationId").read[String] and
       (JsPath \ "calculationTimestamp").read[String] and
       (JsPath \ "calculationType").read[String] and
-      (JsPath \ "requestedBy").readNullable[String] and
-      (JsPath \ "fromDate").readNullable[String] and
-      (JsPath \ "toDate").readNullable[String] and
       (JsPath \ "calculationOutcome").readNullable[String] and
-      (JsPath \ "calculationTrigger").readNullable[CalculationTrigger]
+      (JsPath \ "calculationTrigger").readNullable[CalculationTrigger] and
+      (JsPath \ "crystallised").readNullable[Boolean]
       )(GetCalculationListModel.apply _)
 
 }
