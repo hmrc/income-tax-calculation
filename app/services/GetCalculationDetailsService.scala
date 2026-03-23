@@ -194,12 +194,9 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
             case _ if calculationRecord.isDefined =>
               logger.info(s"[CalculationDetailController][getCalculationDetails] - Tax year: $taxYear, calling getCalculationList2150")
               listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
-            case _ if appConfig.useGetCalcListHip5624 =>
+            case _ =>
               logger.info(s"[CalculationDetailController][getCalculationDetails] - Tax year: $taxYear, calling getCalculationList5624")
               hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
-            case _ =>
-              logger.info(s"[CalculationDetailController][getCalculationDetails] - Tax year: $taxYear, calling getCalculationList2150, possibly No calculationRecord defined")
-              listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
           }
 
         retrievedCalculationList.flatMap {

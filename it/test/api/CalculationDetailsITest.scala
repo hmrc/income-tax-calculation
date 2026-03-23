@@ -39,7 +39,6 @@ class CalculationDetailsITest extends AnyWordSpec
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
         ("feature-switch.useGetCalcDetailsHipPlatform5294" -> !enableHip) +:
-        ("feature-switch.useGetCalcListHipPlatform5624" -> !enableHip) +:
         servicesToUrlConfig: _*
     )
     .build()
@@ -81,25 +80,6 @@ class CalculationDetailsITest extends AnyWordSpec
               Json.parse(s"""$successCalcDetailsLegacySubmissionChannelJson""")
         }
 
-      }
-
-      "return the calculation details by calling the HIP endpoint when called with tax year 23/24" in new Setup {
-        authorised()
-
-        val calcList2150 = s"/income-tax/23-24/view/calculations-summary/$successNino"
-        val hipUrlForCalcDetails24 = s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId"
-
-        stubGetWithResponseBody(calcList2150, 200, listCalcResponse)
-        stubGetWithResponseBody(hipUrlForCalcDetails24, 200, successModelJson)
-
-        whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")
-          .withHttpHeaders(mtditidHeader, authorization)
-          .get()) {
-          result =>
-            result.status mustBe 200
-            Json.parse(result.body) mustBe
-              Json.parse(s"""$successModelJson""")
-        }
       }
 
       "return the calculation details by calling the HIP endpoint when called with tax year 25/26" in new Setup {
