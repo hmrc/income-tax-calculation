@@ -17,10 +17,9 @@
 package controllers
 
 import controllers.predicates.AuthorisedAction
-import enums.*
 import models.*
 import play.api.Logging
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.GetCalculationDetailsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController

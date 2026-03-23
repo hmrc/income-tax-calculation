@@ -53,9 +53,6 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
       calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2",
       calculationTimestamp = "2019-03-17T09:22:59Z",
       calculationType = "IY",
-      requestedBy = Some("Customer"),
-      fromDate = None,
-      toDate = None,
       calculationTrigger = None
     ))).toString
     val agentClientCookie: Map[String, String] = Map("MTDITID" -> "555555555")

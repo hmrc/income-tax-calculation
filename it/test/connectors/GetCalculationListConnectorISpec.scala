@@ -43,7 +43,6 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
   val nino = "nino"
 
   private def getURL2150(nino: String, taxYearRange: String): String = s"/income-tax/$taxYearRange/view/calculations-summary/$nino"
-
   private def getURL2083(nino: String, taxYearRange: String): String = s"/income-tax/$taxYearRange/view/$nino/calculations-summary"
 
   private def getResponse2150: String = {
@@ -51,9 +50,6 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
       calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
       calculationTimestamp = "2019-03-17T09:22:59Z",
       calculationType = "IY",
-      requestedBy = Some("Customer"),
-      fromDate = None,
-      toDate = None,
       calculationTrigger = None
     ))).toString
   }
@@ -63,11 +59,8 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
       Json.toJson(Seq(GetCalculationListModel(
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
         calculationTimestamp = "2019-03-17T09:22:59Z",
-        calculationType = "inYear",
-        requestedBy = Some("customer"),
-        fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1"),
-        calculationTrigger = None
+        calculationType = "IY",
+        calculationTrigger = None,
       )))
     ).toString
   }
@@ -81,10 +74,7 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
       val successModel = GetCalculationListModel(
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
         calculationTimestamp = "2019-03-17T09:22:59Z",
-        calculationType = "inYear",
-        requestedBy = Some("customer"),
-        fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1"),
+        calculationType = "IY",
         calculationTrigger = None
       )
 
@@ -92,9 +82,6 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
         calculationTimestamp = "2019-03-17T09:22:59Z",
         calculationType = "IY",
-        requestedBy = Some("Customer"),
-        fromDate = None,
-        toDate = None,
         calculationTrigger = None
       )
 
@@ -156,9 +143,6 @@ class GetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec wit
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "inYear",
-            requestedBy = Some("customer"),
-            fromDate = Some("2013-05-d1"),
-            toDate = Some("2016-05-d1"),
             calculationTrigger = None
           )).toString()
 

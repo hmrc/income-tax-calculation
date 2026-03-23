@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.hip
 
 import config.BackendAppConfig
-import connectors.hip.HipGetCalculationListConnector
 import helpers.WiremockSpec
 import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import org.scalatest.matchers.must.Matchers
@@ -49,9 +48,6 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
       calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
       calculationTimestamp = "2019-03-17T09:22:59Z",
       calculationType = "inYear",
-      requestedBy = Some("customer"),
-      fromDate = Some("2013-05-d1"),
-      toDate = Some("2016-05-d1"),
       calculationTrigger = None
     ))).toString
   }
@@ -66,9 +62,6 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
         calculationTimestamp = "2019-03-17T09:22:59Z",
         calculationType = "inYear",
-        requestedBy = Some("customer"),
-        fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1"),
         calculationTrigger = None
       )
       "Hip 5624 returns a success with expected JSON" in {
@@ -119,9 +112,6 @@ class HipGetCalculationListConnectorISpec extends AnyWordSpec with WiremockSpec 
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
         calculationTimestamp = "2019-03-17T09:22:59Z",
         calculationType = "inYear",
-        requestedBy = Some("customer"),
-        fromDate = Some("2013-05-d1"),
-        toDate = Some("2016-05-d1"),
         calculationTrigger = None
       )).toString()
 
