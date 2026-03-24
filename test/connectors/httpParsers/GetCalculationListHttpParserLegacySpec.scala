@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{ErrorBodyModel, ErrorModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import play.api.http.Status.{BAD_REQUEST, CONFLICT, FORBIDDEN, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
 import testUtils.TestSuite
@@ -31,10 +31,20 @@ class GetCalculationListHttpParserLegacySpec extends TestSuite {
     "return a GetCalculationsList model" when {
       "DES returns 200" in {
 
-        val response = Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z"))).toString()
+        val response = Json.toJson(Seq(GetCalculationListModel(
+          calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+          calculationTimestamp = "2019-03-17T09:22:59Z",
+          calculationType = "IY",
+          calculationTrigger = None
+        ))).toString()
 
         parser.GetCalculationListHttpReadsLegacy.read("POST", "url", HttpResponse(OK, response)) mustBe
-          Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c","2019-03-17T09:22:59Z")))
+          Right(Seq(GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "IY",
+            calculationTrigger = None
+          )))
       }
     }
 

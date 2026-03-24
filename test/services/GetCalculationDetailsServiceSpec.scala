@@ -22,8 +22,7 @@ import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResp
 import connectors.httpParsers.GetCalculationListHttpParser.HttpGetResult
 import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser.HipGetCalculationDetailsResponse
 import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
-import enums.*
-import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -179,7 +178,12 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(
         Future.successful(
-          Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+          Right(Seq(GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "inYear",
+            calculationTrigger = None
+          )))
         )
       )
 

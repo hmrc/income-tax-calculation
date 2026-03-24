@@ -53,7 +53,7 @@ class CalculationDetailsITest extends AnyWordSpec
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponse)
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
@@ -69,7 +69,7 @@ class CalculationDetailsITest extends AnyWordSpec
       "return the calculation details by calling the IF endpoint when called with the tax year 22/23" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(ifUrlListCalcLegacy("2023"), 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(ifUrlListCalcLegacy("2023"), 200, listCalcResponse)
         stubGetWithResponseBody(ifUrl2023, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2023")
@@ -146,7 +146,7 @@ class CalculationDetailsITest extends AnyWordSpec
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponse)
         stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
@@ -183,7 +183,7 @@ class CalculationDetailsITest extends AnyWordSpec
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponse)
         stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details")
@@ -246,7 +246,7 @@ class CalculationDetailsITest extends AnyWordSpec
         agentAuthorised()
         val calcListLegacyUrl: String = if (enableHip) hipCalcListLegacyWithoutTaxYear else desUrlForListCalcWithoutTaxYear
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponse)
         stubGetWithResponseBody(desUrlForCalculationDetails, 200, successCalcDetailsExpectedJsonFull)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
@@ -284,7 +284,7 @@ class CalculationDetailsITest extends AnyWordSpec
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponse)
         stubGetWithResponseBody(desUrlForCalculationDetails, 500, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)
@@ -321,7 +321,7 @@ class CalculationDetailsITest extends AnyWordSpec
 
         authorised()
 
-        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponseLegacy)
+        stubGetWithResponseBody(calcListLegacyUrl, 200, listCalcResponse)
         stubGetWithResponseBody(desUrlForCalculationDetails, 503, response)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details", additionalCookies = agentClientCookie)

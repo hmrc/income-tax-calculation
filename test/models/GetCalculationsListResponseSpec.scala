@@ -23,14 +23,13 @@ class GetCalculationsListResponseSpec extends TestSuite {
 
   val mtdJson: JsValue = Json.parse(
     """
-      |{
-      |  "calculations": [
-      |    {
-      |      "calculationId": "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-      |      "calculationTimestamp": "2019-03-17T09:22:59Z"
-      |    }
-      |  ]
-      |}
+      |[
+      |  {
+      |    "calculationId": "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+      |    "calculationTimestamp": "2019-03-17T09:22:59Z",
+      |    "calculationType": "IY"
+      |  }
+      |]
     """.stripMargin
   )
 
@@ -40,19 +39,19 @@ class GetCalculationsListResponseSpec extends TestSuite {
       |[
       |	{
       |		"calculationId": "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-      |		"calculationTimestamp": "2019-03-17T09:22:59Z"
+      |		"calculationTimestamp": "2019-03-17T09:22:59Z",
+      |   "calculationType": "IY"
       |	}
       |]
     """.stripMargin
   )
 
-  val response: CalculationsListResponseLegacy = CalculationsListResponseLegacy(
-    Seq(
-      GetCalculationListModelLegacy(
+  val response: Seq[GetCalculationListModel] = Seq(GetCalculationListModel(
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-        calculationTimestamp = "2019-03-17T09:22:59Z"
-      )
-    ))
+        calculationTimestamp = "2019-03-17T09:22:59Z",
+        calculationType = "IY",
+        calculationTrigger = None
+  ))
 
 
   "Json writes" must {
@@ -63,7 +62,7 @@ class GetCalculationsListResponseSpec extends TestSuite {
 
   "Json reads" must {
     "align with the API 1404 des spec" in {
-      desJson.as[CalculationsListResponseLegacy] mustBe response
+      desJson.as[Seq[GetCalculationListModel]] mustBe response
 
     }
   }

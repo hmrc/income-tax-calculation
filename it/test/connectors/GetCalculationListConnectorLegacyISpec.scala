@@ -19,7 +19,7 @@ package connectors
 import config.BackendAppConfig
 import connectors.hip.HipCalculationLegacyListConnector
 import helpers.WiremockSpec
-import models.{ErrorBodyModel, ErrorModel, GetCalculationListModelLegacy}
+import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
@@ -45,6 +45,12 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
   val taxYear = Some("2021")
   val url = s"/itsd/calculations/liability/$nino"
   val taxYearUrl = s"/itsd/calculations/liability/$nino\\?taxYear=${taxYear.get}"
+  val listCalcSequence: Seq[GetCalculationListModel] = Seq(GetCalculationListModel(
+    calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2",
+    calculationTimestamp = "2019-03-17T09:22:59Z",
+    calculationType = "IY",
+    calculationTrigger = None
+  ))
 
   "GetCalculationListConnector" should {
 
@@ -53,24 +59,23 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
 
     "return a success result" when {
       "DES returns a success with expected JSON" in {
-        val response =
-          Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
+        val response = Json.toJson(listCalcSequence).toString
 
         stubGetWithResponseBody(url, OK, response)
         val result = await(connector.calcList(nino, None))
 
-        result mustBe Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+        result mustBe Right(listCalcSequence)
       }
 
 
       "DES returns a success with expected JSON with OptionalTaxYear" in {
         val response =
-          Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
+          Json.toJson(listCalcSequence).toString
 
         stubGetWithResponseBody(taxYearUrl, OK, response)
         val result = await(connector.calcList(nino, taxYear))
 
-        result mustBe Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+        result mustBe Right(listCalcSequence)
       }
 
       "IF returns a success with expected JSON" in {
@@ -78,12 +83,12 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
         val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
         val response =
-          Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
+          Json.toJson(listCalcSequence).toString
 
         stubGetWithResponseBody(url, OK, response)
         val result = await(connector.calcList(nino, None))
 
-        result mustBe Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+        result mustBe Right(listCalcSequence)
       }
 
       "IF returns a success with expected JSON with OptionalTaxYear" in {
@@ -91,12 +96,12 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
         val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
         val response =
-          Json.toJson(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z"))).toString
+          Json.toJson(listCalcSequence).toString
 
         stubGetWithResponseBody(taxYearUrl, OK, response)
         val result = await(connector.calcList(nino, taxYear))
 
-        result mustBe Right(Seq(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")))
+        result mustBe Right(listCalcSequence)
       }
     }
   }
@@ -125,7 +130,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
       val appConfigWithInternalHost = appConfig("localhost")
       val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
-      val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")).toString()
+      val response = Json.toJson(listCalcSequence.head).toString()
 
       stubGetWithResponseBody(url, OK, response)
 
@@ -158,7 +163,7 @@ class GetCalculationListConnectorLegacyISpec extends AnyWordSpec with WiremockSp
       val appConfigWithInternalHost = appConfig("localhost")
       val connector = new HipCalculationLegacyListConnector(httpClient, appConfigWithInternalHost)
 
-      val response = Json.toJson(GetCalculationListModelLegacy("f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c", "2019-03-17T09:22:59Z")).toString()
+      val response = Json.toJson(listCalcSequence.head).toString()
 
       stubGetWithResponseBody(taxYearUrl, OK, response)
 

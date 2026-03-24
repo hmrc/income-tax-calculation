@@ -17,7 +17,7 @@
 package helpers
 
 import com.github.tomakehurst.wiremock.http.HttpHeader
-import models.{GetCalculationListModel, GetCalculationListModelLegacy}
+import models.GetCalculationListModel
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 
@@ -45,7 +45,6 @@ trait CalculationDetailsITestHelper extends WiremockStubHelpers {
     def ifUrlListCalcLegacy(taxYear: String): String = s"/itsd/calculations/liability/$successNino\\?taxYear=$taxYear"
 
     val ifUrlForCalculationList = s"/income-tax/view/calculations/liability/23-24/$successNino"
-    val listCalcResponseLegacy: String = Json.toJson(Seq(GetCalculationListModelLegacy(calculationId, "2019-03-17T09:22:59Z"))).toString()
 
     val ifGetCalcListUrl26 = "/income-tax/25-26/view/AA123123A/calculations-summary"
 
