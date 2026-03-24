@@ -27,7 +27,8 @@ class GetCalculationsListResponseSpec extends TestSuite {
       |  {
       |    "calculationId": "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
       |    "calculationTimestamp": "2019-03-17T09:22:59Z",
-      |    "calculationType": "IY"
+      |    "calculationType": "inYear",
+      |    "crystallised": false
       |  }
       |]
     """.stripMargin
@@ -46,7 +47,15 @@ class GetCalculationsListResponseSpec extends TestSuite {
     """.stripMargin
   )
 
-  val response: Seq[GetCalculationListModel] = Seq(GetCalculationListModel(
+  val mtdResponse: Seq[GetCalculationListModel] = Seq(GetCalculationListModel(
+    calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+    calculationTimestamp = "2019-03-17T09:22:59Z",
+    calculationType = "inYear",
+    calculationTrigger = None,
+    crystallised = Some(false)
+  ))
+
+  val desResponse: Seq[GetCalculationListModel] = Seq(GetCalculationListModel(
         calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
         calculationTimestamp = "2019-03-17T09:22:59Z",
         calculationType = "IY",
@@ -56,14 +65,13 @@ class GetCalculationsListResponseSpec extends TestSuite {
 
   "Json writes" must {
     "have the same output as the frontend" in {
-      Json.toJson(response) mustBe mtdJson
+      Json.toJson(mtdResponse) mustBe mtdJson
     }
   }
 
   "Json reads" must {
     "align with the API 1404 des spec" in {
-      desJson.as[Seq[GetCalculationListModel]] mustBe response
-
+      desJson.as[Seq[GetCalculationListModel]] mustBe desResponse
     }
   }
 
