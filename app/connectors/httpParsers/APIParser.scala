@@ -25,6 +25,8 @@ import utils.PagerDutyHelper.{getCorrelationId, pagerDutyLog}
 
 trait APIParser {
 
+  type HttpGetResult[T] = Either[ErrorModel, T]
+
   val parserName : String
 
   def logMessage(response:HttpResponse): Option[String] ={

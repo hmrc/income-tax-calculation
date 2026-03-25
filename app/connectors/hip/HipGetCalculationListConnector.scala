@@ -18,7 +18,8 @@ package connectors.hip
 
 import config.AppConfig
 import connectors.core.CorrelationId
-import connectors.httpParsers.GetCalculationListHttpParser.{GetCalculationListHttpReads, GetCalculationListResponse}
+import connectors.httpParsers.GetCalculationListHttpParser.{GetCalculationListHttpReads, HttpGetResult}
+import models.GetCalculationListModel
 import play.api.Logging
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, StringContextOps}
@@ -30,7 +31,7 @@ class HipGetCalculationListConnector @Inject()(httpClient: HttpClientV2,
                                                val appConfig: AppConfig)
                                               (implicit ec: ExecutionContext) extends HipConnector with Logging {
 
-  def getCalculationList5624(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+  def getCalculationList5624(nino: String, taxYear: String)(implicit hc: HeaderCarrier): Future[HttpGetResult[Seq[GetCalculationListModel]]] = {
     val taxYearRange = s"${taxYear.takeRight(2).toInt - 1}-${taxYear.takeRight(2)}"
     val getCalculationListUrl: String = appConfig.hipBaseUrl + s"/itsa/income-tax/v1/$taxYearRange/view/calculations/liability/$nino"
 
@@ -45,9 +46,9 @@ class HipGetCalculationListConnector @Inject()(httpClient: HttpClientV2,
     hipCall(getCalculationListUrl, hipHeaders)
   }
 
-  private def hipCall(urlString: String, headers: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[GetCalculationListResponse] = {
+  private def hipCall(urlString: String, headers: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[HttpGetResult[Seq[GetCalculationListModel]]] = {
     httpClient.get(url"$urlString")
       .setHeader(headers: _*)
-      .execute[GetCalculationListResponse]
+      .execute[HttpGetResult[Seq[GetCalculationListModel]]]
   }
 }

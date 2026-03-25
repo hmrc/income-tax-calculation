@@ -19,7 +19,7 @@ package services
 import config.AppConfig
 import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import connectors.httpParsers.GetCalculationListHttpParserLegacy.GetCalculationListResponseLegacy
+import connectors.httpParsers.GetCalculationListHttpParser.HttpGetResult
 import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser.HipGetCalculationDetailsResponse
 import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
 import enums.*
@@ -47,7 +47,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
   private type CalculationDetailAsJsonResponse = Either[ErrorModel, JsValue]
 
   private def getLegacyCalcListResult(nino: String, taxYear: Option[String])
-                                     (implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+                                     (implicit hc: HeaderCarrier): Future[HttpGetResult[Seq[GetCalculationListModel]]] = {
     logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
     calcListHipLegacyConnector.calcList(nino, taxYear)
   }

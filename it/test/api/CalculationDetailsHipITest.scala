@@ -68,7 +68,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       "return the calculation details when called with the tax year 2019" in new Setup {
         authorised()
 
-        stubGetWithResponseBody(s"/itsd/calculations/liability/$successNino\\?taxYear=2019", OK, listCalcResponseLegacy)
+        stubGetWithResponseBody(s"/itsd/calculations/liability/$successNino\\?taxYear=2019", OK, listCalcResponse)
         stubGetWithResponseBody(s"/itsa/income-tax/v1/18-19/view/calculations/liability/$successNino/$calculationId", OK, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2019")
@@ -257,7 +257,7 @@ class CalculationDetailsHipITest extends AnyWordSpec
       "return the calculation details when called with the tax year 2019" in new Setup {
         agentAuthorised()
 
-        stubGetWithResponseBody(s"/itsd/calculations/liability/$successNino\\?taxYear=2019", OK, listCalcResponseLegacy)
+        stubGetWithResponseBody(s"/itsd/calculations/liability/$successNino\\?taxYear=2019", OK, listCalcResponse)
         stubGetWithResponseBody(s"/itsa/income-tax/v1/18-19/view/calculations/liability/$successNino/$calculationId", OK, Json.toJson(successFullModelGetCalculationDetailsHip).toString())
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2019")

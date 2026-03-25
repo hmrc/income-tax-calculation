@@ -18,7 +18,9 @@ package connectors.hip
 
 import config.AppConfig
 import connectors.core.CorrelationId
+import connectors.httpParsers.GetCalculationListHttpParser.HttpGetResult
 import connectors.httpParsers.GetCalculationListHttpParserLegacy.*
+import models.GetCalculationListModel
 import play.api.Logging
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, StringContextOps}
@@ -29,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class HipCalculationLegacyListConnector @Inject()(http: HttpClientV2, val appConfig: AppConfig)
                                                  (implicit ec: ExecutionContext) extends HipConnector with Logging {
 
-  def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[GetCalculationListResponseLegacy] = {
+  def calcList(nino: String, taxYear: Option[String])(implicit hc: HeaderCarrier): Future[HttpGetResult[Seq[GetCalculationListModel]]] = {
 
     val endpointUrl: String =
       s"${appConfig.hipBaseUrl}/itsd/calculations/liability/$nino${taxYear.fold("")(year => s"?taxYear=$year")}"
@@ -48,6 +50,6 @@ class HipCalculationLegacyListConnector @Inject()(http: HttpClientV2, val appCon
     http
       .get(url"$endpointUrl")
       .setHeader(hipHeaders: _*)
-      .execute[GetCalculationListResponseLegacy]
+      .execute[HttpGetResult[Seq[GetCalculationListModel]]]
   }
 }
