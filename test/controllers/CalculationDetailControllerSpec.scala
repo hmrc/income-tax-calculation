@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.data.EitherT
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import enums.{CalculationTrigger, SubmissionChannel}
 import models.{ErrorBodyModel, ErrorModel}
@@ -42,24 +43,24 @@ class CalculationDetailControllerSpec extends TestSuite {
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
   def calculationResponse(nino: String, taxYearOption: Option[String], calcType: Option[String])(response: CalculationDetailResponse): Unit = {
-    when(service.getCalculationDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYearOption), ArgumentMatchers.eq(calcType))(any())) thenReturn Future(
+    when(service.getCalculationDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYearOption), ArgumentMatchers.eq(calcType))(any())) thenReturn EitherT(Future(
       response match {
         case Right(obj) => Right(Json.toJson(obj))
         case Left(err) => Left(err)
-      }
+      })
     )
   }
 
   def calculationResponseByCalcId(nino: String, calculationId: String, taxYearOption: Option[String], submissionChannel: Option[SubmissionChannel])(response: CalculationDetailResponse): Unit = {
     when(service.getCalculationDetailsByCalcId(any(), any(), any(), any())(any()))
       .thenReturn(
-        Future(
+        EitherT(Future(
           response match {
             case Right(obj) => Right(Json.toJson(obj))
             case Left(err) => Left(err)
           }
         )
-      )
+      ))
   }
 
 

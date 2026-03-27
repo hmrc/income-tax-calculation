@@ -37,6 +37,7 @@ case class GetCalculationListModel(
   }
 }
 
+case class CalculationListResponseModel(calculations: Seq[GetCalculationListModel])
 
 
 object GetCalculationListModel {
@@ -50,4 +51,8 @@ object GetCalculationListModel {
       (JsPath \ "crystallised").readNullable[Boolean]
       )(GetCalculationListModel.apply _)
 
+}
+
+object CalculationListResponseModel {
+  implicit val format: Format[CalculationListResponseModel] = Json.format[CalculationListResponseModel]
 }
