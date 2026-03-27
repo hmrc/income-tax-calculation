@@ -9,3 +9,5 @@ GET         /income-tax/nino/:nino/calculation-details                          
 GET         /income-tax/nino/:nino/calc-id/:calcId/calculation-details                            controllers.CalculationDetailController.calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String])
 
 GET         /income-tax/nino/:nino/tax-years                                                      controllers.TaxYearsDataController.getTaxYearsData(nino: String)
+
+GET         /calculation-list/:nino/:taxYear                                                      controllers.CalculationListController.getCalculationList(nino, taxYear)

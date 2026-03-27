@@ -19,7 +19,7 @@ package controllers
 import controllers.predicates.AuthorisedAction
 import models.*
 import play.api.Logging
-import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.GetCalculationDetailsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -27,35 +27,21 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class CalculationDetailController @Inject()(getCalculationDetailsService: GetCalculationDetailsService,
-                                            cc: ControllerComponents,
-                                            authorisedAction: AuthorisedAction
+class CalculationListController @Inject()(getCalculationDetailsService: GetCalculationDetailsService,
+                                          cc: ControllerComponents,
+                                          authorisedAction: AuthorisedAction
                                            )(implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
-  def calculationDetail(nino: String, taxYear: Option[String], calculationRecord: Option[String]): Action[AnyContent] =
+  def getCalculationList(nino: String, taxYear: String): Action[AnyContent] =
     authorisedAction.async { implicit user =>
-      getCalculationDetailsService.getCalculationDetails(nino, taxYear, calculationRecord).value.map {
+      getCalculationDetailsService.getCalculationListResponse(nino, taxYear).value.map {
         case Right(success) =>
           logger.info(s"[CalculationDetailController][calculationDetail] - Successful Response: OK 200 - $success")
-          Ok(success)
+          Ok(Json.toJson(success))
         case Left(error) =>
           logger.error(s"[CalculationDetailController][calculationDetail] - Error Response: $error")
           Status(error.status)(error.toJson)
       }
     }
-
-  def calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String]): Action[AnyContent] =
-    authorisedAction.async { implicit user =>
-      getCalculationDetailsService.getCalculationDetailsByCalcId(nino, Some(calcId), taxYear, None).value.map {
-        case Right(success) =>
-          logger.info(s"[CalculationDetailController][calculationDetailByCalcId] - Successful Response: OK 200 - $success")
-          Ok(success)
-        case Left(error) =>
-          logger.error(s"[CalculationDetailController][calculationDetailByCalcId] - Error Response: $error")
-          Status(error.status)(error.toJson)
-      }
-    }
-
-
 }
 
