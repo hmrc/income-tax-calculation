@@ -26,7 +26,7 @@ import models.{ErrorBodyModel, ErrorModel, GetCalculationListModel}
 import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import play.api.http.Status.*
 import play.api.libs.json.Json
-import testConstants.GetCalculationDetailsConstants.successModelFull
+import testConstants.GetCalculationDetailsConstants.{expectedResult2083WithCrystallised, expectedResult2083WithoutCrystallised, successModelFull}
 import testConstants.hip.GetCalculationDetailsTestConstants.successFullModelGetCalculationDetailsHip
 import testUtils.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
@@ -53,6 +53,7 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   val specificTaxYear: Option[String] = Some(TaxYear.taxYear2024.toString)
   val specificTaxYearPlusOne: Option[String] = Some((TaxYear.taxYear2024 + 1).toString)
   val taxYear2026: Option[String] = Some(TaxYear.taxYear2026.toString)
+  val taxYear2026String: String = TaxYear.taxYear2026.toString
   val optionalTaxYear = false
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
@@ -76,6 +77,34 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
             calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
             calculationTimestamp = "2019-03-17T09:22:59Z",
             calculationType = "inYear",
+            calculationTrigger = None
+          )))
+        )
+      )
+
+  def listCalculationDetailsSuccess2083IY: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
+    (mockListCalculationConnector.getCalculationList2083(_: String, _: String)(_: HeaderCarrier))
+      .expects(*, *, *)
+      .returning(
+        Future.successful(
+          Right(Seq(GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "IY",
+            calculationTrigger = None
+          )))
+        )
+      )
+
+  def listCalculationDetailsSuccess2083DF: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
+    (mockListCalculationConnector.getCalculationList2083(_: String, _: String)(_: HeaderCarrier))
+      .expects(*, *, *)
+      .returning(
+        Future.successful(
+          Right(Seq(GetCalculationListModel(
+            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+            calculationTimestamp = "2019-03-17T09:22:59Z",
+            calculationType = "DF",
             calculationTrigger = None
           )))
         )
@@ -207,6 +236,24 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
   def setHipEnabledFeatureSwitchConfig(): MockAppConfig = {
     new MockAppConfig {
       override val useGetCalcListHip5624: Boolean = true
+    }
+  }
+
+  ".getCalculationListResponse" should {
+    "return a Right with updated calcType when input calculationType is IY" in {
+      listCalculationDetailsSuccess2083IY
+
+      val result = await(service().getCalculationListResponse(nino, taxYear2026String).value)
+
+      result mustBe Right(expectedResult2083WithoutCrystallised)
+    }
+
+    "return a Right with updated calcType and crystallised when input calculationType is DF" in {
+      listCalculationDetailsSuccess2083DF
+
+      val result = await(service().getCalculationListResponse(nino, taxYear2026String).value)
+
+      result mustBe Right(expectedResult2083WithCrystallised)
     }
   }
 
