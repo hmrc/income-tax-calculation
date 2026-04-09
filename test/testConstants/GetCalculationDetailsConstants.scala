@@ -17,6 +17,7 @@
 package testConstants
 
 import enums.IsMTD
+import models.{CalculationListResponseModel, GetCalculationListModel}
 import models.calculation.*
 import models.calculation.taxcalculation.*
 
@@ -449,6 +450,21 @@ object GetCalculationDetailsConstants {
       ),
       submissionChannel = None
     )
+
+  val expectedResult2083WithoutCrystallised = CalculationListResponseModel(Seq(GetCalculationListModel(
+    calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+    calculationTimestamp = "2019-03-17T09:22:59Z",
+    calculationType = "inYear",
+    calculationTrigger = None
+  )))
+
+  val expectedResult2083WithCrystallised = CalculationListResponseModel(Seq(GetCalculationListModel(
+    calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+    calculationTimestamp = "2019-03-17T09:22:59Z",
+    calculationType = "crystallisation",
+    calculationTrigger = None,
+    crystallised = Some(true)
+  )))
 
   private val source = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))
   val successCalcDetailsExpectedJsonFull: String = try source.mkString finally source.close()
