@@ -59,8 +59,9 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
 
     for {
       calcList <- getCalculationList(nino, taxYearOption, calculationRecord)
-      optCalcId <- getCalculationIdFromCalcList(nino, calcList, taxYearOption, calculationRecord)
-      calculationDetailsResponse <- getCalculationDetailsByCalcId(nino, optCalcId, taxYearOption, None)
+      optCalcRecord <- getCalculationRecord(nino, calcList, taxYearOption, calculationRecord)
+      optSubmissionChannel <- determineSubmissionChannel(optCalcRecord.flatMap(_.calculationTrigger))
+      calculationDetailsResponse <- getCalculationDetailsByCalcId(nino, optCalcRecord.map(_.calculationId), taxYearOption, optSubmissionChannel)
     } yield calculationDetailsResponse
   }
 
@@ -91,11 +92,15 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
     }
   }
 
-  def determineSubmissionChannel(calculationTrigger: Option[CalculationTrigger]): Option[SubmissionChannel] = {
-    calculationTrigger.map {
-      case CesaSAReturn2083 | CesaSAReturn2150 => IsLegacyWithCesa
-      case _ => IsMTD
-    }
+  def determineSubmissionChannel(calculationTrigger: Option[CalculationTrigger]): CalculationResult[Option[SubmissionChannel]] = {
+    EitherT.right(
+      Future(
+        calculationTrigger.map {
+          case CesaSAReturn2083 | CesaSAReturn2150 => IsLegacyWithCesa
+          case _ => IsMTD
+        }
+      )
+    )
   }
 
   def getCalculationDetailsByCalcId(
@@ -151,6 +156,56 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
         Future(Left(ErrorModel(500, ErrorBodyModel("500", error))))
       case _ =>
         Future(Left(ErrorModel(500, ErrorBodyModel("500", "[GetCalculationDetailsService][getCalculationDetailsByCalcId] - Unknown error"))))
+    }
+  }
+
+  def getCalculationRecord(nino: String,
+                           calcSummaryList: Seq[GetCalculationListModel],
+                           taxYearOption: Option[String],
+                           calculationRecord: Option[String]): CalculationResult[Option[GetCalculationListModel]] = EitherT {
+    Future {
+      taxYearOption match {
+        case Some(taxYear) if taxYear.toInt >= taxYear2024 =>
+          val processedList: Seq[GetCalculationListModel] =
+            if (calcSummaryList.forall(_.calculationOutcome.isEmpty)) {
+              calcSummaryList
+            } else {
+              calcSummaryList.filter(_.calculationOutcome.exists(_.equalsIgnoreCase("PROCESSED")))
+            }
+
+          lazy val notFoundError = ErrorModel(NOT_FOUND, ErrorBodyModel.notFoundError())
+          lazy val badRequestError = ErrorModel(BAD_REQUEST, ErrorBodyModel("INVALID_CALCULATION_RECORD", "The provided calculation record is invalid"))
+          lazy val latestSortedList: Seq[GetCalculationListModel] = processedList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
+          lazy val previousFilteredList = processedList.filter(calc => postFinalisationAllowedTypes.contains(calc.calculationType))
+          lazy val previousSortedList = previousFilteredList.sortBy(_.calculationTimestamp)(Ordering[String].reverse)
+
+          if (processedList.isEmpty) {
+            logger.info(s"[CalculationDetailController][filterCalcList] - NOT_FOUND: No calculations found after filtering by outcome")
+            Left(ErrorModel(204, ErrorBodyModel("NO_CONTENT", s"No calculations found after filtering by outcome - processedList.isEmpty")))
+          } else {
+            calculationRecord match {
+              case Some("LATEST") =>
+                logger.info(s"[CalculationDetailController][filterCalcList] - Success retrieving Latest tax calc, calculationTrigger: ${latestSortedList.head.calculationTrigger}")
+                Right(latestSortedList.headOption)
+              case Some("PREVIOUS") =>
+                previousSortedList.lift(1) match {
+                  case Some(value) =>
+                    logger.info(s"[CalculationDetailController][filterCalcList] - Success retrieving Previous tax calc, calculationTrigger: ${value.calculationTrigger}")
+                    Right(Some(value))
+                  case None =>
+                    Left(notFoundError)
+                }
+              case Some(_) =>
+                logger.error(s"[CalculationDetailController][filterCalcList] - INVALID_CALCULATION_RECORD: The provided calculation record is invalid")
+                Left(badRequestError)
+              case None =>
+                logger.info(s"[CalculationDetailController][filterCalcList] - No calculation record, Success retrieving tax calc for processed list, calculationTrigger: ${processedList.head.calculationTrigger}")
+                Right(processedList.headOption)
+            }
+          }
+
+        case _ => Right(calcSummaryList.headOption)
+      }
     }
   }
 
