@@ -49,7 +49,7 @@ class GetCalculationListConnector @Inject()(
     httpClient.get(url"$urlString")
       .execute[HttpResponse]
       .map { response =>
-        logger.info(s"[getCalculationList][getCalculationList] - Response: -${response.body}-")
+        logger.info(s"[getCalculationList][getCalculationList]") // TODO - MIPR-2637: Inform V&C team about no longer logging the response body
         GetCalculationListHttpReads.read("GET", urlString, response)
       }
   }
