@@ -19,7 +19,7 @@ import sbt.*
 object AppDependencies {
 
   private val bootstrapPlay30Version = "10.7.0"
-  private val mongoPlay30Version = "2.10.0"
+  private val mongoPlay30Version = "2.12.0"
   private val scalaTestVersion = "3.2.19"
   private val pegdownVersion = "1.6.0"
   private val jacksonModuleScalaVersion = "2.20.1"
