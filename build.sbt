@@ -56,7 +56,6 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test
   )
   .settings(PlayKeys.playDefaultPort := 9314)
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(coverageSettings: _*)
   .settings(ThisBuild / scalacOptions ++= Seq(
     "-Wconf:msg=Flag.*repeatedly:s",

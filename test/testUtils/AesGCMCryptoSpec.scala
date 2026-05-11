@@ -19,19 +19,19 @@ package testUtils
 import com.codahale.metrics.SharedMetricRegistries
 import config.{AppConfig, MockAppConfig}
 import models.mongo.TextAndKey
-import utils.{EncryptedValue, EncryptionDecryptionException, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue, EncryptionDecryptionException}
 
 import java.security.InvalidAlgorithmParameterException
 import java.util.Base64
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.{Cipher, IllegalBlockSizeException, KeyGenerator, NoSuchPaddingException}
 
-class SecureGCMCipherSpec extends TestSuite {
+class AesGCMCryptoSpec extends TestSuite {
   SharedMetricRegistries.clear()
 
   private implicit lazy val appConfig: AppConfig = new MockAppConfig().config()
 
-  private val underTest = new SecureGCMCipher
+  private val underTest = new AesGCMCrypto
 
   private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
   private val secretKey2 = "cXo7u0HuJK8B/52xLwW7eQ=="
@@ -44,7 +44,7 @@ class SecureGCMCipherSpec extends TestSuite {
 
   "encrypt" should {
     "return plain text when turned off" in {
-      val encrypterWithNoCrypt = new SecureGCMCipher()(new MockAppConfig().config(false))
+      val encrypterWithNoCrypt = new AesGCMCrypto()(new MockAppConfig().config(false))
       val encryptedText = encrypterWithNoCrypt.encrypt(textToEncrypt)
 
       encryptedText.value mustBe textToEncrypt
@@ -87,7 +87,7 @@ class SecureGCMCipherSpec extends TestSuite {
     "return an EncryptionDecryptionError if the secret key is an invalid type" in {
       val keyGen = KeyGenerator.getInstance("DES")
       val key = keyGen.generateKey()
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override val ALGORITHM_KEY: String = "DES"
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -99,7 +99,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if the alg is invalid" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override val ALGORITHM_TO_TRANSFORM_STRING: String = "invalid"
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -109,7 +109,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if the padding is invalid" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new NoSuchPaddingException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -119,7 +119,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a InvalidAlgorithmParameterException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new InvalidAlgorithmParameterException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -129,7 +129,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a IllegalStateException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new IllegalStateException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -139,7 +139,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a UnsupportedOperationException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new UnsupportedOperationException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -149,7 +149,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a IllegalBlockSizeException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new IllegalBlockSizeException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -159,7 +159,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a RuntimeException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new RuntimeException()
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
@@ -171,7 +171,7 @@ class SecureGCMCipherSpec extends TestSuite {
 
   "decrypt" should {
     "return plain text when turned off" in {
-      val encrypterWithNoCrypt = new SecureGCMCipher()(new MockAppConfig().config(false))
+      val encrypterWithNoCrypt = new AesGCMCrypto()(new MockAppConfig().config(false))
       val encryptedText = encrypterWithNoCrypt.decrypt(textToEncrypt, "nonce")
       encryptedText mustBe textToEncrypt.toInt
     }
@@ -251,7 +251,7 @@ class SecureGCMCipherSpec extends TestSuite {
     "return an EncryptionDecryptionError if the secret key is an invalid type" in {
       val keyGen = KeyGenerator.getInstance("DES")
       val key = keyGen.generateKey()
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override val ALGORITHM_KEY: String = "DES"
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
@@ -263,7 +263,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if the alg is invalid" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override val ALGORITHM_TO_TRANSFORM_STRING: String = "invalid"
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
@@ -273,7 +273,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if the padding is invalid" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new NoSuchPaddingException()
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
@@ -283,7 +283,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a InvalidAlgorithmParameterException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new InvalidAlgorithmParameterException()
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
@@ -293,7 +293,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a IllegalStateException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new IllegalStateException()
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
@@ -303,7 +303,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a UnsupportedOperationException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new UnsupportedOperationException()
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
@@ -313,7 +313,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a IllegalBlockSizeException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new IllegalBlockSizeException()
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
@@ -323,7 +323,7 @@ class SecureGCMCipherSpec extends TestSuite {
     }
 
     "return an EncryptionDecryptionError if a RuntimeException is thrown" in {
-      val secureGCMEncrypter = new SecureGCMCipher {
+      val secureGCMEncrypter = new AesGCMCrypto {
         override def getCipherInstance: Cipher = throw new RuntimeException()
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](

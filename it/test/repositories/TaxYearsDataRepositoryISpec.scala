@@ -27,7 +27,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.Configuration
 import uk.gov.hmrc.mongo.MongoUtils
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import utils.SecureGCMCipher
+import utils.AesGCMCrypto
 import org.mongodb.scala.ObservableFuture
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -41,7 +41,7 @@ class TaxYearsDataRepositoryISpec extends AnyWordSpec with WiremockSpec with Mat
   )
 
   private val repoWithInvalidEncryption = appWithInvalidEncryptionKey.injector.instanceOf[TaxYearsDataRepositoryImpl]
-  private implicit val secureGCMCipher: SecureGCMCipher = app.injector.instanceOf[SecureGCMCipher]
+  private implicit val aesGCMCrypto: AesGCMCrypto = app.injector.instanceOf[AesGCMCrypto]
 
   private def count: Long = await(underTest.collection.countDocuments().head())
 

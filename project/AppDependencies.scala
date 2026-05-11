@@ -19,26 +19,24 @@ import sbt.*
 object AppDependencies {
 
   private val bootstrapPlay30Version = "10.7.0"
-  private val mongoPlay30Version = "2.10.0"
-  private val scalaTestVersion = "3.2.19"
-  private val pegdownVersion = "1.6.0"
-  private val jacksonModuleScalaVersion = "2.20.1"
+  private val mongoPlay30Version = "2.12.0"
+  private val scalaTestVersion = "3.2.20"
+  private val jacksonModuleScalaVersion = "2.21.3"
   private val wiremockVersion = "3.0.1"
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30"  % bootstrapPlay30Version,
     "uk.gov.hmrc.mongo"            %% "hmrc-mongo-play-30"         % mongoPlay30Version,
     "com.fasterxml.jackson.module" %% "jackson-module-scala"       % jacksonModuleScalaVersion,
-    "org.typelevel"     %% "cats-core"                                   % "2.13.0"
+    "org.typelevel"                %% "cats-core"                  % "2.13.0"
   )
   val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapPlay30Version % "test",
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-30"  % mongoPlay30Version     % "test",
     "org.scalatest"           %% "scalatest"                % scalaTestVersion       % "test",
     "uk.gov.hmrc"             %% "bootstrap-test-play-30"   % bootstrapPlay30Version % "test",
-    "org.pegdown"             %  "pegdown"                  % pegdownVersion         % "test",
     "com.vladsch.flexmark"    %  "flexmark-all"             % "0.64.8"               % "test",
     "com.github.tomakehurst"  %  "wiremock"                 % wiremockVersion        % "test",
-    "org.scalamock"           %% "scalamock"                % "7.5.2"                % "test"
+    "org.scalamock"           %% "scalamock"                % "7.5.5"                % "test"
   )
 }

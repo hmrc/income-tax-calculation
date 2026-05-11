@@ -19,18 +19,18 @@ package utils
 import models.mongo.TextAndKey
 
 trait Encryptable[A] {
-  def encrypt(value: A)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue
+  def encrypt(value: A)(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedValue
 }
 
 object EncryptorInstances {
 
   implicit val intEncryptor: Encryptable[Int] = new Encryptable[Int] {
-    def encrypt(value: Int)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue = secureGCMCipher.encrypt(value)
+    def encrypt(value: Int)(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedValue = aesGCMCrypto.encrypt(value)
   }
 }
 
 object EncryptableSyntax {
   implicit class EncryptableOps[A](value: A)(implicit e: Encryptable[A]) {
-    def encrypted(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue = e.encrypt(value)
+    def encrypted(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedValue = e.encrypt(value)
   }
 }

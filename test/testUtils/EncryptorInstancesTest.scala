@@ -19,21 +19,21 @@ package testUtils
 import models.mongo.TextAndKey
 import org.scalamock.scalatest.MockFactory
 import utils.EncryptorInstances.intEncryptor
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 class EncryptorInstancesTest extends TestSuite
   with MockFactory {
 
   private val encryptedInt = mock[EncryptedValue]
 
-  private implicit val secureGCMCipher: SecureGCMCipher = mock[SecureGCMCipher]
+  private implicit val aesGCMCrypto: AesGCMCrypto = mock[AesGCMCrypto]
   private implicit val textAndKey: TextAndKey = TextAndKey("some-associated-text", "some-aes-key")
 
   "intEncryptor" should {
     "encrypt Int values" in {
       val intValue: Int = 500
 
-      (secureGCMCipher.encrypt(_: Int)(_: TextAndKey)).expects(intValue, textAndKey).returning(encryptedInt)
+      (aesGCMCrypto.encrypt(_: Int)(_: TextAndKey)).expects(intValue, textAndKey).returning(encryptedInt)
 
       intEncryptor.encrypt(intValue) mustBe encryptedInt
     }
