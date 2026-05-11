@@ -21,21 +21,21 @@ import org.scalamock.scalatest.MockFactory
 import utils.DecryptorInstances.intDecryptor
 import utils.TypeCaster.Converter
 import utils.TypeCaster.Converter.intLoader
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 class DecryptorInstancesTest extends TestSuite
   with MockFactory {
 
   private val encryptedValue = EncryptedValue("some-value", "some-nonce")
 
-  private implicit val secureGCMCipher: SecureGCMCipher = mock[SecureGCMCipher]
+  private implicit val aesGCMCrypto: AesGCMCrypto = mock[AesGCMCrypto]
   private implicit val textAndKey: TextAndKey = TextAndKey("some-associated-text", "some-aes-key")
 
   "intDecryptor" should {
     "decrypt to Int values" in {
       val intValue: Int = 50
 
-      (secureGCMCipher.decrypt[Int](_: String, _: String)(_: TextAndKey, _: Converter[Int]))
+      (aesGCMCrypto.decrypt[Int](_: String, _: String)(_: TextAndKey, _: Converter[Int]))
         .expects(encryptedValue.value, encryptedValue.nonce, textAndKey, intLoader).returning(intValue)
 
       intDecryptor.decrypt(encryptedValue) mustBe intValue

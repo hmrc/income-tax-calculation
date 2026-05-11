@@ -18,12 +18,12 @@ package models.mongo
 
 import models.mongo.LocalDateJsonExtensions.{dateTimeReads, dateTimeWrites}
 import models.mongo.TaxYearsData.dateTimeFormat
-import play.api.libs.json._
+import play.api.libs.json.*
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.intDecryptor
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.intEncryptor
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 import java.time.{LocalDateTime, ZoneOffset}
 
@@ -31,7 +31,7 @@ case class TaxYearsData(nino: String,
                         taxYears: Seq[Int],
                         lastUpdated: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC) ){
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTaxYearsData = EncryptedTaxYearsData(
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedTaxYearsData = EncryptedTaxYearsData(
     nino = nino,
     taxYears = taxYears.map(_.encrypted),
     lastUpdated = lastUpdated
@@ -50,7 +50,7 @@ case class EncryptedTaxYearsData(nino: String,
                                  taxYears: Seq[EncryptedValue],
                                  lastUpdated: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC) ){
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TaxYearsData = TaxYearsData(
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): TaxYearsData = TaxYearsData(
     nino = nino,
     taxYears = taxYears.map(_.decrypted),
     lastUpdated = lastUpdated

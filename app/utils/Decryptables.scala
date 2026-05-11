@@ -19,18 +19,18 @@ package utils
 import models.mongo.TextAndKey
 
 trait Decryptable[A] {
-  def decrypt(encryptedValue: EncryptedValue)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): A
+  def decrypt(encryptedValue: EncryptedValue)(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): A
 }
 
 object DecryptorInstances {
   implicit val intDecryptor: Decryptable[Int] = new Decryptable[Int] {
-    override def decrypt(encryptedValue: EncryptedValue)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): Int =
-      secureGCMCipher.decrypt[Int](encryptedValue.value, encryptedValue.nonce)
+    override def decrypt(encryptedValue: EncryptedValue)(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): Int =
+      aesGCMCrypto.decrypt[Int](encryptedValue.value, encryptedValue.nonce)
   }
 }
 
 object DecryptableSyntax {
   implicit class DecryptableOps(encryptedValue: EncryptedValue) {
-    def decrypted[A](implicit d: Decryptable[A], secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): A = d.decrypt(encryptedValue)
+    def decrypted[A](implicit d: Decryptable[A], aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): A = d.decrypt(encryptedValue)
   }
 }

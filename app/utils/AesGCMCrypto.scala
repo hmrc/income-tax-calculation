@@ -42,7 +42,7 @@ class EncryptionDecryptionException(method: String, reason: String, message: Str
 }
 
 @Singleton
-class SecureGCMCipher @Inject()(implicit private val appConfig: AppConfig) extends Logging {
+class AesGCMCrypto @Inject()(implicit private val appConfig: AppConfig) extends Logging {
 
   val IV_SIZE = 96
   val TAG_BIT_LENGTH = 128
@@ -64,7 +64,7 @@ class SecureGCMCipher @Inject()(implicit private val appConfig: AppConfig) exten
         validateAssociatedText(textAndKey.associatedText, METHOD_ENCRYPT), gcmParameterSpec, secretKey)
       EncryptedValue(cipherText, nonce)
     } else {
-      logger.info("[SecureGCMCipher][encrypt] Encryption is turned off")
+      logger.info("[AesGCMCrypto][encrypt] Encryption is turned off")
       EncryptedValue(valueToEncrypt.toString, s"${valueToEncrypt.toString}-Nonce")
     }
   }
@@ -82,7 +82,7 @@ class SecureGCMCipher @Inject()(implicit private val appConfig: AppConfig) exten
         case Right(value) => converter.convert(value)
       }
     } else {
-      logger.info("[SecureGCMCipher][decrypt] Encryption is turned off")
+      logger.info("[AesGCMCrypto][decrypt] Encryption is turned off")
       converter.convert(valueToDecrypt)
     }
   }

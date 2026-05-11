@@ -29,7 +29,7 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mdc.Mdc
 import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_TAX_YEARS_DATA, FAILED_TO_FIND_TAX_YEARS_DATA}
 import utils.PagerDutyHelper.pagerDutyLog
-import utils.SecureGCMCipher
+import utils.AesGCMCrypto
 
 import java.time.{LocalDateTime, ZoneOffset}
 import javax.inject.{Inject, Singleton}
@@ -38,7 +38,7 @@ import scala.util.Try
 
 @Singleton
 class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: AppConfig)
-                                          (implicit secureGCMCipher: SecureGCMCipher, ec: ExecutionContext)
+                                          (implicit aesGCMCrypto: AesGCMCrypto, ec: ExecutionContext)
   extends PlayMongoRepository[EncryptedTaxYearsData](
   mongoComponent = mongo,
   collectionName = "taxYearsData",
