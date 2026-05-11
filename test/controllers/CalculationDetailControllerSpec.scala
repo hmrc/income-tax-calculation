@@ -18,7 +18,7 @@ package controllers
 
 import cats.data.EitherT
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
-import enums.{CalculationTrigger, SubmissionChannel}
+import enums.SubmissionChannel
 import models.{ErrorBodyModel, ErrorModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

@@ -16,7 +16,6 @@
 
 package testConstants.hip
 
-import enums.IsMTD
 import models.hip.calculation.*
 import models.hip.calculation.taxCalculation.*
 import models.hip.{CalculationHipResponseModel, Inputs, Metadata, PersonalInformation}

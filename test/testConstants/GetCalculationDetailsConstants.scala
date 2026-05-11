@@ -16,10 +16,9 @@
 
 package testConstants
 
-import enums.IsMTD
-import models.{CalculationListResponseModel, GetCalculationListModel}
 import models.calculation.*
 import models.calculation.taxcalculation.*
+import models.{CalculationListResponseModel, GetCalculationListModel}
 
 import java.time.LocalDate
 import scala.io.Source
