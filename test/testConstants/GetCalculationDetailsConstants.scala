@@ -266,6 +266,13 @@ object GetCalculationDetailsConstants {
           specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
           inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
         )),
+        pensionContributionReliefs = Some(PensionContributionReliefs(
+          totalPensionContributionReliefs = (5000.99),
+          PensionContributionDetail(
+            regularPensionContributions = 5000.99,
+            oneOffPensionContributionsPaid = 5000.99
+          )
+        )),
         pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
           totalPensionCharges = Some(5000.99),
           totalTaxPaid = Some(5000.99),
@@ -432,6 +439,13 @@ object GetCalculationDetailsConstants {
           stateBenefits = Some(-99999999999.99),
           specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
           inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
+        )),
+        pensionContributionReliefs = Some(PensionContributionReliefs(
+          totalPensionContributionReliefs = (5000.99),
+          PensionContributionDetail(
+            regularPensionContributions = 5000.99,
+            oneOffPensionContributionsPaid = 5000.99
+          )
         )),
         pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
           totalPensionCharges = Some(5000.99),
