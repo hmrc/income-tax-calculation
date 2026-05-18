@@ -941,6 +941,13 @@ object GetCalculationDetailsConstants {
        |      "cgtAmount": 5000.99,
        |      "incomeTaxNicAndCgtAmount": 5000.99
        |    },
+       |    "pensionContributionReliefs": {
+       |      "totalPensionContributionReliefs": 5000.99,
+       |      "pensionContributionDetail": {
+       |        "regularPensionContributions": 5000.99,
+       |        "oneOffPensionContributionsPaid": 5000.99
+       |      }
+       |    },
        |    "pensionSavingsTaxCharges": {
        |      "totalPensionCharges": 5000.99,
        |      "totalTaxPaid": 5000.99,

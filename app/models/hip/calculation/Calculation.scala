@@ -17,8 +17,8 @@
 package models.hip.calculation
 
 import models.hip.calculation.taxCalculation.TaxCalculation
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
 /*
     totalFHLPropertyProfit, totalEeaFhlProfit fields are no longer in the HIP API 1885 for
@@ -47,7 +47,8 @@ case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
                        otherIncome: Option[OtherIncome],
                        transitionProfit: Option[TransitionProfit],
-                       highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitCharge]
+                       highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitCharge],
+                       pensionContributionReliefs: Option[PensionContributionReliefs]
                       )
 
 object Calculation {
@@ -220,5 +221,19 @@ case class HighIncomeChildBenefitCharge(adjustedNetIncome: BigDecimal,
 
 object HighIncomeChildBenefitCharge {
   implicit val format: OFormat[HighIncomeChildBenefitCharge] = Json.format[HighIncomeChildBenefitCharge]
+}
+
+case class PensionContributionReliefs(totalPensionContributionReliefs: BigDecimal,
+                                      pensionContributionDetail: PensionContributionDetail)
+
+object PensionContributionReliefs {
+  implicit val format: OFormat[PensionContributionReliefs] = Json.format[PensionContributionReliefs]
+}
+
+case class PensionContributionDetail(regularPensionContributions: BigDecimal,
+                                     oneOffPensionContributionsPaid: BigDecimal)
+
+object PensionContributionDetail {
+  implicit val format: OFormat[PensionContributionDetail] = Json.format[PensionContributionDetail]
 }
 
