@@ -204,7 +204,8 @@ object GetCalculationDetailsTestConstants {
             statePensionLumpSumCharges = Some(200.22),
             payeUnderpaymentsCodedOut = Some(500.11),
             giftAidTaxChargeWhereBasicRateDiffers = Some(1000.22),
-            incomeTaxChargedOnTransitionProfits = Some(400.22)
+            incomeTaxChargedOnTransitionProfits = Some(400.22),
+            winterFuelPaymentCharge = Some(50.11)
           ),
           nics = Some(Nics(
             class2Nics = Some(Class2Nics(
