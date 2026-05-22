@@ -279,6 +279,13 @@ object HipGetCalculationDetailsConstants {
           cgtAmount = Some(50),
           incomeTaxNicAndCgtAmount = Some(150)
         )),
+        pensionContributionReliefs = Some(PensionContributionReliefs(
+          totalPensionContributionReliefs = (5000.99),
+          PensionContributionDetail(
+            regularPensionContributions = 5000.99,
+            oneOffPensionContributionsPaid = 5000.99
+          )
+        )),
         pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
           totalPensionCharges = Some(400),
           totalTaxPaid = Some(1000.50),
