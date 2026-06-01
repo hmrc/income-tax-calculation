@@ -38,6 +38,7 @@ class CalculationListController @Inject()(getCalculationDetailsService: GetCalcu
         case Right(success) =>
           logger.info(s"[CalculationDetailController][calculationDetail] - Successful Response: OK 200 - $success")
           Ok(Json.toJson(success))
+        case Left(error) if error.status == NO_CONTENT => Status(NOT_FOUND)(error.toJson)
         case Left(error) =>
           logger.error(s"[CalculationDetailController][calculationDetail] - Error Response: $error")
           Status(error.status)(error.toJson)

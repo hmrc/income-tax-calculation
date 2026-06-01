@@ -172,7 +172,7 @@ class CalculationListITest extends AnyWordSpec
           }
         }
 
-        "returns a NO_CONTENT when receiving a NOT_FOUND" in {
+        "returns a NOT_FOUND when receiving a NOT_FOUND" in {
           auth(isAgent)
 
           stubGetWithResponseBody(url2083, NOT_FOUND, errorResponse)
@@ -181,7 +181,7 @@ class CalculationListITest extends AnyWordSpec
             .withHttpHeaders(mtditidHeader, authorization)
             .get()) {
             result =>
-              result.status mustBe NO_CONTENT
+              result.status mustBe NOT_FOUND
           }
         }
 

@@ -73,7 +73,8 @@ class CalculationListControllerSpec extends TestSuite {
       }
 
       Seq(SERVICE_UNAVAILABLE, INTERNAL_SERVER_ERROR, NOT_FOUND, CONFLICT, BAD_REQUEST).foreach { httpErrorCode =>
-        s"return a $httpErrorCode when unsuccessful" in {
+        val expectedErrorCode = if (httpErrorCode == NO_CONTENT) NOT_FOUND else httpErrorCode
+        s"return a $expectedErrorCode when unsuccessful" in {
 
           val result = {
             auth(isAgent)
@@ -81,7 +82,7 @@ class CalculationListControllerSpec extends TestSuite {
 
             controller.getCalculationList(nino, taxYear)(fakeRequestWithMtditid)
           }
-          status(result) mustBe httpErrorCode
+          status(result) mustBe expectedErrorCode
           contentAsJson(result) mustBe errorResponse
         }
       }
