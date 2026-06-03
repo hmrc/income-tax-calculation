@@ -283,8 +283,8 @@ object GetCalculationDetailsTestConstants {
         pensionContributionReliefs = Some(PensionContributionReliefs(
           totalPensionContributionReliefs = (5000.99),
           PensionContributionDetail(
-            regularPensionContributions = 5000.99,
-            oneOffPensionContributionsPaid = 5000.99
+            regularPensionContributions = Some(5000.99),
+            oneOffPensionContributionsPaid = Some(5000.99)
           )
         )),
         pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
