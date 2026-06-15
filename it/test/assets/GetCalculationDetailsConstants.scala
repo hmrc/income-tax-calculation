@@ -73,6 +73,7 @@ object GetCalculationDetailsConstants {
         incomeSummaryTotals = Some(IncomeSummaryTotals(
           totalSelfEmploymentProfit = Some(12500),
           totalPropertyProfit = Some(12500),
+          totalUKOtherPropertyProfit = Some(12500),
           totalFHLPropertyProfit = Some(12500),
           totalForeignPropertyProfit = Some(12500),
           totalEeaFhlProfit = Some(12500)
@@ -432,6 +433,7 @@ object GetCalculationDetailsConstants {
        |    "incomeSummaryTotals" : {
        |      "totalSelfEmploymentProfit" : 12500,
        |      "totalPropertyProfit" : 12500,
+       |      "totalUKOtherPropertyProfit": 12500,
        |      "totalFHLPropertyProfit" : 12500,
        |      "totalForeignPropertyProfit" : 12500,
        |      "totalEeaFhlProfit" : 12500
@@ -767,6 +769,7 @@ object GetCalculationDetailsConstants {
        |    "incomeSummaryTotals" : {
        |      "totalSelfEmploymentProfit" : 12500,
        |      "totalPropertyProfit" : 12500,
+       |      "totalUKOtherPropertyProfit": 12500,
        |      "totalFHLPropertyProfit" : 12500,
        |      "totalForeignPropertyProfit" : 12500,
        |      "totalEeaFhlProfit" : 12500
