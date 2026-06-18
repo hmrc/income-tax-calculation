@@ -136,7 +136,6 @@ class ExampleCalculationSpec extends TestSuite {
             |						"threshold": 99999999
             |					}]
             |				},
-            |				"nic4NetOfDeductions": 3845,
             |				"totalNic": 3845
             |			},
             |			"totalIncomeTaxAndNicsDue": 15345
