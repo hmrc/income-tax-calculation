@@ -127,7 +127,8 @@ object HipGetCalculationDetailsConstants {
           totalOfAllGains = 40000
         )),
         savingsAndGainsIncome = Some(SavingsAndGainsIncome(
-          chargeableForeignSavingsAndGains = Some(10)
+          chargeableForeignSavingsAndGains = Some(10),
+          totalUkSavingsAndGains = Some(10)
         )),
         dividendsIncome = Some(DividendsIncome(
           totalUkDividends = Some(1000),chargeableForeignDividends = Some(500)
@@ -408,7 +409,8 @@ object HipGetCalculationDetailsConstants {
       |      "totalOfAllGains" : 40000
       |    },
       |    "savingsAndGainsIncome" : {
-      |      "chargeableForeignSavingsAndGains" : 10
+      |      "chargeableForeignSavingsAndGains" : 10,
+      |      "totalUkSavingsAndGains" : 10
       |    },
       |    "dividendsIncome" : {
       |      "chargeableForeignDividends" : 500

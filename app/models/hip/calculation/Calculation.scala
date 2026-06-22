@@ -156,7 +156,8 @@ object ChargeableEventGainsIncome {
   implicit val format: OFormat[ChargeableEventGainsIncome] = Json.format[ChargeableEventGainsIncome]
 }
 
-case class SavingsAndGainsIncome(chargeableForeignSavingsAndGains: Option[Int] = None)
+case class SavingsAndGainsIncome(chargeableForeignSavingsAndGains: Option[Int] = None,
+                                 totalUkSavingsAndGains: Option[Int] = None)
 
 object SavingsAndGainsIncome {
   implicit val format: OFormat[SavingsAndGainsIncome] = Json.format[SavingsAndGainsIncome]
