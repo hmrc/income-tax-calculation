@@ -138,6 +138,7 @@ object HipGetCalculationDetailsConstants {
         incomeSummaryTotals = Some(IncomeSummaryTotals(
           totalSelfEmploymentProfit = Some(50),
           totalPropertyProfit = Some(50),
+          totalUKOtherPropertyProfit = Some(50),
           totalForeignPropertyProfit = Some(50)
         )),
         taxCalculation = Some(TaxCalculation(
@@ -415,6 +416,7 @@ object HipGetCalculationDetailsConstants {
       |    "incomeSummaryTotals" : {
       |      "totalSelfEmploymentProfit" : 50,
       |      "totalPropertyProfit" : 50,
+      |      "totalUKOtherPropertyProfit" : 50,
       |      "totalForeignPropertyProfit" : 50
       |    },
       |    "taxCalculation" : {

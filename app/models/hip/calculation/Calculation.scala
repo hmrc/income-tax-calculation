@@ -177,6 +177,7 @@ object PartnerIncome {
 case class IncomeSummaryTotals(
                                 totalSelfEmploymentProfit: Option[Int] = None,
                                 totalPropertyProfit: Option[Int] = None,
+                                totalUKOtherPropertyProfit: Option[Int] = None,
                                 totalForeignPropertyProfit: Option[Int] = None
                               )
 
@@ -186,6 +187,7 @@ object IncomeSummaryTotals {
   implicit val reads: Reads[IncomeSummaryTotals] = (
     (__ \ "totalSelfEmploymentProfit").readNullable[Int] and
       (__ \ "totalPropertyProfit").readNullable[Int] and
+      (__ \ "totalUKOtherPropertyProfit").readNullable[Int] and
       (__ \ "totalForeignPropertyProfit").readNullable[Int])(IncomeSummaryTotals.apply _)
 
 }

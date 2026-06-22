@@ -138,6 +138,7 @@ object GetCalculationDetailsTestConstants {
         incomeSummaryTotals = Some(IncomeSummaryTotals(
           totalSelfEmploymentProfit = Some(50),
           totalPropertyProfit = Some(50),
+          totalUKOtherPropertyProfit = Some(50),
           totalForeignPropertyProfit = Some(50)
         )),
         taxCalculation = Some(TaxCalculation(
