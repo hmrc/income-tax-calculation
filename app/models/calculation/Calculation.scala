@@ -105,7 +105,7 @@ case class IncomeSummaryTotals(
                                 totalSelfEmploymentProfit: Option[Int] = None,
                                 totalPropertyProfit: Option[Int] = None,
                                 totalUKOtherPropertyProfit: Option[Int] = None,
-                                totalForeignPropertyProfit: Option[Int] = None,
+                                totalForeignPropertyProfit: Option[Int] = None
                               )
 
 object IncomeSummaryTotals {
