@@ -20,12 +20,6 @@ import models.hip.calculation.taxCalculation.TaxCalculation
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 
-/*
-    totalFHLPropertyProfit, totalEeaFhlProfit fields are no longer in the HIP API 1885 for
-    IncomeSummaryTotals
-    https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=872973684
- */
-
 case class Calculation(allowancesAndDeductions: Option[AllowancesAndDeductions],
                        reliefs: Option[Reliefs],
                        taxDeductedAtSource: Option[TaxDeductedAtSource],
