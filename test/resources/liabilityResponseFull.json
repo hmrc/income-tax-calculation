@@ -317,7 +317,6 @@
         "taxableProfit": 12500,
         "adjustedIncomeTaxLoss": 12500,
         "totalBroughtForwardIncomeTaxLosses": 12500,
-        "lossForCSFHL": 12500,
         "broughtForwardIncomeTaxLossesUsed": 12500,
         "taxableProfitAfterIncomeTaxLossesDeduction": 12500,
         "adjustedProfit": 2100.99,
