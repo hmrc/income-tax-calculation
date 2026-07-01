@@ -40,11 +40,11 @@ import scala.util.Try
 class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: AppConfig)
                                           (implicit aesGCMCrypto: AesGCMCrypto, ec: ExecutionContext)
   extends PlayMongoRepository[EncryptedTaxYearsData](
-  mongoComponent = mongo,
-  collectionName = "taxYearsData",
-  domainFormat = EncryptedTaxYearsData.formats,
-  indexes = TaxYearsDataIndexes.indexes(appConfig)
-) with Repository with TaxYearsDataRepository with Logging {
+    mongoComponent = mongo,
+    collectionName = "taxYearsData",
+    domainFormat = EncryptedTaxYearsData.formats,
+    indexes = TaxYearsDataIndexes.indexes(appConfig)
+  ) with Repository with TaxYearsDataRepository with Logging {
 
   def logOutIndexes(implicit ec: ExecutionContext): Future[Unit] = {
     val StartOfLog: String = "INDEX_IN_TAX_YEARS_DATA"
@@ -57,13 +57,12 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
   }
 
 
-
   def find(nino: String): Future[Either[DatabaseError, Option[TaxYearsData]]] = {
     lazy val start = "[TaxYearsDataRepositoryImpl][find]"
 
     val queryFilter = filter(nino)
-    val now: LocalDateTime  = LocalDateTime.now(ZoneOffset.UTC)
-    val update = set("lastUpdated", toBson(now) (dateTimeWrites))
+    val now: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
+    val update = set("lastUpdated", toBson(now)(dateTimeWrites))
     val options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
 
     val findResult = collection.findOneAndUpdate(queryFilter, update, options).toFutureOption().map(Right(_)).recover {
@@ -82,7 +81,7 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
           }
           }
         }.toEither match {
-          case Left(exception: Exception) => handleEncryptionDecryptionException(exception, start)
+          case Left(exception) => handleEncryptionDecryptionException(exception, start)
           case Right(decryptedData) => Right(decryptedData)
         }
     }
@@ -95,7 +94,7 @@ class TaxYearsDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig: App
       implicit val textAndKey: TextAndKey = TextAndKey(taxYearsData.nino, appConfig.encryptionKey)
       taxYearsData.encrypted()
     }.toEither match {
-      case Left(exception: Exception) => Future.successful(handleEncryptionDecryptionException(exception, start))
+      case Left(exception) => Future.successful(handleEncryptionDecryptionException(exception, start))
       case Right(encryptedData) =>
 
         val queryFilter = filter(encryptedData.nino)

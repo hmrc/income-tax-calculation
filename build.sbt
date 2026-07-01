@@ -21,6 +21,8 @@ val appName = "income-tax-calculation"
 
 val currentScalaVersion = "3.3.6"
 
+val wErrorScalacOption: String = "-Werror"
+
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
 
@@ -59,7 +61,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(coverageSettings: _*)
   .settings(ThisBuild / scalacOptions ++= Seq(
     "-Wconf:msg=Flag.*repeatedly:s",
-    "-Wconf:src=routes/.*:s"
+    "-Wconf:src=routes/.*:s",
+    wErrorScalacOption
   ))
 
 
@@ -73,7 +76,10 @@ lazy val it = project
   )
   .settings(scalaVersion := currentScalaVersion)
   .settings(majorVersion := 1)
-  .settings(scalacOptions += "-Xfatal-warnings")
+  .settings(scalacOptions ++= Seq(
+    "-Xfatal-warnings",
+    wErrorScalacOption)
+  )
   .settings(
     testForkedParallel := true
   )
