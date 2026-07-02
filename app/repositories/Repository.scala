@@ -27,7 +27,7 @@ import utils.PagerDutyHelper.pagerDutyLog
 trait Repository {
   def filter(nino: String): Bson = and(equal("nino", toBson(nino)))
 
-  def handleEncryptionDecryptionException[T](exception: Exception, startOfMessage: String): Left[DatabaseError, T] = {
+  def handleEncryptionDecryptionException[T](exception: Throwable, startOfMessage: String): Left[DatabaseError, T] = {
     val message: String = exception match {
       case exception: EncryptionDecryptionException => s"${exception.failureReason} ${exception.failureMessage}"
       case _ => exception.getMessage
