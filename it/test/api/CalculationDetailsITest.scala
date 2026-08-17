@@ -39,7 +39,6 @@ class CalculationDetailsITest extends AnyWordSpec
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
         ("feature-switch.useGetCalcDetailsHipPlatform5294" -> !enableHip) +:
-        ("feature-switch.useGetCalcListHipPlatform5624" -> !enableHip) +:
         servicesToUrlConfig: _*
     )
     .build()

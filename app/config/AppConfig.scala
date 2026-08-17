@@ -81,7 +81,7 @@ class BackendAppConfig @Inject()(config: Configuration, servicesConfig: Services
   override def confidenceLevel: Int = config.get[Int]("microservice.services.auth.confidenceLevel")
 
    def useGetCalcDetailsHipPlatform5294: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcDetailsHipPlatform5294")
-   def useGetCalcListHip5624: Boolean = servicesConfig.getBoolean("feature-switch.useGetCalcListHipPlatform5624")
+
 
   def useEncryption: Boolean = servicesConfig.getBoolean("feature-switch.useEncryption")
   def useBusinessDetailsStub: Boolean = servicesConfig.getBoolean("feature-switch.useBusinessDetailsStub")

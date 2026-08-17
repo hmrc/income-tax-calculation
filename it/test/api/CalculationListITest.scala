@@ -81,7 +81,6 @@ class CalculationListITest extends AnyWordSpec
     .configure(
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
-        ("feature-switch.useGetCalcListHipPlatform5624" -> false) +:
         servicesToUrlConfig: _*
     )
     .build()
@@ -108,12 +107,6 @@ class CalculationListITest extends AnyWordSpec
               result.status mustBe OK
               Json.parse(result.body) mustBe Json.parse(calcListJson)
           }
-        }
-
-        "return the calculation list when tax 2024 <= year < 2026 and useGetCalcListHipPlatform5624 is true (5624)" in {
-          val result: (Int, JsValue) = hip5624Tester.runTest(isAgent)
-          result._1 mustBe OK
-          result._2 mustBe Json.parse(calcListJson)
         }
 
         "return the calculation list when 2024 <= tax year < 2026 and there are no special cases (2150)" in {
@@ -217,7 +210,6 @@ class hip5624ITest(url: String => String,
     .configure(
       ("feature-switch.useEncryption" -> true) +:
         ("auditing.consumer.baseUri.port" -> wireMockPort) +:
-        ("feature-switch.useGetCalcListHipPlatform5624" -> true) +:
         servicesToUrlConfig: _*
     )
     .build()
