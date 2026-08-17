@@ -51,7 +51,7 @@ trait AppConfig {
   def useBusinessDetailsStub: Boolean
   def confidenceLevel: Int
   def useGetCalcDetailsHipPlatform5294: Boolean
-  def useGetCalcListHip5624: Boolean
+
 }
 
 class BackendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
