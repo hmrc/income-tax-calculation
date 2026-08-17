@@ -17,7 +17,7 @@
 package services
 
 import config.AppConfig
-import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
+import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser.HipGetCalculationDetailsResponse
 import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
@@ -40,7 +40,6 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              listCalculationDetailsConnector: GetCalculationListConnector,
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
                                              hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
-                                             hipGetCalculationListConnector: HipGetCalculationListConnector,
                                              val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private val taxYear2024: Int = TaxYear.taxYear2024
