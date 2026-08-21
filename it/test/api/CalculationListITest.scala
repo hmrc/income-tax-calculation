@@ -112,7 +112,7 @@ class CalculationListITest extends AnyWordSpec
         "return the calculation list when 2024 <= tax year < 2026 and there are no special cases (2150)" in {
           auth(isAgent)
 
-          stubGetWithResponseBody(url2150, OK, calcListResponse)
+          stubGetWithResponseBody(url5624, OK, calcListResponse)
 
           whenReady(buildClient(url(taxYear24))
             .withHttpHeaders(mtditidHeader, authorization)

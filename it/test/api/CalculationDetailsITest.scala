@@ -85,10 +85,10 @@ class CalculationDetailsITest extends AnyWordSpec
       "return the calculation details by calling the HIP endpoint when called with tax year 23/24" in new Setup {
         authorised()
 
-        val calcList2150 = s"/income-tax/23-24/view/calculations-summary/$successNino"
+        val calcList5624 = s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino"
         val hipUrlForCalcDetails24 = s"/itsa/income-tax/v1/23-24/view/calculations/liability/$successNino/$calculationId"
 
-        stubGetWithResponseBody(calcList2150, 200, listCalcResponse)
+        stubGetWithResponseBody(calcList5624, 200, listCalcResponse)
         stubGetWithResponseBody(hipUrlForCalcDetails24, 200, successModelJson)
 
         whenReady(buildClient(s"/income-tax-calculation/income-tax/nino/$successNino/calculation-details?taxYear=2024")

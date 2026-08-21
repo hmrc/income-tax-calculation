@@ -17,7 +17,7 @@
 package services
 
 import config.AppConfig
-import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationsDataConnector}
+import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.hip.HipGetCalculationDetailsHttpParser.HipGetCalculationDetailsResponse
 import connectors.{CalculationDetailsConnectorLegacy, GetCalculationListConnector}
@@ -40,6 +40,7 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
                                              listCalculationDetailsConnector: GetCalculationListConnector,
                                              calcListHipLegacyConnector: HipCalculationLegacyListConnector,
                                              hipGetCalculationsDataConnector: HipGetCalculationsDataConnector,
+                                             hipGetCalculationListConnector: HipGetCalculationListConnector,
                                              val appConfig: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   private val taxYear2024: Int = TaxYear.taxYear2024
@@ -79,8 +80,8 @@ class GetCalculationDetailsService @Inject()(calculationDetailsConnectorLegacy: 
               logger.info(s"[CalculationDetailController][getCalculationDetails] - Tax year: $taxYear, calling getCalculationList2150")
               listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
             case _ =>
-              logger.info(s"[CalculationDetailController][getCalculationDetails] - Tax year: $taxYear, calling getCalculationList2150, possibly No calculationRecord defined")
-              listCalculationDetailsConnector.getCalculationList2150(nino, taxYear)
+              logger.info(s"[CalculationDetailController][getCalculationDetails] - Tax year: $taxYear, calling getCalculationList5624")
+              hipGetCalculationListConnector.getCalculationList5624(nino, taxYear)
           }
       case _ =>
         logger.info(s"[GetCalculationDetailsService][calcListHipLegacyConnector]")
