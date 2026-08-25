@@ -63,7 +63,28 @@ object PersonalInformation {
   implicit val format: OFormat[PersonalInformation] = Json.format[PersonalInformation]
 }
 
-case class Inputs(personalInformation: PersonalInformation)
+case class SubmissionPeriod(startDate: LocalDate,
+                             endDate: LocalDate,
+                             receivedDateTime: String,
+                             submissionId: Option[String] = None)
+
+object SubmissionPeriod {
+  implicit val format: OFormat[SubmissionPeriod] = Json.format[SubmissionPeriod]
+}
+
+case class BusinessIncomeSource(submissionPeriods: Option[SubmissionPeriod] = None)
+
+object BusinessIncomeSource {
+  implicit val format: OFormat[BusinessIncomeSource] = Json.format[BusinessIncomeSource]
+}
+
+case class IncomeSources(businessIncomeSources: Option[Seq[BusinessIncomeSource]] = None)
+
+object IncomeSources {
+  implicit val format: OFormat[IncomeSources] = Json.format[IncomeSources]
+}
+
+case class Inputs(personalInformation: PersonalInformation, incomeSources: Option[IncomeSources] = None)
 
 object Inputs {
   implicit val format: OFormat[Inputs] = Json.format[Inputs]
@@ -75,7 +96,16 @@ object Message {
   implicit val format: OFormat[Message] = Json.format[Message]
 }
 
-case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None)
+case class CustomerServiceMessage(text: String)
+
+object CustomerServiceMessage {
+  implicit val format: OFormat[CustomerServiceMessage] = Json.format[CustomerServiceMessage]
+}
+
+case class Messages(info: Option[Seq[Message]] = None,
+                     warnings: Option[Seq[Message]] = None,
+                     errors: Option[Seq[Message]] = None,
+                     customerServiceMessages: Option[Seq[CustomerServiceMessage]] = None)
 
 object Messages {
   implicit val format: OFormat[Messages] = Json.format[Messages]

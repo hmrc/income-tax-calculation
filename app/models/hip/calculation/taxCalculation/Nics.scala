@@ -25,7 +25,7 @@ object Nics {
   implicit val format: OFormat[Nics] = Json.format[Nics]
 }
 
-case class Class2Nics(amount: Option[BigDecimal] = None)
+case class Class2Nics(amount: Option[BigDecimal] = None, underLowerProfitThreshold: Option[Boolean] = None)
 
 object Class2Nics {
   implicit val format: OFormat[Class2Nics] = Json.format[Class2Nics]
