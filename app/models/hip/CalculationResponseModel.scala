@@ -72,7 +72,7 @@ object SubmissionPeriod {
   implicit val format: OFormat[SubmissionPeriod] = Json.format[SubmissionPeriod]
 }
 
-case class BusinessIncomeSource(submissionPeriods: Option[SubmissionPeriod] = None)
+case class BusinessIncomeSource(submissionPeriods: Option[Seq[SubmissionPeriod]] = None)
 
 object BusinessIncomeSource {
   implicit val format: OFormat[BusinessIncomeSource] = Json.format[BusinessIncomeSource]
