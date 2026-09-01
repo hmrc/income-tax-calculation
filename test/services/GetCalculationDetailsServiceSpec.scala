@@ -16,7 +16,7 @@
 
 package services
 
-import config.{AppConfig, MockAppConfig}
+import config.AppConfig
 import connectors.hip.{HipCalculationLegacyListConnector, HipGetCalculationListConnector, HipGetCalculationsDataConnector}
 import connectors.httpParsers.CalculationDetailsHttpParser.CalculationDetailResponse
 import connectors.httpParsers.GetCalculationListHttpParser.HttpGetResult
@@ -190,18 +190,18 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       )
 
   def listCalculationDetailsSuccess5624: CallHandler3[String, String, HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
-    (mockHipCalculationListConnector.getCalculationList5624(_: String, _: String)(_: HeaderCarrier))
-      .expects(*, *, *)
-      .returning(
-        Future.successful(
-          Right(Seq(GetCalculationListModel(
-            calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
-            calculationTimestamp = "2019-03-17T09:22:59Z",
-            calculationType = "inYear",
-            calculationTrigger = None
-          )))
+      (mockHipCalculationListConnector.getCalculationList5624(_: String, _: String)(_: HeaderCarrier))
+        .expects(*, *, *)
+        .returning(
+          Future.successful(
+            Right(Seq(GetCalculationListModel(
+              calculationId = "f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c",
+              calculationTimestamp = "2019-03-17T09:22:59Z",
+              calculationType = "inYear",
+              calculationTrigger = None
+            )))
+          )
         )
-      )
 
   def listCalculationDetailsSuccessLegacy: CallHandler3[String, Option[String], HeaderCarrier, Future[HttpGetResult[Seq[GetCalculationListModel]]]] =
     (mockHipCalculationListConnectorLegacy.calcList(_: String, _: Option[String])(_: HeaderCarrier))
@@ -233,11 +233,6 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       .expects(*, *, *)
       .returning(Future.successful(Right(Seq.empty[GetCalculationListModel])))
 
-  def setHipEnabledFeatureSwitchConfig(): MockAppConfig = {
-    new MockAppConfig {
-      override val useGetCalcListHip5624: Boolean = true
-    }
-  }
 
   ".getCalculationListResponse" should {
     "return a Right with updated calcType when input calculationType is IY" in {
@@ -269,17 +264,17 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Right(Json.toJson(successModelFull.copy(submissionChannel = None)))
     }
 
-    "return a Right when successful for specific tax year before 25-26 with hip disabled and no calculationRecord" in {
+    "return a Right when successful for specific tax year before 25-26 with no calculationRecord" in {
       getHipCalculationDetailsSuccess
 
-      listCalculationDetailsSuccess2150
+      listCalculationDetailsSuccess5624
 
       val result = await(service().getCalculationDetails(nino, specificTaxYear, None).value)
 
       result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
-    "return a Right when successful for specific tax year before 25-26 with hip disabled and a latest calculationRecord" in {
+    "return a Right when successful for specific tax year before 25-26 with a latest calculationRecord" in {
       getHipCalculationDetailsSuccess
 
       listCalculationDetailsSuccess2150
@@ -299,15 +294,8 @@ class GetCalculationDetailsServiceSpec extends TestSuite {
       result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
     }
 
-    "return a Right when successful for specific tax year before 25-26 with hip enabled and no calculationRecord" in {
-      getHipCalculationDetailsSuccess
 
-      listCalculationDetailsSuccess5624
 
-      val result = await(service(setHipEnabledFeatureSwitchConfig()).getCalculationDetails(nino, specificTaxYear, None).value)
-
-      result mustBe Right(Json.toJson(successFullModelGetCalculationDetailsHip))
-    }
 
     "return a Right when successful for specific tax year for 25-26 onwards and no calculationRecord" in {
       getHipCalculationDetailsSuccess
