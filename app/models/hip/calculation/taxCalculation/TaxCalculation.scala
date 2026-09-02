@@ -27,7 +27,9 @@ case class TaxCalculation(incomeTax: IncomeTax,
                           totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                           totalIncomeTaxAndNicsDue: BigDecimal,
                           totalTaxDeducted: Option[BigDecimal] = None,
-                          totalIncomeTaxAndNicsAndCgt: Option[BigDecimal] = None
+                          totalIncomeTaxAndNicsAndCgt: Option[BigDecimal] = None,
+                          taxRefundedOrSetOff: Option[BigDecimal] = None,
+                          totalTaxAndNicsDue: Option[BigDecimal] = None
                          )
 
 object TaxCalculation {
