@@ -256,7 +256,9 @@ object GetCalculationDetailsTestConstants {
           totalRoyaltyPaymentsTaxCharged = Some(50),
           totalIncomeTaxAndNicsDue = 2000,
           totalTaxDeducted = Some(5000),
-          totalIncomeTaxAndNicsAndCgt = Some(2500)
+          totalIncomeTaxAndNicsAndCgt = Some(2500),
+          taxRefundedOrSetOff = Some(1100),
+          totalTaxAndNicsDue = Some(2100)
         )),
         endOfYearEstimate = Some(EndOfYearEstimate(
           incomeSource = Some(List(IncomeSource(
