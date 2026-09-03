@@ -82,7 +82,8 @@ object GetCalculationDetailsTestConstants {
           stateBenefits = Some(300),
           specialWithholdingTaxOrUkTaxPaid = Some(400),
           inYearAdjustmentCodedInLaterTaxYear = Some(500),
-          taxTakenOffTradingIncome = Some(100)
+          taxTakenOffTradingIncome = Some(100),
+          taxTakenOffOtherIncome = Some(1100)
         )),
         giftAid = Some(GiftAid(
           grossGiftAidPayments = 30,
