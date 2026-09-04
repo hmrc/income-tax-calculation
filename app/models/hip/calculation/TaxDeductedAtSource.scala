@@ -29,7 +29,8 @@ case class TaxDeductedAtSource(
                                 stateBenefits: Option[BigDecimal] = None,
                                 specialWithholdingTaxOrUkTaxPaid: Option[BigDecimal] = None,
                                 inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
-                                taxTakenOffTradingIncome: Option[BigDecimal] = None
+                                taxTakenOffTradingIncome: Option[BigDecimal] = None,
+                                taxTakenOffOtherIncome: Option[BigDecimal] = None
                               )
 
 object TaxDeductedAtSource {
@@ -45,5 +46,6 @@ object TaxDeductedAtSource {
       (__ \ "stateBenefits").readNullable[BigDecimal] and
       (__ \ "specialWithholdingTaxOrUkTaxPaid").readNullable[BigDecimal] and
       (__ \ "inYearAdjustmentCodedInLaterTaxYear").readNullable[BigDecimal] and
-      (__ \ "taxTakenOffTradingIncome").readNullable[BigDecimal])(TaxDeductedAtSource.apply _)
+      (__ \ "taxTakenOffTradingIncome").readNullable[BigDecimal] and
+      (__ \ "taxTakenOffOtherIncome").readNullable[BigDecimal])(TaxDeductedAtSource.apply _)
 }

@@ -841,7 +841,8 @@
       "cgtDueThisPeriod": -99999999999.99,
       "totalIncomeTaxAndNicsAndCgtDueThisPeriod": 5000.99,
       "taxRefundedOrSetOff": 1100,
-      "totalTaxAndNicsDue": 2100
+      "totalTaxAndNicsDue": 2100,
+      "taxTakenOffTradingIncome": 1100
     },
     "endOfYearEstimate": {
       "incomeSource": [
