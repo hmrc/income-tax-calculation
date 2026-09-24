@@ -32,15 +32,22 @@ class CalculationListController @Inject()(getCalculationDetailsService: GetCalcu
                                           authorisedAction: AuthorisedAction
                                            )(implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
+  private def isDownstreamTimeout(status: Int): Boolean = {
+    status == 499 || status == 502 || status == 503
+  }
+
   def getCalculationList(nino: String, taxYear: String): Action[AnyContent] =
     authorisedAction.async { implicit user =>
       getCalculationDetailsService.getCalculationListResponse(nino, taxYear).value.map {
         case Right(success) =>
-          logger.info(s"[CalculationDetailController][calculationDetail] - Successful Response: OK 200 - $success")
+          logger.info(s"[CalculationListController][getCalculationList] - Successful Response: OK 200 - $success")
           Ok(Json.toJson(success))
         case Left(error) if error.status == NO_CONTENT => Status(NOT_FOUND)(error.toJson)
+        case Left(error) if isDownstreamTimeout(error.status) =>
+          logger.warn(s"[CalculationListController][getCalculationList] - Downstream Timeout Error Response: $error")
+          Status(error.status)(error.toJson)
         case Left(error) =>
-          logger.error(s"[CalculationDetailController][calculationDetail] - Error Response: $error")
+          logger.error(s"[CalculationListController][getCalculationList] - Error Response: $error")
           Status(error.status)(error.toJson)
       }
     }

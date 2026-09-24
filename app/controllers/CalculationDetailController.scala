@@ -32,12 +32,19 @@ class CalculationDetailController @Inject()(getCalculationDetailsService: GetCal
                                             authorisedAction: AuthorisedAction
                                            )(implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
+  private def isDownstreamTimeout(status: Int): Boolean = {
+    status == 499 || status == 502 || status == 503
+  }
+
   def calculationDetail(nino: String, taxYear: Option[String], calculationRecord: Option[String]): Action[AnyContent] =
     authorisedAction.async { implicit user =>
       getCalculationDetailsService.getCalculationDetails(nino, taxYear, calculationRecord).value.map {
         case Right(success) =>
           logger.info(s"[CalculationDetailController][calculationDetail] - Successful Response: OK 200 - $success")
           Ok(success)
+        case Left(error) if isDownstreamTimeout(error.status) =>
+          logger.warn(s"[CalculationDetailController][calculationDetail] - Downstream Timeout Error Response: $error")
+          Status(error.status)(error.toJson)
         case Left(error) =>
           logger.error(s"[CalculationDetailController][calculationDetail] - Error Response: $error")
           Status(error.status)(error.toJson)
@@ -50,6 +57,9 @@ class CalculationDetailController @Inject()(getCalculationDetailsService: GetCal
         case Right(success) =>
           logger.info(s"[CalculationDetailController][calculationDetailByCalcId] - Successful Response: OK 200 - $success")
           Ok(success)
+        case Left(error) if isDownstreamTimeout(error.status) =>
+          logger.warn(s"[CalculationDetailController][calculationDetailByCalcId] - Downstream Timeout Error Response: $error")
+          Status(error.status)(error.toJson)
         case Left(error) =>
           logger.error(s"[CalculationDetailController][calculationDetailByCalcId] - Error Response: $error")
           Status(error.status)(error.toJson)
