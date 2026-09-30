@@ -868,7 +868,9 @@
       "totalTaxDeducted": -99999999999.99,
       "incomeTaxNicAmount": -99999999999.99,
       "cgtAmount": 5000.99,
-      "incomeTaxNicAndCgtAmount": 5000.99
+      "incomeTaxNicAndCgtAmount": 5000.99,
+      "taxRefundedOrSetOffAmount": 1100,
+      "totalTaxAndNicsAmount": 10134.99
     }
   }
 }
