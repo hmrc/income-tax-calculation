@@ -282,7 +282,9 @@ object GetCalculationDetailsTestConstants {
           totalTaxDeducted = Some(100),
           incomeTaxNicAmount = Some(100),
           cgtAmount = Some(50),
-          incomeTaxNicAndCgtAmount = Some(150)
+          incomeTaxNicAndCgtAmount = Some(150),
+          taxRefundedOrSetOffAmount = Some(1100),
+          totalTaxAndNicsAmount = Some(2100)
         )),
         pensionContributionReliefs = Some(PensionContributionReliefs(
           totalPensionContributionReliefs = (5000.99),
