@@ -16,6 +16,17 @@ Run the following command to start the remaining services locally:
     sudo mongod (If not already running)
     sm --start INCOME_TAX_SUBMISSION_ALL -r
 
+### To run the application locally execute the following:
+
+```
+sbt 'run 9314'
+```
+### To run the application locally execute in test mode the following:
+
+```
+sbt "run 9314 -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"
+```
+
 This service runs on port: `localhost:9314`
 
 ### Calculation endpoints:
@@ -45,7 +56,7 @@ All Calculation requests / data is retrieved / updated via one of two downstream
 
 ### Get Calculation List Responses (For the Following Call, a * symbol represents any number, a # represents any letter)
 
-| Nino | Response Status | Notes
+| Nino | Response Status | Notes |
 | --- | --- | --- |
 | L#*****2# | 500 (Server Error) |  |
 | L#******# | 404 (Not Found) |  |
@@ -53,7 +64,7 @@ All Calculation requests / data is retrieved / updated via one of two downstream
 | Any Other Nino | 200 (Ok) | Returns a Calculation List response |
 
 ### Intent to Crystallise BVR Errors
-| Nino | Response Status | Associated BVR Error
+| Nino | Response Status | Associated BVR Error |
 | --- | --- | --- |
 | AA004031A | 403 (Forbidden) | No updates provided |
 | AA004091A | 409 (Conflict) | We already have an Income Tax Return for that tax year |
@@ -61,7 +72,7 @@ All Calculation requests / data is retrieved / updated via one of two downstream
 
 
 ### Declare Crystallisation BVR Errors
-| Nino | Response Status | Associated BVR Error
+| Nino | Response Status | Associated BVR Error |
 | --- | --- | --- |
 | AA104091A | 409 (Conflict) | Your address has changed |
 | AA104092A | 409 (Conflict) | We already have an Income Tax Return for that tax year |
