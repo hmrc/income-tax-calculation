@@ -19,14 +19,13 @@ package connectors.httpParsers.hip
 import connectors.httpParsers.APIParser
 import models.hip.CalculationHipResponseModel
 import models.{ErrorBodyModel, ErrorModel}
-import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper.pagerDutyLog
 
-object HipGetCalculationDetailsHttpParser extends APIParser with Logging {
-  
+object HipGetCalculationDetailsHttpParser extends APIParser {
+
   type HipGetCalculationDetailsResponse = Either[ErrorModel, CalculationHipResponseModel]
 
   override val parserName: String = "CalculationDetailsHttpParser"

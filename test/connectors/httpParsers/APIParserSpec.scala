@@ -70,6 +70,11 @@ class APIParserSpec extends TestSuite {
         """{"code":"INTERNAL_SERVER_ERROR","reason":"The service is currently facing issues."}""".stripMargin)))
       result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR,ErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues.")))
     }
+    "handle error with missing/non-parsable error body" in {
+      val result = FakeParser.handleIFError(httpResponse(Json.parse(
+        """{}""".stripMargin)))
+      result mustBe Left(ErrorModel(INTERNAL_SERVER_ERROR, ErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
+    }
   }
 
 }
