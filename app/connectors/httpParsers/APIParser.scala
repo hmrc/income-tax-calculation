@@ -17,13 +17,15 @@
 package connectors.httpParsers
 
 import models.{ErrorBodyModel, ErrorModel, ErrorsBodyModel}
+import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsPath, JsonValidationError}
 import uk.gov.hmrc.http.HttpResponse
-import utils.PagerDutyHelper.PagerDutyKeys.{BAD_SUCCESS_JSON_FROM_API, UNEXPECTED_RESPONSE_FROM_API}
+import utils.PagerDutyHelper.PagerDutyKeys.BAD_SUCCESS_JSON_FROM_API
 import utils.PagerDutyHelper.{getCorrelationId, pagerDutyLog}
 
-trait APIParser {
+
+trait APIParser extends Logging {
 
   type HttpGetResult[T] = Either[ErrorModel, T]
 
@@ -52,13 +54,13 @@ trait APIParser {
         case (Some(apiError), _) => Left(ErrorModel(status, apiError))
         case (_, Some(apiErrors)) => Left(ErrorModel(status, apiErrors))
         case _ =>
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, Some(s"[$parserName][read] Unexpected Json response."))
+          logger.error(s"[$parserName][read] Failure to read error body. Status: $status, APInumber: $apiNumber")
           Left(ErrorModel(status, ErrorBodyModel.parsingError(apiNumber)))
       }
     } catch {
       case _:
         Exception =>
-        pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, Some(s"[$parserName][read] Unexpected Json response."))
+        logger.error(s"[$parserName][read] Unexpected Json response. Status: $status, APInumber: $apiNumber")
         Left(ErrorModel(status, ErrorBodyModel.parsingError(apiNumber)))
     }
   }
