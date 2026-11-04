@@ -22,6 +22,7 @@ case class IncomeTax(totalIncomeReceivedFromAllSources: Int,
                      totalAllowancesAndDeductions: Int,
                      totalTaxableIncome: Int,
                      payPensionsProfit: Option[PayPensionsProfit] = None,
+                     property: Option[Property] = None,
                      savingsAndGains: Option[SavingsAndGains] = None,
                      dividends: Option[Dividends] = None,
                      lumpSums: Option[LumpSums] = None,
@@ -45,6 +46,12 @@ case class PayPensionsProfit(taxBands: Option[Seq[TaxBands]])
 
 object PayPensionsProfit {
   implicit val format: OFormat[PayPensionsProfit] = Json.format[PayPensionsProfit]
+}
+
+case class Property(taxBands: Option[Seq[TaxBands]])
+
+object Property {
+  implicit val format: OFormat[Property] = Json.format[Property]
 }
 
 case class TaxBands(name: String,
