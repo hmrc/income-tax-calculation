@@ -157,6 +157,16 @@ object GetCalculationDetailsTestConstants {
                 taxAmount = 150.11
               )))
             )),
+            property = Some(Property(
+              taxBands = Some(Seq(TaxBands(
+                name = "property",
+                rate = 20,
+                bandLimit = 10000,
+                apportionedBandLimit = 10000,
+                income = 5000,
+                taxAmount = 1000
+              )))
+            )),
             savingsAndGains = Some(SavingsAndGains(
               taxableIncome = 4000,
               taxBands = Some(Seq(TaxBands(
