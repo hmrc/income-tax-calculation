@@ -1,9 +1,9 @@
 # microservice specific routes
 
-GET         /income-tax/nino/:nino/calculation-details                                            controllers.CalculationDetailController.calculationDetail(nino: String, taxYear: Option[String], calculationRecord: Option[String])
+GET         /income-tax/nino/:nino/calculation-details                                                                                                            controllers.CalculationDetailController.calculationDetail(nino: String, taxYear: Option[String], calculationRecord: Option[String])
 
-GET         /income-tax/nino/:nino/calc-id/:calcId/calculation-details                            controllers.CalculationDetailController.calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String])
+GET         /income-tax/nino/:nino/calc-id/:calcId/calculation-details                                                                                            controllers.CalculationDetailController.calculationDetailByCalcId(nino: String, calcId: String, taxYear: Option[String])
 
-GET         /calculation-list/:nino/:taxYear                                                      controllers.CalculationListController.getCalculationList(nino, taxYear)
+GET         /calculation-list/:nino/:taxYear                                                                                                                      controllers.CalculationListController.getCalculationList(nino, taxYear)
 
-GET         /calculations-finalisation-summary/:nino/:taxYear                                     controllers.CalculationsFinalisationSummaryController.getCalculationsFinalisationSummary(nino, taxYear)
+GET         /calculations-finalisation-summary/taxYear/:taxYear/taxableEntityId/:taxableEntityId/calculationId/:calculationId                                     controllers.CalculationsFinalisationSummaryController.getCalculationsFinalisationSummary(taxYear: String, taxableEntityId: String, calculationId: String)

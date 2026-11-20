@@ -17,7 +17,6 @@
 package connectors.httpParsers.hip
 
 import connectors.httpParsers.APIParser
-import models.hip.CalculationHipResponseModel
 import models.hip.calculation.taxLiabilitySummaryDataSA302.TaxLiabilitySummaryDataSA302ResponseModel
 import models.{ErrorBodyModel, ErrorModel}
 import play.api.http.Status.*

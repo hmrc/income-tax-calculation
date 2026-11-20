@@ -16,6 +16,8 @@
 
 package enums
 
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads, Writes}
+
 enum CalculationReasonType(val name: String):
   case CustomerRequest extends CalculationReasonType("customerRequest")
   case Class2NICEvent extends CalculationReasonType("class2NICEvent")
@@ -29,3 +31,23 @@ enum CalculationReasonType(val name: String):
   case NationalInsurance extends CalculationReasonType("nationalInsurance")
   case DevolvedResidency extends CalculationReasonType("devolvedResidency")
   case CustomerRejectionOfaCorrection extends CalculationReasonType("customerRejectionOfaCorrection")
+
+object CalculationReasonType:
+  private val byString: Map[String, CalculationReasonType] =
+    CalculationReasonType.values.map(ct => ct.name -> ct).toMap
+
+  given reads: Reads[CalculationReasonType] =
+    Reads {
+      case JsString(value) =>
+        byString.get(value)
+          .map(JsSuccess(_))
+          .getOrElse(JsError(s"Unknown CalculationReasonType: $value"))
+
+      case _ =>
+        JsError("calculationReasonType must be a string")
+    }
+
+  given writes: Writes[CalculationReasonType] =
+    Writes(t => JsString(t.name))
+  
+end CalculationReasonType

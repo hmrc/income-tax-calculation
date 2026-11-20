@@ -16,5 +16,27 @@
 
 package enums
 
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads, Writes}
+
 enum TaxRegimeType:
   case UK, Scotland, Wales
+
+object TaxRegimeType:
+  private val byString: Map[String, TaxRegimeType] =
+    TaxRegimeType.values.map(ct => ct.toString -> ct).toMap
+
+  given reads: Reads[TaxRegimeType] =
+    Reads {
+      case JsString(value) =>
+        byString.get(value)
+          .map(JsSuccess(_))
+          .getOrElse(JsError(s"Unknown PlanType: $value"))
+
+      case _ =>
+        JsError("planType must be a string")
+    }
+
+  given writes: Writes[TaxRegimeType] =
+    Writes(t => JsString(t.toString))
+
+end TaxRegimeType

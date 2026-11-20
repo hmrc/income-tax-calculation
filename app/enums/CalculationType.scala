@@ -16,8 +16,30 @@
 
 package enums
 
+import play.api.libs.json.*
+
 enum CalculationType(val name: String):
   case IF extends CalculationType("Intent to Finalise")
   case DF extends CalculationType("Declare Finalisation")
   case IA extends CalculationType("Intent to Amend")
   case CA extends CalculationType("Confirm Amendment")
+
+object CalculationType:
+  private val byString: Map[String, CalculationType] =
+    CalculationType.values.map(ct => ct.name -> ct).toMap
+
+  given reads: Reads[CalculationType] =
+    Reads {
+      case JsString(value) =>
+        byString.get(value)
+          .map(JsSuccess(_))
+          .getOrElse(JsError(s"Unknown CalculationType: $value"))
+
+      case _ =>
+        JsError("calculationType must be a string")
+    }
+
+  given writes: Writes[CalculationType] =
+    Writes(t => JsString(t.name))
+
+end CalculationType
