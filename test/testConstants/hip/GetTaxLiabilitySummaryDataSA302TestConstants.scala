@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-
 package testConstants.hip
 
 import enums.{CalculationReasonType, CalculationType, PlanType, TaxRegimeType}
-import models.hip.calculation.taxLiabilitySummaryDataSA302.{
-  BasicRateLimitExtension, BusinessAssetsDisposalAndInvestorsRelief, CgtTaxBands, Class2Nics, Class4Nics, Data,
-  Dividends, GainsOnLifePolicies, GiftAid, MarriageAllowanceTransferDetails, Message, Messages, Metadata, Nic4Bands,
-  Nics, OtherGains, PayPensionsProfit, PensionSavingsTaxCharges, RedundancyAndLumpSumsAndCompensation,
-  ReliefForFinanceCosts, ResidentialProperty, SavingsAndGains, StatePensionLumpSum, StudentLoanRepayments,
-  TaxBands, TaxLiabilitySummaryDataSA302Model
-}
+import models.hip.taxLiabilitySummaryDataSA302.*
+import play.api.libs.json.{JsValue, Json}
+import play.mvc.Http.Status
+import uk.gov.hmrc.http.HttpResponse
 
 object GetTaxLiabilitySummaryDataSA302TestConstants {
 
@@ -325,4 +321,10 @@ object GetTaxLiabilitySummaryDataSA302TestConstants {
     )
   )
 
+  val testTaxLiabilitySummaryDataSA302ModelJson: JsValue =
+    Json.toJson(successModelFull)
+
+  val successResponse: HttpResponse = HttpResponse(status = Status.OK, json = testTaxLiabilitySummaryDataSA302ModelJson, headers = Map.empty)
+  val badJson: HttpResponse = HttpResponse(status = Status.OK, json = Json.toJson("{}"), headers = Map.empty)
+  val badResponse: HttpResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, body = "Dummy error message")
 }

@@ -17,7 +17,7 @@
 package connectors.httpParsers.hip
 
 import connectors.httpParsers.APIParser
-import models.hip.calculation.taxLiabilitySummaryDataSA302.TaxLiabilitySummaryDataSA302ResponseModel
+import models.hip.taxLiabilitySummaryDataSA302.TaxLiabilitySummaryDataSA302Model
 import models.{ErrorBodyModel, ErrorModel}
 import play.api.http.Status.*
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -25,15 +25,16 @@ import utils.PagerDutyHelper.PagerDutyKeys.*
 import utils.PagerDutyHelper.pagerDutyLog
 
 object HipGetTaxLiabilitySummaryDataSA302DetailsHttpParser extends APIParser {
-  type HipGetTaxLiabilitySummaryDataSA302DetailsResponse = Either[ErrorModel, TaxLiabilitySummaryDataSA302ResponseModel]
+
+  type HipGetTaxLiabilitySummaryDataSA302DetailsResponse = Either[ErrorModel, TaxLiabilitySummaryDataSA302Model]
 
   override val parserName: String = "TaxLiabilitySummaryDataSA302DetailsHttpParser"
 
-  implicit object GetCalculationDetailsHttpReads extends HttpReads[HipGetTaxLiabilitySummaryDataSA302DetailsResponse] {
-    
+  implicit object GetTaxLiabilitySummaryDataSA302DetailsHttpReads extends HttpReads[HipGetTaxLiabilitySummaryDataSA302DetailsResponse] {
+
     override def read(method: String, url: String, response: HttpResponse): HipGetTaxLiabilitySummaryDataSA302DetailsResponse = {
       response.status match {
-        case OK => response.json.validate[TaxLiabilitySummaryDataSA302ResponseModel].fold[HipGetTaxLiabilitySummaryDataSA302DetailsResponse](
+        case OK => response.json.validate[TaxLiabilitySummaryDataSA302Model].fold[HipGetTaxLiabilitySummaryDataSA302DetailsResponse](
           validationErrors => badSuccessJsonFromAPI(validationErrors),
           parsedModel => Right(parsedModel)
         )

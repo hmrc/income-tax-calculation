@@ -16,33 +16,34 @@
 
 package services
 
+import cats.data.EitherT
 import connectors.hip.HipGetTaxLiabilitySummaryDataSA302Connector
 import models.ErrorModel
-import models.hip.calculation.taxLiabilitySummaryDataSA302.{
-  TaxLiabilitySummaryDataSA302Error, TaxLiabilitySummaryDataSA302Model, TaxLiabilitySummaryDataSA302ResponseModel
-}
+import models.hip.taxLiabilitySummaryDataSA302.TaxLiabilitySummaryDataSA302Model
+import play.api.Logging
+import service.CalculationResult
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class GetTaxLiabilitySummaryDataSA302Service @Inject()
-                        (hipGetTaxLiabilitySummaryDataSA302Connector: HipGetTaxLiabilitySummaryDataSA302Connector)(implicit ec: ExecutionContext) {
+(hipGetTaxLiabilitySummaryDataSA302Connector: HipGetTaxLiabilitySummaryDataSA302Connector)(implicit ec: ExecutionContext) extends Logging {
 
   def getTaxLiabilitySummaryDataSA302Details(
                                               taxYear: String,
                                               taxableEntityId: String,
                                               calculationId: String)
-                                            (implicit hc: HeaderCarrier): Future[Either[ErrorModel, TaxLiabilitySummaryDataSA302ResponseModel]] = {
+                                            (implicit hc: HeaderCarrier): CalculationResult[TaxLiabilitySummaryDataSA302Model] = EitherT {
 
     hipGetTaxLiabilitySummaryDataSA302Connector.getGetTaxLiabilitySummaryDataSA302(taxYear, taxableEntityId, calculationId).map {
-      case Left(error) => Left(error)
+      case Left(error) =>
+        logger.error(s"[GetTaxLiabilitySummaryDataSA302Service][getTaxLiabilitySummaryDataSA302Details] - Error Response: $error")
+        Left(error)
 
       case Right(model: TaxLiabilitySummaryDataSA302Model) =>
+        logger.info(s"[hipGetTaxLiabilitySummaryDataSA302Connector][getTaxLiabilitySummaryDataSA302Details] taxYear=$taxYear")
         Right(model)
-
-      case Right(error: TaxLiabilitySummaryDataSA302Error) =>
-        Right(TaxLiabilitySummaryDataSA302Error(status = error.status, message = error.message))
     }
   }
 }

@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package models.hip.calculation.taxLiabilitySummaryDataSA302
+package models.hip.taxLiabilitySummaryDataSA302
 
 import enums.{CalculationReasonType, CalculationType, PlanType, TaxRegimeType}
 import play.api.libs.json.{Json, OFormat}
 
-sealed trait TaxLiabilitySummaryDataSA302ResponseModel
-
-object TaxLiabilitySummaryDataSA302ResponseModel {
-  given format: OFormat[TaxLiabilitySummaryDataSA302ResponseModel] = Json.format[TaxLiabilitySummaryDataSA302ResponseModel]
-}
-
 case class TaxLiabilitySummaryDataSA302Model(
                                               metadata: Option[Metadata],
                                               data: Option[Data],
-                                              messages: Option[Messages]) extends TaxLiabilitySummaryDataSA302ResponseModel
+                                              messages: Option[Messages])
 
 object TaxLiabilitySummaryDataSA302Model {
   given format: OFormat[TaxLiabilitySummaryDataSA302Model] = Json.format[TaxLiabilitySummaryDataSA302Model]
@@ -45,7 +39,7 @@ case class Metadata(
                    )
 
 object Metadata {
-  given format: OFormat[Metadata] = Json.format[Metadata]
+  implicit val format: OFormat[Metadata] = Json.format[Metadata]
 }
 
 case class Data(
@@ -350,10 +344,4 @@ case class Messages(info: Option[Seq[Message]])
 
 object Messages {
   given format: OFormat[Messages] = Json.format[Messages]
-}
-
-case class TaxLiabilitySummaryDataSA302Error(status: Int, message: String) extends TaxLiabilitySummaryDataSA302ResponseModel
-
-object TaxLiabilitySummaryDataSA302Error {
-  given format: OFormat[TaxLiabilitySummaryDataSA302Error] = Json.format[TaxLiabilitySummaryDataSA302Error]
 }
