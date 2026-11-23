@@ -12,5 +12,3 @@ addSbtPlugin("org.playframework" % "sbt-plugin"             % "3.0.10")
 addSbtPlugin("ch.epfl.scala"     % "sbt-scalafix"           % "0.11.1")
 
 addSbtPlugin("org.scoverage"     % "sbt-scoverage"          % "2.0.9")
-
-addSbtPlugin("org.scalastyle"    % "scalastyle-sbt-plugin"  % "1.0.0")
