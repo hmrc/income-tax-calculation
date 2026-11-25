@@ -42,7 +42,7 @@ class GetTaxLiabilitySummaryDataSA302Service @Inject()
         Left(error)
 
       case Right(model: TaxLiabilitySummaryDataSA302Model) =>
-        logger.info(s"[hipGetTaxLiabilitySummaryDataSA302Connector][getTaxLiabilitySummaryDataSA302Details] taxYear=$taxYear")
+        logger.info(s"[GetTaxLiabilitySummaryDataSA302Service][getTaxLiabilitySummaryDataSA302Details] taxYear=$taxYear")
         Right(model)
     }
   }

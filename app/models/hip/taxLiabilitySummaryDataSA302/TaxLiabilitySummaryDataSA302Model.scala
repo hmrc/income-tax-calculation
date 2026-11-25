@@ -39,7 +39,7 @@ case class Metadata(
                    )
 
 object Metadata {
-  implicit val format: OFormat[Metadata] = Json.format[Metadata]
+  given format: OFormat[Metadata] = Json.format[Metadata]
 }
 
 case class Data(
